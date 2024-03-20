@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   StyleSheet,
@@ -8,18 +8,18 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
-  ImageBackground
+  ImageBackground,
 } from 'react-native';
 
 import TextInputBox from '../../components/TextiputBox';
 import CommonButton from '../../components/CommonButton';
-import { connect } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
-import { setName, setDarkmode } from '../../redux/action';
+import {connect} from 'react-redux';
+import {useNavigation} from '@react-navigation/native';
+import {setName, setDarkmode} from '../../redux/action';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import local from '../../Storage/Local';
 import images from '../../assets/Images';
-import { height, width } from '../../Theme/Constants';
+import {height, width} from '../../Theme/Constants';
 import Header from '../../components/Header';
 import CustomSearch from '../../components/CustomSearch';
 
@@ -35,8 +35,6 @@ const LoginScreen = props => {
   const [isLogin, changeIsLogin] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-
-
   const isValidate = async () => {
     const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (email === '') {
@@ -45,12 +43,10 @@ const LoginScreen = props => {
       changecheckEmail('Please enter a valid email address');
     } else if (password == '') {
       changecheckPassword('Please enter password');
-    }
-    else if (password?.length < 6) {
+    } else if (password?.length < 6) {
       changecheckPassword('Password must be at least 6 characters long');
-    }
-    else {
-      navigation.replace('Home');
+    } else {
+      navigation.replace('home');
     }
   };
   useEffect(() => {
@@ -61,16 +57,11 @@ const LoginScreen = props => {
     return unsubscribe;
   }, [navigation]);
 
-
-
   return (
     <View style={styles.container}>
       {/* <Header title={'Home'} /> */}
       <View style={styles.logoview}>
-        <Image
-          source={images.Logo}
-          style={styles.image}
-        />
+        <Image source={images.Logo} style={styles.image} />
       </View>
 
       <Text style={styles.logotext}>LOGIN</Text>
@@ -84,10 +75,10 @@ const LoginScreen = props => {
         errorText={checkEmail}
         onChangeText={text => {
           changeemail(text);
-          changecheckEmail('')
+          changecheckEmail('');
         }}
         placeholder={'User Name'}
-        width={width * .8}
+        width={width * 0.8}
         title={'Email ID'}
       />
       <TextInputBox
@@ -95,10 +86,10 @@ const LoginScreen = props => {
         errorText={checkPassword}
         onChangeText={text => {
           changepassword(text);
-          changecheckPassword('')
+          changecheckPassword('');
         }}
         placeholder={'Password'}
-        width={width * .8}
+        width={width * 0.8}
         title={'Password'}
       />
       <CommonButton
@@ -106,27 +97,31 @@ const LoginScreen = props => {
         // onPress={() => navigation.replace('Home')}
         color={'#003451'}
         title={'Login'}
-        width={width * .8}
+        width={width * 0.8}
         texttitle={'white'}
       />
     </View>
-
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
 
-    alignItems: 'center'
+    alignItems: 'center',
   },
   image: {
-    width: width * .42,
-    height: height * .12
+    width: width * 0.42,
+    height: height * 0.12,
   },
-  logoview: { width: width * .5, marginTop: 100, marginBottom: 80, justifyContent: 'center', alignItems: 'center' },
+  logoview: {
+    width: width * 0.5,
+    marginTop: 100,
+    marginBottom: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   text: {
     color: 'white',
     fontSize: 42,
@@ -140,10 +135,14 @@ const styles = StyleSheet.create({
     color: 'white',
     fontFamily: 'Inter-Bold',
     fontWeight: '700',
-    paddingBottom: 5
-
+    paddingBottom: 5,
   },
-  logotext: { fontSize: 22, color: 'black',fontFamily:'Inter-Bold' },
+  logotext: {
+    fontSize: 22,
+    color: 'black',
+    fontFamily: 'Inter-Bold',
+    fontWeight: '700',
+  },
   subTxt: {
     fontSize: 14,
     color: 'white',
@@ -151,7 +150,7 @@ const styles = StyleSheet.create({
     width: width,
     fontFamily: 'Jost',
     fontWeight: '300',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
 });
 export default LoginScreen;

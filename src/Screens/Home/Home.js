@@ -1,13 +1,7 @@
-import React from 'react';
-import {
-  FlatList,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, {useState} from 'react';
+import {FlatList, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {height, width} from '../../Theme/Constants';
+import CustomSearch from '../../components/CustomSearch';
 
 const Data = [
   {
@@ -67,7 +61,7 @@ const Data = [
   {
     id: 6,
     orderId: '#1678954621',
-    time: '10 mins ago',
+    time: '1 hour ago',
     name: ' Supreme SuperMarket',
     rate: 1638,
     qty: 12,
@@ -85,7 +79,7 @@ const Data = [
   {
     id: 8,
     orderId: '#1678954623',
-    time: '30 mins ago',
+    time: '3 hour ago',
     name: ' Golden Stores',
     rate: 4250,
     qty: 10,
@@ -94,25 +88,36 @@ const Data = [
 ];
 
 const Home = ({navigation: {navigate}}) => {
-  // const OnHomePress = () => {
-  //   navigate('cart');
-  // };
+  const [searchQuery, setSearchQuery] = useState('');
 
   const _renderItems = ({item}) => {
     return (
       <View style={styles.itemContainer}>
         <View style={styles.row1}>
-          <Text>Order{item.orderId}</Text>
-          <Text>{item.time}</Text>
+          <Text style={styles.orderIdText}>Order{item.orderId}</Text>
+          <Text style={styles.timeText}>{item.time}</Text>
         </View>
-        <Text>{item.name}</Text>
+        <View style={styles.row1}>
+          <Text style={styles.nameText}>{item.name}</Text>
+        </View>
         <View style={styles.row1}>
           <View style={styles.row2}>
-            <Text>₹{item.rate}</Text>
-            <Text>({item.qty})</Text>
+            <Text style={styles.rateText}>₹{item.rate}</Text>
+            <Text style={styles.qtyText}>({item.qty} Items)</Text>
           </View>
           <View>
-            <Text>{item.status}</Text>
+            <Text
+              style={{
+                fontWeight: 'bold',
+                color:
+                  item.status == 'Delivered'
+                    ? '#D79B00'
+                    : item.status == 'Ordered'
+                    ? '#17A400'
+                    : 'black',
+              }}>
+              {item.status}
+            </Text>
           </View>
         </View>
       </View>
@@ -121,10 +126,11 @@ const Home = ({navigation: {navigate}}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <TouchableOpacity onPress={() => OnHomePress()}>
-        <Text style={styles.text}>Home Screen</Text>
-      </TouchableOpacity> */}
-      <View style={styles.height20} />
+      <CustomSearch
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+        onClear={() => setSearchQuery('')}
+      />
       <FlatList
         data={Data}
         showsVerticalScrollIndicator={false}
@@ -147,11 +153,9 @@ const styles = StyleSheet.create({
   itemContainer: {
     height: height * 0.11,
     width: width * 1,
-    backgroundColor: 'pink',
-    // margin: 1,
-    borderBottomColor: 'black',
+    borderBottomColor: 'grey',
     borderBottomWidth: 0.4,
-    padding: 6,
+    padding: 8,
   },
   height20: {
     height: 20,
@@ -161,10 +165,35 @@ const styles = StyleSheet.create({
     height: height * 0.03,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: 'blue',
   },
   row2: {
     flexDirection: 'row',
+    marginTop: 3,
+    alignItems: 'center',
+  },
+  orderIdText: {
+    color: 'grey',
+    fontSize: 12,
+  },
+  timeText: {
+    color: 'grey',
+    fontSize: 10,
+  },
+  nameText: {
+    color: '#005A8D',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: -4,
+  },
+  rateText: {
+    color: 'black',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  qtyText: {
+    color: 'black',
+    fontSize: 11,
+    marginLeft: 3,
   },
 });
 
