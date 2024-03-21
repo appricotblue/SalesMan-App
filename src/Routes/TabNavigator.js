@@ -19,6 +19,9 @@ import Reels from '../Screens/Reels/ReelScreen';
 import ShopsScreen from '../Screens/Shops/ShopsScreen';
 import ItemsScreen from '../Screens/Items/ItemsScreen';
 import UserScreen from '../Screens/User/UserScreen';
+import {Image} from 'react-native';
+import images from '../assets/Images';
+import {height, width} from '../Theme/Constants';
 
 const Tab = createBottomTabNavigator();
 
@@ -43,7 +46,13 @@ function TabNavigator() {
             headerShown: false,
             tabBarIcon: ({focused}) => {
               if (focused) {
-                return <OrdersFSVG height={30} width={30} />;
+                // return <OrdersFSVG height={30} width={30} />;
+                return (
+                  <Image
+                    source={images.ordersSelected}
+                    style={{height: height * 0.04, width: width * 0.067}}
+                  />
+                );
               }
               return <OrdersFSVG height={30} width={30} />;
             },
@@ -59,7 +68,13 @@ function TabNavigator() {
             headerShown: false,
             tabBarIcon: ({color, focused}) => {
               if (focused) {
-                return <ShopsFSVG height={30} width={30} color={color} />;
+                // return <ShopsFSVG height={30} width={30} color={color} />;
+                return (
+                  <Image
+                    source={images.shopSelected}
+                    style={{height: height * 0.04, width: width * 0.067}}
+                  />
+                );
               }
               return <ShopsFSVG height={30} width={30} color={color} />;
             },
@@ -76,7 +91,13 @@ function TabNavigator() {
             headerShown: false,
             tabBarIcon: ({color, focused}) => {
               if (focused) {
-                return <ItemsFSVG height={30} width={30} color={color} />;
+                // return <ItemsFSVG height={30} width={30} color={color} />;
+                return (
+                  <Image
+                    source={images.itemSelected}
+                    style={{height: height * 0.04, width: width * 0.067}}
+                  />
+                );
               }
               return <ItemsFSVG height={30} width={30} color={color} />;
             },
@@ -93,7 +114,13 @@ function TabNavigator() {
             headerShown: false,
             tabBarIcon: ({color, focused}) => {
               if (focused) {
-                return <UserFSVG height={30} width={30} color={color} />;
+                // return <UserFSVG height={30} width={30} color={color} />;
+                return (
+                  <Image
+                    source={images.accountSelected}
+                    style={{height: height * 0.04, width: width * 0.067}}
+                  />
+                );
               }
               return <UserFSVG height={30} width={30} color={color} />;
             },

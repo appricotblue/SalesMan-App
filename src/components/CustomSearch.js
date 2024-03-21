@@ -1,21 +1,29 @@
 import React from 'react';
-import { View, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+} from 'react-native';
 import images from './../assets/Images';
 
-const CustomSearch = ({ value, onChangeText, onClear }) => {
+const CustomSearch = ({value, onChangeText, onClear, placeholder}) => {
   return (
     <View style={styles.searchBar}>
-      <Image source={images.GraySearch} style={{ height: 30, width: 30, marginLeft: 10 }} />
+      <Image
+        source={images.GraySearch}
+        style={{height: 20, width: 20, marginLeft: 10}}
+      />
       <TextInput
         style={styles.input}
-        placeholder="Search"
+        placeholder={placeholder}
+        placeholderTextColor={'grey'}
         value={value}
         onChangeText={onChangeText}
       />
       {value.length > 0 && (
-        <TouchableOpacity onPress={onClear}>
-          {/* <Image source={images.Cross} style={{ height: 30, width: 30, marginLeft: 10 }} /> */}
-        </TouchableOpacity>
+        <TouchableOpacity onPress={onClear}></TouchableOpacity>
       )}
     </View>
   );
@@ -24,18 +32,18 @@ const CustomSearch = ({ value, onChangeText, onClear }) => {
 const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
-    width: '90%',
+    width: '100%',
     borderRadius: 10,
     backgroundColor: 'white',
-    marginTop: 20,
+    marginTop: 8,
     alignItems: 'center',
-    marginBottom: 30,
-    borderWidth:1,
-    borderColor:'grey'
+    marginBottom: 8,
+    borderWidth: 0.5,
+    borderColor: 'grey',
   },
   input: {
     flex: 1,
-    padding: 10,
+    padding: 4,
   },
 });
 

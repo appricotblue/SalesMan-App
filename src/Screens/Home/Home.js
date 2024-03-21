@@ -2,6 +2,10 @@ import React, {useState} from 'react';
 import {FlatList, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {height, width} from '../../Theme/Constants';
 import CustomSearch from '../../components/CustomSearch';
+import Header from '../../components/Header';
+import FilterButton from '../../components/FilterButton';
+import HomeScreenSelectable from '../../components/HomeScreenSelectable';
+import HomeOrderButton from '../../components/HomeOrderButton';
 
 const Data = [
   {
@@ -126,17 +130,43 @@ const Home = ({navigation: {navigate}}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CustomSearch
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        onClear={() => setSearchQuery('')}
-      />
+      <Header title={'Orders'} />
+      <View style={{flexDirection: 'row'}}>
+        <View
+          style={{
+            width: width * 0.7,
+            marginLeft: 6,
+          }}>
+          <CustomSearch
+            placeholder={'Search Orders'}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            onClear={() => setSearchQuery('')}
+          />
+        </View>
+        <View
+          style={{
+            width: width * 0.25,
+            marginLeft: 6,
+          }}>
+          <FilterButton />
+        </View>
+      </View>
+      <View style={styles.rowView}>
+        <HomeScreenSelectable title={'Todays Offer'} />
+        <HomeScreenSelectable title={'Draft'} />
+        <HomeScreenSelectable title={'All Orders'} />
+      </View>
+
       <FlatList
         data={Data}
         showsVerticalScrollIndicator={false}
         renderItem={({item}) => <_renderItems item={item} />}
         keyExtractor={item => item.id}
       />
+      <View style={styles.OrderButton}>
+        <HomeOrderButton />
+      </View>
     </SafeAreaView>
   );
 };
@@ -145,7 +175,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-    alignItems: 'center',
   },
   text: {
     color: 'black',
@@ -194,6 +223,27 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 11,
     marginLeft: 3,
+  },
+  rowView: {
+    height: height * 0.06,
+    width: width * 0.97,
+    marginHorizontal: 5,
+    marginBottom: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  OrderButton: {
+    position: 'absolute',
+    bottom: 13,
+    left: 0,
+    right: 0,
+    height: 40, // Adjust height as needed
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    borderRadius: 15,
   },
 });
 
