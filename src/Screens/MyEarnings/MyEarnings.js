@@ -13,18 +13,32 @@ import Header from '../../components/Header';
 import {height, width} from '../../Theme/Constants';
 import images from '../../assets/Images';
 
-const UserScreen = () => {
-  const navigation = useNavigation();
-
+const MyEarnings = () => {
   const data = [
-    {id: '1', title: 'Stephen Devassy', iconName: images.User},
+    {
+      id: '1',
+      title: 'Order#1345333667',
+      date: '12:05 PM | Oct 5, 2023',
+      amount: '₹200',
+    },
     {
       id: '2',
-      title: 'stephendevassy@nirapara.co.in',
-      iconName: images.Envelope,
+      title: 'Order#1345333667',
+      date: '12:05 PM | Oct 5, 2023',
+      amount: '₹200',
     },
-    {id: '3', title: '+91 9567946943', iconName: images.Call},
-    {id: '4', title: 'Log Out', iconName: images.Logout},
+    {
+      id: '3',
+      title: 'Order#1345333667',
+      date: '12:05 PM | Oct 5, 2023',
+      amount: '₹200',
+    },
+    {
+      id: '4',
+      title: 'Order#1345333667',
+      date: '12:05 PM | Oct 5, 2023',
+      amount: '₹200',
+    },
     // Add more items as needed
   ];
 
@@ -32,24 +46,21 @@ const UserScreen = () => {
     <TouchableOpacity
       style={styles.itemContainer}
       onPress={() => console.log('Item pressed')}>
-      <Image source={item.iconName} resizeMode="stretch" style={styles.icon} />
-      <Text style={styles.itemtitle}>{item.title}</Text>
+      <View>
+        <Text style={styles.itemtitle}>{item.title}</Text>
+        <Text style={styles.subtitle}>{item.date}</Text>
+      </View>
+
+      <Text style={styles.title}>{item.amount}</Text>
     </TouchableOpacity>
   );
 
   return (
     <SafeAreaView>
-      <Header title={'User'} />
+      <Header title={'My Earnings'} isBackArrow={true} />
       <View style={styles.container}>
-        <View style={styles.imageview}>
-          <Image source={images.Stephen} style={styles.image} />
-          <Text style={styles.title}>Stephen Devassy </Text>
-          <Text style={styles.subtitle}>Sales Representative, Nirapara </Text>
-        </View>
         <View style={styles.earningsview}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('MyEarnings')}
-            style={styles.subearn}>
+          <TouchableOpacity style={styles.subearn}>
             <Text style={styles.title}>₹80,000 </Text>
             <Text style={styles.subtitle}>My earnings</Text>
           </TouchableOpacity>
@@ -85,20 +96,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {width: 132, height: 132, borderRadius: 70},
-  title: {
-    color: '#005A8D',
-    fontSize: 20,
-    fontFamily: 'Inter-Bold',
-    marginTop: 15,
-  },
+  title: {color: '#005A8D', fontSize: 20, fontFamily: 'Inter-Bold'},
   subtitle: {
     color: 'grey',
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Inter-Regular',
-    marginTop: 15,
+    marginTop: 4,
   },
   earningsview: {
-    height: height * 0.2,
+    height: height * 0.15,
     width: width,
     justifyContent: 'center',
     alignItems: 'center',
@@ -116,6 +122,7 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
@@ -124,7 +131,7 @@ const styles = StyleSheet.create({
   },
   itemtitle: {
     fontSize: 18,
-    marginLeft: 10,
+    fontFamily: 'Inter-Regular',
     color: 'black',
   },
   icon: {
@@ -139,4 +146,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserScreen;
+export default MyEarnings;

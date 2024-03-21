@@ -10,6 +10,11 @@ const images = {
   shopSelected: require('../png/ShopsPNG.png'),
   itemSelected: require('../png/ItemsPNG.png'),
   accountSelected: require('../png/UserPNG.png'),
+  Stephen: require('./Stephen.png'),
+  Call: require('./call.png'),
+  Logout: require('./logout.png'),
+  Envelope: require('./Envelope.png'),
+  User: require('./User.png'),
 };
 
 export default images;
