@@ -130,7 +130,7 @@ const Home = ({navigation: {navigate}}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title={'Orders'} />
+      <Header title={'Orders'} isNotification={true} />
       <View style={{flexDirection: 'row'}}>
         <View
           style={{

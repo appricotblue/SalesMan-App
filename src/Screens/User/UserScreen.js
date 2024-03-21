@@ -39,7 +39,7 @@ const UserScreen = () => {
 
   return (
     <SafeAreaView>
-      <Header title={'User'} />
+      <Header title={'User'} isNotification={true} />
       <View style={styles.container}>
         <View style={styles.imageview}>
           <Image source={images.Stephen} style={styles.image} />

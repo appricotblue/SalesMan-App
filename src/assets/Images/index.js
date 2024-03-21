@@ -10,6 +10,7 @@ const images = {
   shopSelected: require('../png/ShopsPNG.png'),
   itemSelected: require('../png/ItemsPNG.png'),
   accountSelected: require('../png/UserPNG.png'),
+  supreme: require('../png/SupremePNG.png'),
   Stephen: require('./Stephen.png'),
   Call: require('./call.png'),
   Logout: require('./logout.png'),

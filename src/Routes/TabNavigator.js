@@ -35,8 +35,8 @@ function TabNavigator() {
           tabBarActiveTintColor: Colors.primary,
           tabBarActiveBackgroundColor: Colors.white,
           tabBarInactiveBackgroundColor: Colors.white,
-          tabBarLabel: '',
-          tabBarStyle: {paddingVertical: 12},
+          // tabBarLabel: '',
+          tabBarStyle: {paddingVertical: 10},
         }}>
         <Tab.Screen
           name="Home"
