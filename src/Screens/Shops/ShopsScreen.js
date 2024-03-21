@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {FlatList, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {height, width} from '../../Theme/Constants';
 import CustomSearch from '../../components/CustomSearch';
 import Header from '../../components/Header';
@@ -109,33 +116,39 @@ const Data = [
 const ShopsScreen = ({navigation: {navigate}}) => {
   const [searchQuery, setSearchQuery] = useState('');
 
+  const onShopPress = () => {
+    navigate('shopDetails');
+  };
+
   const _renderItems = ({item}) => {
     return (
       <View style={styles.itemContainer}>
-        <View style={styles.row1}>
-          <Text style={styles.nameText}>{item.name}</Text>
-        </View>
-        <View style={styles.row1}>
-          <View style={styles.row2}>
-            <Text style={styles.rateText}>{item.location}</Text>
-            {/* <Text style={styles.qtyText}>({item.qty} Items)</Text> */}
+        <TouchableOpacity onPress={() => onShopPress()}>
+          <View style={styles.row1}>
+            <Text style={styles.nameText}>{item.name}</Text>
           </View>
-          <View>
-            <Text
-              style={{
-                color: item.orders.length === 0 ? null : '#17A400',
-              }}>
-              {item.orders}
-            </Text>
+          <View style={styles.row1}>
+            <View style={styles.row2}>
+              <Text style={styles.rateText}>{item.location}</Text>
+              {/* <Text style={styles.qtyText}>({item.qty} Items)</Text> */}
+            </View>
+            <View>
+              <Text
+                style={{
+                  color: item.orders.length === 0 ? null : '#17A400',
+                }}>
+                {item.orders}
+              </Text>
+            </View>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
     );
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title={'Shops'} />
+      <Header title={'Shops'} isNotification={true} />
       <View style={{flexDirection: 'row'}}>
         <View
           style={{

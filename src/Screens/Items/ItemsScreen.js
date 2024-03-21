@@ -152,7 +152,7 @@ const ItemsScreen = ({navigation: {navigate}}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title={'Items'} />
+      <Header title={'Items'} isNotification={true} />
       <View style={{flexDirection: 'row'}}>
         <View
           style={{

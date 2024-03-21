@@ -6,30 +6,34 @@ import images from '../assets/Images';
 import {useNavigation} from '@react-navigation/native';
 import {width} from '../Theme/Constants';
 
-const Header = ({title, isBackArrow}) => {
+const Header = ({title, isBackArrow, isNotification}) => {
   const navigation = useNavigation();
   return (
     <View style={styles.mainContainer}>
-      {isBackArrow ? (
-        <TouchableOpacity
-          style={styles.container}
-          onPress={() => navigation.goBack()}>
-          <Image source={images.ArrowLeft} style={styles.arrowStyle} />
-        </TouchableOpacity>
-      ) : null}
-      <Text style={styles.titleStyle}>{title}</Text>
-
       <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity
-          style={styles.iconStyle}
-          // onPress={() => navigation.navigate('')}
-        >
-          <Image
-            style={{width: 18, height: 23, marginHorizontal: 10}}
-            source={images.Notification}
-          />
-        </TouchableOpacity>
+        {isBackArrow ? (
+          <TouchableOpacity
+            style={styles.container}
+            onPress={() => navigation.goBack()}>
+            <Image source={images.ArrowLeft} style={styles.arrowStyle} />
+          </TouchableOpacity>
+        ) : null}
+        <Text style={styles.titleStyle}>{title}</Text>
       </View>
+
+      {isNotification ? (
+        <View style={{flexDirection: 'row'}}>
+          <TouchableOpacity
+            style={styles.iconStyle}
+            // onPress={() => navigation.navigate('')}
+          >
+            <Image
+              style={{width: 18, height: 23, marginHorizontal: 10}}
+              source={images.Notification}
+            />
+          </TouchableOpacity>
+        </View>
+      ) : null}
     </View>
   );
 };
