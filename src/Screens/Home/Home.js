@@ -6,6 +6,7 @@ import Header from '../../components/Header';
 import FilterButton from '../../components/FilterButton';
 import HomeScreenSelectable from '../../components/HomeScreenSelectable';
 import HomeOrderButton from '../../components/HomeOrderButton';
+import FilterModal from '../../components/FilterModal';
 
 const Data = [
   {
@@ -93,6 +94,7 @@ const Data = [
 
 const Home = ({navigation: {navigate}}) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
 
   const _renderItems = ({item}) => {
     return (
@@ -149,7 +151,7 @@ const Home = ({navigation: {navigate}}) => {
             width: width * 0.25,
             marginLeft: 6,
           }}>
-          <FilterButton />
+          <FilterButton onPress={() => setModalVisible(true)} />
         </View>
       </View>
       <View style={styles.rowView}>
@@ -167,6 +169,10 @@ const Home = ({navigation: {navigate}}) => {
       <View style={styles.OrderButton}>
         <HomeOrderButton />
       </View>
+      <FilterModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+      />
     </SafeAreaView>
   );
 };
