@@ -15,6 +15,7 @@ import images from '../../assets/Images';
 import CommonButton from '../../components/CommonButton';
 
 const OrderDetails = () => {
+    const navigation = useNavigation();
   const data = [
     {
       id: '1',
@@ -80,7 +81,7 @@ const OrderDetails = () => {
 
    
         </View>
-        <View style={{width:width*.9,alignSelf:'center',height:height*.34, marginTop:10,borderBottomColor:'gray',borderBottomWidth:.5,paddingBottom:20}}>
+        <View style={styles.flatlistview}>
     
         <Text style={styles.subtitle}>Items</Text>
         <FlatList
@@ -92,20 +93,20 @@ const OrderDetails = () => {
         </View>
         <View style={{width:width*.9,alignSelf:'center',marginTop:10,paddingBottom:20}}>
         <View style={{width:width*.9,marginTop:10,justifyContent:'space-between',flexDirection:'row'}}>
-        <Text style={styles.subtitle}>Order Status</Text>
+        <Text style={styles.subtitle}>Total Invoice Amount</Text>
             <Text style={[styles.title,{color:'black'}]}>₹6200</Text>
           
         </View>
-        <View style={{width:width*.9,marginTop:10,justifyContent:'space-between',flexDirection:'row',backgroundColor:'#D9D9D9',padding:5}}>
-        <Text style={[styles.subtitle,{color:'#117C00'}] }>Order Status</Text>
+        <View style={styles.totalview}>
+        <Text style={[styles.subtitle,{color:'#117C00'}] }>Your Earnings</Text>
             <Text style={[styles.title,{color:'#117C00'}]}>₹6200</Text>
           
         </View>
+        
         <CommonButton
-        onPress={() => isValidate()}
-        // onPress={() => navigation.replace('Home')}
+        onPress={() => navigation.navigate('EditOrder')}
         color={'white'}
-        title={'Login'}
+        title={'Edit Order'}
         width={width * 0.9}
         texttitle={'#005A8D'}
       />
@@ -158,14 +159,12 @@ const styles = StyleSheet.create({
   
   },
   itemContainer: {
+    height: height * 0.11,
+    width: width * 1,
+    borderBottomColor: 'grey',
+    borderBottomWidth: 0.4,
+    padding: 8,
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    // paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: .5,
-    borderBottomColor: '#ccc',
-    width: width*.9,
   },
   itemtitle: {
     fontSize: 14,
@@ -182,6 +181,12 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#ccc',
   },
+  height20: {
+    height: 20,
+  },
+
+  flatlistview:{width:width*.9,alignSelf:'center',height:height*.34, marginTop:10,borderBottomColor:'gray',borderBottomWidth:.5,paddingBottom:20},
+  totalview:{width:width*.9,marginTop:10,justifyContent:'space-between',flexDirection:'row',backgroundColor:'#D9D9D9',padding:5}
 });
 
 export default OrderDetails;

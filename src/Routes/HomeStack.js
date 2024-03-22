@@ -6,6 +6,7 @@ import CartScreen from '../Screens/Cart/CartScreen';
 import MyEarnings from '../Screens/MyEarnings/MyEarnings';
 import ShopDetails from '../Screens/ShopDetails/ShopDetails';
 import OrderDetails from '../Screens/Home/OrderDetails';
+import EditOrder from '../Screens/Home/EditOrder';
 import FilterScreen from '../Screens/Filter/FilterScreen';
 
 const Stack = createStackNavigator();
@@ -22,6 +23,7 @@ const HomeStack = () => {
       <Stack.Screen name="MyEarnings" component={MyEarnings} />
       <Stack.Screen name="shopDetails" component={ShopDetails} />
       <Stack.Screen name="OrderDetails" component={OrderDetails} />
+      <Stack.Screen name="EditOrder" component={EditOrder} />
       <Stack.Screen name="filter" component={FilterScreen} />
     </Stack.Navigator>
   );
