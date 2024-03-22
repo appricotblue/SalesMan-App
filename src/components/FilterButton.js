@@ -1,11 +1,11 @@
 import React from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 
-const FilterButton = () => {
+const FilterButton = ({onPress}) => {
   return (
-    <View style={styles.searchBar}>
+    <TouchableOpacity style={styles.searchBar} onPress={onPress}>
       <Text style={styles.textStyle}>Filter</Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 

@@ -1,11 +1,19 @@
 import React, {useState} from 'react';
-import {FlatList, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+} from 'react-native';
 import {height, width} from '../../Theme/Constants';
 import CustomSearch from '../../components/CustomSearch';
 import Header from '../../components/Header';
 import FilterButton from '../../components/FilterButton';
 import HomeScreenSelectable from '../../components/HomeScreenSelectable';
 import HomeOrderButton from '../../components/HomeOrderButton';
+import FilterModal from '../../components/FilterModal';
 
 const Data = [
   {
@@ -93,10 +101,17 @@ const Data = [
 
 const Home = ({navigation: {navigate}}) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const filterPress = () => {
+    navigate('filter');
+  };
 
   const _renderItems = ({item}) => {
     return (
-      <View style={styles.itemContainer}>
+      <TouchableOpacity
+        onPress={() => navigate('OrderDetails')}
+        style={styles.itemContainer}>
         <View style={styles.row1}>
           <Text style={styles.orderIdText}>Order{item.orderId}</Text>
           <Text style={styles.timeText}>{item.time}</Text>
@@ -124,7 +139,7 @@ const Home = ({navigation: {navigate}}) => {
             </Text>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -149,7 +164,7 @@ const Home = ({navigation: {navigate}}) => {
             width: width * 0.25,
             marginLeft: 6,
           }}>
-          <FilterButton />
+          <FilterButton onPress={() => filterPress()} />
         </View>
       </View>
       <View style={styles.rowView}>
@@ -167,6 +182,11 @@ const Home = ({navigation: {navigate}}) => {
       <View style={styles.OrderButton}>
         <HomeOrderButton />
       </View>
+      <FilterModal
+        visible={modalVisible}
+        onPress={() => setModalVisible(false)}
+        onApply={() => setModalVisible(false)}
+      />
     </SafeAreaView>
   );
 };

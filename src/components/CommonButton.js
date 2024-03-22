@@ -15,14 +15,23 @@ const CommonButton = props => {
   const buttonColors = props?.color ? props?.color : ['blue'];
   return (
     <TouchableOpacity
-      style={[styles.saveButton, {backgroundColor: props?.color,width: props?.width}]}
+      style={[
+        styles.saveButton,
+        {backgroundColor: props?.color, width: props?.width},
+      ]}
       onPress={() => props?.onPress()}>
-        {/* <LinearGradient   start={{x: 0, y: 0.5}} 
+      {/* <LinearGradient   start={{x: 0, y: 0.5}} 
         end={{x: 1, y: 0.5}} colors={buttonColors} style={[styles.saveButton, { width: props?.width },]}> */}
-      <Text style={{fontWeight: 'bold', color: props?.texttitle, justifyContent:'center',alignItems:'center',fontSize:18}}>
+      <Text
+        style={{
+          fontWeight: 'bold',
+          color: props?.texttitle,
+          justifyContent: 'center',
+          alignItems: 'center',
+          fontSize: 18,
+        }}>
         {props?.title}
       </Text>
-    
     </TouchableOpacity>
   );
 };
@@ -31,12 +40,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
-    height: 50,
+    height: 40,
     borderRadius: 7,
     marginTop: height / 50,
     marginBottom: height / 50,
-    fontFamily:'Jost',
-    fontWeight:'500'
+    fontFamily: 'Jost',
+    fontWeight: '500',
+    borderWidth: 1,
+    borderColor: '#005A8D',
   },
 });
 export default CommonButton;
