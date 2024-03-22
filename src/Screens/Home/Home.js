@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {FlatList, SafeAreaView, StyleSheet, Text, View,TouchableOpacity} from 'react-native';
+import {
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+} from 'react-native';
 import {height, width} from '../../Theme/Constants';
 import CustomSearch from '../../components/CustomSearch';
 import Header from '../../components/Header';
@@ -7,7 +14,6 @@ import FilterButton from '../../components/FilterButton';
 import HomeScreenSelectable from '../../components/HomeScreenSelectable';
 import HomeOrderButton from '../../components/HomeOrderButton';
 import FilterModal from '../../components/FilterModal';
-
 
 const Data = [
   {
@@ -99,7 +105,9 @@ const Home = ({navigation: {navigate}}) => {
 
   const _renderItems = ({item}) => {
     return (
-      <TouchableOpacity onPress={()=>navigate('OrderDetails')} style={styles.itemContainer}>
+      <TouchableOpacity
+        onPress={() => navigate('OrderDetails')}
+        style={styles.itemContainer}>
         <View style={styles.row1}>
           <Text style={styles.orderIdText}>Order{item.orderId}</Text>
           <Text style={styles.timeText}>{item.time}</Text>
@@ -172,7 +180,8 @@ const Home = ({navigation: {navigate}}) => {
       </View>
       <FilterModal
         visible={modalVisible}
-        onClose={() => setModalVisible(false)}
+        onPress={() => setModalVisible(false)}
+        onApply={() => setModalVisible(false)}
       />
     </SafeAreaView>
   );

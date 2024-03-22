@@ -3,10 +3,11 @@ import React, {useState} from 'react';
 import {height, width} from '../Theme/Constants';
 import CustomSearch from './CustomSearch';
 import Calander from './Calander';
+import CommonButton from './CommonButton';
 
 const transparent = 'rgba(0,0,0,0.5)';
 
-function FilterModal({visible, onClose}) {
+function FilterModal({visible, onClose, onPress, onApply}) {
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
@@ -42,6 +43,26 @@ function FilterModal({visible, onClose}) {
             </View>
           </View>
           <View style={styles.height10} />
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}>
+            <CommonButton
+              onPress={() => onPress()}
+              color={'white'}
+              title={'Cancel'}
+              width={width * 0.35}
+              texttitle={'#005A8D'}
+            />
+            <CommonButton
+              onPress={() => onApply()}
+              color={'#005A8D'}
+              title={'Apply'}
+              width={width * 0.35}
+              texttitle={'white'}
+            />
+          </View>
         </View>
       </View>
     </Modal>
