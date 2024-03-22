@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
   image: {width: 132, height: 132, borderRadius: 70},
   title: {color: '#005A8D', fontSize: 20, fontFamily: 'Inter-Bold'},
   subtitle: {

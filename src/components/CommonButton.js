@@ -36,7 +36,9 @@ const styles = StyleSheet.create({
     marginTop: height / 50,
     marginBottom: height / 50,
     fontFamily:'Jost',
-    fontWeight:'500'
+    fontWeight:'500',
+    borderWidth:1,
+    borderColor:'#005A8D'
   },
 });
 export default CommonButton;
