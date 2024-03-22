@@ -30,6 +30,7 @@ function FilterScreen({visible, onClose}) {
         <View>
           <Text style={styles.text}>Filter by Date</Text>
         </View>
+
         <View
           style={{
             flexDirection: 'row',
