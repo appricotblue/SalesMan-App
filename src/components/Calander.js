@@ -1,14 +1,14 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {height} from '../Theme/Constants';
 import CalendarSVG from '../assets/svg/CalendarSVG';
 
-function Calander({date}) {
+function Calander({date, onPress}) {
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
       <Text style={styles.dateText}>{date}</Text>
       <CalendarSVG />
-    </View>
+    </TouchableOpacity>
   );
 }
 

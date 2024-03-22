@@ -103,6 +103,10 @@ const Home = ({navigation: {navigate}}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
 
+  const filterPress = () => {
+    navigate('filter');
+  };
+
   const _renderItems = ({item}) => {
     return (
       <TouchableOpacity
@@ -160,7 +164,7 @@ const Home = ({navigation: {navigate}}) => {
             width: width * 0.25,
             marginLeft: 6,
           }}>
-          <FilterButton onPress={() => setModalVisible(true)} />
+          <FilterButton onPress={() => filterPress()} />
         </View>
       </View>
       <View style={styles.rowView}>

@@ -14,7 +14,7 @@ function FilterModal({visible, onClose, onPress, onApply}) {
     <Modal visible={visible} animationType="fade" transparent={true}>
       <View style={styles.modalContainer}>
         <View style={styles.modalStyle}>
-          <View>
+          {/* <View>
             <Text style={styles.text}>Filter by Shop</Text>
           </View>
           <CustomSearch
@@ -62,7 +62,7 @@ function FilterModal({visible, onClose, onPress, onApply}) {
               width={width * 0.35}
               texttitle={'white'}
             />
-          </View>
+          </View> */}
         </View>
       </View>
     </Modal>
