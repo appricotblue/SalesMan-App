@@ -6,13 +6,40 @@ import CustomSearch from '../../components/CustomSearch';
 import Calander from '../../components/Calander';
 import {useNavigation} from '@react-navigation/native';
 import FilterModal from '../../components/FilterModal';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
-const transparent = 'rgba(0,0,0,0.5)';
-
-function FilterScreen({visible, onClose}) {
+function FilterScreen() {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
   const [calanderVisible, setCalanderVisible] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [isFromDatePickerVisible, setFromDatePickerVisibility] =
+    useState(false);
+  const [fromDate, setFromDate] = useState('');
+
+  const onShowCalander = () => {
+    setDatePickerVisibility(true);
+  };
+  const onCloseCalander = () => {
+    setDatePickerVisibility(false);
+  };
+  const handleConfirm = date => {
+    console.log('A to date has been picked: ', date);
+    onCloseCalander();
+  };
+
+  const handleFromConfirm = date => {
+    console.log('A From date has been picked: ', date);
+    setFromDate(date);
+    onCloseCalander();
+  };
+
+  const onShowFromCalander = () => {
+    setDatePickerVisibility(true);
+  };
+  const onCloseFromCalander = () => {
+    setDatePickerVisibility(false);
+  };
 
   return (
     <View style={styles.modalContainer}>
@@ -39,14 +66,11 @@ function FilterScreen({visible, onClose}) {
           }}>
           <View style={styles.fromView}>
             <Text style={styles.fromText}>From</Text>
-            <Calander date={'March 12'} />
+            <Calander date={'March 12'} onPress={() => onShowFromCalander()} />
           </View>
           <View style={styles.toView}>
             <Text style={styles.toText}>To</Text>
-            <Calander
-              date={'March 12'}
-              onPress={() => setCalanderVisible(true)}
-            />
+            <Calander date={'March 12'} onPress={() => onShowCalander()} />
           </View>
         </View>
         <View style={styles.height10} />
@@ -71,10 +95,23 @@ function FilterScreen({visible, onClose}) {
           />
         </View>
       </View>
-      <FilterModal
+      {/* <FilterModal
         visible={calanderVisible}
         onPress={() => setCalanderVisible(false)}
         onApply={() => setCalanderVisible(false)}
+      /> */}
+
+      <DateTimePickerModal
+        isVisible={isFromDatePickerVisible}
+        mode="date"
+        onConfirm={handleFromConfirm}
+        onCancel={onCloseFromCalander}
+      />
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        onConfirm={handleConfirm}
+        onCancel={onCloseCalander}
       />
     </View>
   );
@@ -84,15 +121,16 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     alignItems: 'center',
-    // justifyContent: 'center',
     backgroundColor: 'white',
   },
   modalStyle: {
-    height: height * 0.95,
+    height: height * 0.39,
     width: width * 0.95,
-    backgroundColor: 'white',
     borderRadius: 8,
-    padding: 20,
+    padding: 15,
+    marginTop: 10,
+    borderColor: 'grey',
+    borderWidth: 0.3,
   },
   text: {
     fontSize: 15,
