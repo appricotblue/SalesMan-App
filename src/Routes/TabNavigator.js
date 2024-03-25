@@ -22,6 +22,7 @@ import UserScreen from '../Screens/User/UserScreen';
 import {Image} from 'react-native';
 import images from '../assets/Images';
 import {height, width} from '../Theme/Constants';
+import Return from '../Screens/Return/Return';
 
 const Tab = createBottomTabNavigator();
 
@@ -55,6 +56,33 @@ function TabNavigator() {
                 );
               }
               return <OrdersFSVG height={30} width={30} />;
+            },
+            unmountOnBlur: true,
+            tabBarHideOnKeyboard: true,
+          }}
+        />
+         <Tab.Screen
+          name="Return"
+          component={Return}
+          options={{
+            title: 'Return',
+            headerShown: false,
+            tabBarIcon: ({focused}) => {
+              if (focused) {
+                // return <OrdersFSVG height={30} width={30} />;
+                return (
+                  <Image
+                    source={images.retun}
+                    style={{height: height * 0.04, width: width * 0.067}}
+                  />
+                );
+              }
+              return  (
+                <Image
+                  source={images.retun_gray}
+                  style={{height: height * 0.04, width: width * 0.067}}
+                />
+              );
             },
             unmountOnBlur: true,
             tabBarHideOnKeyboard: true,
