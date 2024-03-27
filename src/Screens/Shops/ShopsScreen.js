@@ -10,6 +10,8 @@ import {
 import {height, width} from '../../Theme/Constants';
 import CustomSearch from '../../components/CustomSearch';
 import Header from '../../components/Header';
+import HomeOrderButton from '../../components/HomeOrderButton';
+import {useNavigation} from '@react-navigation/native';
 
 const Data = [
   {
@@ -115,6 +117,7 @@ const Data = [
 
 const ShopsScreen = ({navigation: {navigate}}) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const navigation = useNavigation();
 
   const onShopPress = () => {
     navigate('shopDetails');
@@ -170,6 +173,10 @@ const ShopsScreen = ({navigation: {navigate}}) => {
         renderItem={({item}) => <_renderItems item={item} />}
         keyExtractor={item => item.id}
       />
+
+<View style={styles.OrderButton}>
+        <HomeOrderButton  onpress={()=>navigation.navigate('AddShop')} title={'Add Shop'}/>
+      </View>
     </SafeAreaView>
   );
 };

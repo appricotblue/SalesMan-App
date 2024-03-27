@@ -1,8 +1,9 @@
-import {View, Text, TextInput, StyleSheet} from 'react-native';
+import { View, Text, TextInput, StyleSheet } from 'react-native';
 import React from 'react';
-import {height, width} from '../Theme/Constants';
+import { height, width } from '../Theme/Constants';
 
 function CustomTextInput({
+  title,
   onChangeText,
   value,
   placeholder,
@@ -11,9 +12,10 @@ function CustomTextInput({
 }) {
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>{title}</Text>
       <TextInput
         style={styles.inputStyle}
-        onChangeText={onChangeText}
+        onChangeText={text => onChangeText(text)}
         value={value}
         placeholder={placeholder}
         keyboardType={keyboardType}
@@ -25,20 +27,22 @@ function CustomTextInput({
 
 const styles = StyleSheet.create({
   container: {
+    marginBottom: 10,
+  },
+  title: {
+    marginBottom: 5,
+    fontWeight: 'bold',
+  },
+  inputStyle: {
     height: height * 0.06,
     width: width * 0.9,
     borderWidth: 1,
     borderColor: 'grey',
-    borderRadius: 15,
+    borderRadius: 10,
     paddingHorizontal: 10,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  inputStyle: {
-    width: width * 0.8,
-    height: height * 0.05,
-    // backgroundColor: 'pink',
-    color: 'black',
+    // Add any other styles you need for the input
   },
 });
 

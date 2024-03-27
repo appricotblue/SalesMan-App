@@ -8,6 +8,7 @@ import ShopDetails from '../Screens/ShopDetails/ShopDetails';
 import OrderDetails from '../Screens/Home/OrderDetails';
 import EditOrder from '../Screens/Home/EditOrder';
 import FilterScreen from '../Screens/Filter/FilterScreen';
+import AddShop from '../Screens/Shops/AddShop';
 
 
 const Stack = createStackNavigator();
@@ -26,6 +27,7 @@ const HomeStack = () => {
       <Stack.Screen name="OrderDetails" component={OrderDetails} />
       <Stack.Screen name="EditOrder" component={EditOrder} />
       <Stack.Screen name="filter" component={FilterScreen} />
+      <Stack.Screen name="AddShop" component={AddShop} />
     </Stack.Navigator>
   );
 };

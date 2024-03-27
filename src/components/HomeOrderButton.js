@@ -3,9 +3,9 @@ import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {height, width} from '../Theme/Constants';
 import PlusSVG from '../assets/svg/PlusSVG';
 
-const HomeOrderButton = ({title}) => {
+const HomeOrderButton = ({title,onpress}) => {
   return (
-    <TouchableOpacity style={[styles.searchBar]}>
+    <TouchableOpacity onPress={()=>onpress()} style={[styles.searchBar]}>
       <PlusSVG />
       <Text style={styles.textStyle}>{title}</Text>
     </TouchableOpacity>
