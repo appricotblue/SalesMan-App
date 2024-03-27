@@ -1,16 +1,16 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 // import { Ionicons } from '@expo/vector-icons'; // Assuming you're using Ionicons for icons
 import images from '../assets/Images';
-import {useNavigation} from '@react-navigation/native';
-import {width} from '../Theme/Constants';
+import { useNavigation } from '@react-navigation/native';
+import { width } from '../Theme/Constants';
 
-const Header = ({title, isBackArrow, isNotification}) => {
+const Header = ({ title, isBackArrow, isNotification, isRouteview }) => {
   const navigation = useNavigation();
   return (
     <View style={styles.mainContainer}>
-      <View style={{flexDirection: 'row'}}>
+      <View style={{ flexDirection: 'row' }}>
         {isBackArrow ? (
           <TouchableOpacity
             style={styles.container}
@@ -21,19 +21,38 @@ const Header = ({title, isBackArrow, isNotification}) => {
         <Text style={styles.titleStyle}>{title}</Text>
       </View>
 
-      {isNotification ? (
-        <View style={{flexDirection: 'row'}}>
+
+      <View style={{ flexDirection: 'row' }}>
+        {isRouteview ? (
+          <TouchableOpacity onPress={() => navigation.navigate('Route')} style={styles.routeview}>
+            <View >
+              <Text style={{ color: 'white', fontSize: 9 }}>Today’s Route</Text>
+              <Text style={{ color: 'white', fontSize: 11 }}>Kakkanad </Text>
+            </View>
+            <View style={{ width: 10, }}>
+              <Image
+                style={{ width: 9, height: 15, marginHorizontal: 10 }}
+                source={images.Arrowryt}
+              />
+            </View>
+
+          </TouchableOpacity>
+        ) : null}
+
+
+        {isNotification ? (
           <TouchableOpacity
             style={styles.iconStyle}
-            // onPress={() => navigation.navigate('')}
+          // onPress={() => navigation.navigate('')}
           >
             <Image
-              style={{width: 18, height: 23, marginHorizontal: 10}}
+              style={{ width: 18, height: 23, marginHorizontal: 10 }}
               source={images.Notification}
             />
           </TouchableOpacity>
-        </View>
-      ) : null}
+        ) : null}
+      </View>
+
     </View>
   );
 };
@@ -67,6 +86,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  routeview: {
+    borderColor: 'white',
+    borderWidth: 1,
+    width: 95,
+    height: 35,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row'
+  }
 });
 
 export default Header;

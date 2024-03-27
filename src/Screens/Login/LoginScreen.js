@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -13,13 +13,13 @@ import {
 
 import TextInputBox from '../../components/TextiputBox';
 import CommonButton from '../../components/CommonButton';
-import {connect} from 'react-redux';
-import {useNavigation} from '@react-navigation/native';
-import {setName, setDarkmode} from '../../redux/action';
+import { connect } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { setName, setDarkmode } from '../../redux/action';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import local from '../../Storage/Local';
 import images from '../../assets/Images';
-import {height, width} from '../../Theme/Constants';
+import { height, width } from '../../Theme/Constants';
 import Header from '../../components/Header';
 import CustomSearch from '../../components/CustomSearch';
 
@@ -49,27 +49,14 @@ const LoginScreen = props => {
       navigation.replace('home');
     }
   };
-  // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     changeemail('');
-  //     changepassword('');
-  //   });
-  //   return unsubscribe;
-  // }, [navigation]);
+
 
   return (
     <View style={styles.container}>
-      {/* <Header title={'Home'} /> */}
       <View style={styles.logoview}>
         <Image source={images.Logo} style={styles.image} />
       </View>
-
       <Text style={styles.logotext}>LOGIN</Text>
-      {/* <CustomSearch
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        onClear={() => setSearchQuery('')}
-      /> */}
       <TextInputBox
         value={email}
         errorText={checkEmail}

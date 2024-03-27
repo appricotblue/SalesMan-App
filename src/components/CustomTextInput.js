@@ -9,18 +9,40 @@ function CustomTextInput({
   placeholder,
   keyboardType,
   placeholderTextColor,
+  errorText,
+  multiline
 }) {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,   {
+      minHeight: multiline
+        ? height / 6
+        : height / 28,
+      justifyContent: multiline ? 'flex-start' : 'center',
+    },]}>
       <Text style={styles.title}>{title}</Text>
       <TextInput
-        style={styles.inputStyle}
+        style={[styles.inputStyle,  errorText != '' && styles.errorInput,
+        {
+          minHeight: multiline
+            ? height / 8
+            : height / 28,
+          justifyContent: multiline ? 'flex-start' : 'center',
+        },]}
         onChangeText={text => onChangeText(text)}
         value={value}
-        placeholder={placeholder}
+        // placeholder={placeholder}
         keyboardType={keyboardType}
-        placeholderTextColor={placeholderTextColor}
+        // placeholderTextColor={placeholderTextColor}
+        placeholderTextColor={errorText == '' ? 'gray' : '#ff6666'}
+        placeholder={
+          errorText != '' ? errorText : placeholder
+        }
       />
+       {errorText != '' && value != '' ? (
+            <Text style={{top: 5, left: 10, color: '#ff6666'}}>
+              * {errorText}
+            </Text>
+          ) : null}
     </View>
   );
 }
@@ -43,6 +65,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     // Add any other styles you need for the input
+  },
+  errorInput: {
+    shadowColor: 'trasnparant',
+    borderWidth: 1,
+    borderColor: '#ff6666',
   },
 });
 

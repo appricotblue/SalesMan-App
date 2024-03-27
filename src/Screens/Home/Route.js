@@ -99,7 +99,7 @@ const Data = [
   },
 ];
 
-const Home = ({navigation: {navigate}}) => {
+const Route = ({navigation: {navigate}}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -145,7 +145,7 @@ const Home = ({navigation: {navigate}}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title={'Orders'} isNotification={true}  isRouteview={true} />
+      <Header title={'Kakkanad Route'} isNotification={true} isBackArrow={true}  />
       <View style={{flexDirection: 'row'}}>
         <View
           style={{
@@ -179,9 +179,7 @@ const Home = ({navigation: {navigate}}) => {
         renderItem={({item}) => <_renderItems item={item} />}
         keyExtractor={item => item.id}
       />
-      <View style={styles.OrderButton}>
-        <HomeOrderButton onpress={()=> navigate('EditOrder')} title={'New Sales Order'} />
-      </View>
+     
       <FilterModal
         visible={modalVisible}
         onPress={() => setModalVisible(false)}
@@ -267,4 +265,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default Route;
