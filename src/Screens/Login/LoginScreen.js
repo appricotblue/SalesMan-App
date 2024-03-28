@@ -28,7 +28,7 @@ var windowHeight = Dimensions.get('window').height; //full height
 
 const LoginScreen = props => {
   const navigation = useNavigation();
-  const [email, changeemail] = useState('ananthu@aindria.com');
+  const [email, changeemail] = useState('jasna@aindria.com');
   const [checkEmail, changecheckEmail] = useState('');
   const [checkPassword, changecheckPassword] = useState('');
   const [password, changepassword] = useState('1234567');
