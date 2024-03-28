@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
+  ScrollView,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Header from '../../components/Header';
@@ -35,6 +36,24 @@ const OrderDetails = () => {
       date: '₹120 x 25',
       amount: '₹200',
     },
+    {
+      id: '4',
+      title: 'Nirapara Ragi Puttu Podi (500g)',
+      date: '₹120 x 25',
+      amount: '₹200',
+    },
+    {
+      id: '5',
+      title: 'Nirapara Ragi Puttu Podi (500g)',
+      date: '₹120 x 25',
+      amount: '₹200',
+    },
+    {
+      id: '6',
+      title: 'Nirapara Ragi Puttu Podi (500g)',
+      date: '₹120 x 25',
+      amount: '₹200',
+    },
   
   
   ];
@@ -56,22 +75,24 @@ const OrderDetails = () => {
     <SafeAreaView>
       <Header title={'Orders Details'} isBackArrow={true} />
       <View style={styles.container}>
+      <ScrollView>
+
         <View style={{width:width*.9,alignSelf:'center',marginTop:10,borderBottomColor:'gray',borderBottomWidth:.5,paddingBottom:20}}>
         <Text style={styles.subtitle}>Order#16546688544</Text>
             <Text style={styles.title}>Supreme Supermarket </Text>
             <Text style={styles.subtitle}>Kakkanad</Text>
             <Text style={styles.title}>+91 95447 96311 </Text>
             <View style={styles.earningsview}>
-          <TouchableOpacity style={styles.subearn}>
+          <View style={styles.subearn}>
            
             <Text style={styles.subtitle}>Expected Delivery Date</Text>
             <Text style={styles.title}>March 12,2024 </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.subearn}>
+          </View>
+          <View style={styles.subearn}>
             
             <Text style={styles.subtitle}>Actual Delivery Date</Text>
             <Text style={styles.title}>March 13,2024</Text>
-          </TouchableOpacity>
+          </View>
         </View>
         <View style={{width:width*.9,alignSelf:'center',marginTop:10}}>
         <Text style={styles.subtitle}>Order Status</Text>
@@ -84,14 +105,22 @@ const OrderDetails = () => {
         <View style={styles.flatlistview}>
     
         <Text style={styles.subtitle}>Items</Text>
-        <FlatList
+        {/* <FlatList
           data={data}
           renderItem={({item}) => <ListItem item={item} />}
           keyExtractor={item => item.id}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
-        />
+        /> */}
+        {data.map((item,index) => {
+          return(
+            <ListItem item={item}/>
+          )
+        })}
+
         </View>
-        <View style={{width:width*.9,alignSelf:'center',marginTop:10,paddingBottom:20}}>
+      </ScrollView>
+
+        <View style={{width:width*.9,alignSelf:'center',marginTop:5,paddingBottom:20,marginBottom:35}}>
         <View style={{width:width*.9,marginTop:10,justifyContent:'space-between',flexDirection:'row'}}>
         <Text style={styles.subtitle}>Total Invoice Amount</Text>
             <Text style={[styles.title,{color:'black'}]}>₹6200</Text>
@@ -113,14 +142,13 @@ const OrderDetails = () => {
 
  </View>
       </View>
+     
     </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
   container: {
     height: height,
-    // alignItems: 'center',
-
     backgroundColor: '#FFffff',
   },
   text: {
@@ -144,22 +172,17 @@ const styles = StyleSheet.create({
   earningsview: {
     height: height * 0.08,
     width: width,
-   
     alignItems: 'center',
     flexDirection: 'row',
-    // backgroundColor:'red'
+    justifyContent:'space-between'
   },
   subearn: {
     height: height * 0.15,
     width: width * 0.45,
-  
     justifyContent: 'center',
-    // backgroundColor:'red'
-   
-  
   },
   itemContainer: {
-    height: height * 0.11,
+    height: height * 0.1,
     width: width * 1,
     borderBottomColor: 'grey',
     borderBottomWidth: 0.4,
@@ -185,8 +208,15 @@ const styles = StyleSheet.create({
     height: 20,
   },
 
-  flatlistview:{width:width*.9,alignSelf:'center',height:height*.34, marginTop:10,borderBottomColor:'gray',borderBottomWidth:.5,paddingBottom:20},
-  totalview:{width:width*.9,marginTop:10,justifyContent:'space-between',flexDirection:'row',backgroundColor:'#D9D9D9',padding:5}
+  flatlistview:{
+    width:width*.9,
+    alignSelf:'center',
+    minHeight:height*.34, 
+    marginTop:10,
+    borderBottomColor:'gray',
+    borderBottomWidth:.5,
+    paddingBottom:20},
+  totalview:{width:width*.91,marginTop:10,justifyContent:'space-between',flexDirection:'row',backgroundColor:'#D9D9D9',padding:5}
 });
 
 export default OrderDetails;
