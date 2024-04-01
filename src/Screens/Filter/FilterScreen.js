@@ -9,7 +9,6 @@ import FilterModal from '../../components/FilterModal';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { configureLayoutAnimationBatch } from 'react-native-reanimated/lib/typescript/reanimated2/core';
 
-
 function FilterScreen() {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
@@ -18,6 +17,7 @@ function FilterScreen() {
   const [isFromDatePickerVisible, setFromDatePickerVisibility] =
     useState(false);
   const [fromDate, setFromDate] = useState('');
+  
 
   const onShowCalander = () => {
     setDatePickerVisibility(true);
@@ -31,7 +31,7 @@ function FilterScreen() {
   };
 
   const handleFromConfirm = date => {
-    console.log('A From date has been picked: ', date);
+    console.log('A From date has been picked: ', date);git 
     setFromDate(date);
     onCloseCalander();
   };
