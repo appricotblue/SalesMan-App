@@ -18,6 +18,7 @@ const images = {
   Logout: require('./logout.png'),
   Envelope: require('./Envelope.png'),
   User: require('./User.png'),
+  Arrowryt: require('./arrowryt.png'),
 };
 
 export default images;

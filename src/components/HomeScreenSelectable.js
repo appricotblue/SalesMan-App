@@ -1,11 +1,34 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {height, width} from '../Theme/Constants';
 
-const HomeScreenSelectable = ({containerStyle, title}) => {
+const HomeScreenSelectable = ({containerStyle, isSelected,title, onPress, selectedBorderColor = 'blue',
+selectedBackgroundColor = 'lightblue',
+selectedTextColor = 'black',}) => {
+
+ 
+
+ 
+  
+  
   return (
-    <TouchableOpacity style={[styles.searchBar, containerStyle]}>
-      <Text style={styles.textStyle}>{title}</Text>
+    <TouchableOpacity
+      style={[
+        styles.searchBar,
+        containerStyle,
+        isSelected && {
+          borderColor: selectedBorderColor,
+          backgroundColor: selectedBackgroundColor,
+        },
+      ]}
+      onPress={()=>onPress()}>
+      <Text
+        style={[
+          styles.textStyle,
+          isSelected && { color: selectedTextColor },
+        ]}>
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -23,6 +46,8 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: 'grey',
     paddingHorizontal: 12,
+    borderStyle: 'dashed',
+  
   },
   input: {
     flex: 1,
