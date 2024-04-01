@@ -19,7 +19,6 @@ function FilterScreen() {
   const [fromDate, setFromDate] = useState('');
 
   const onShowCalander = () => {
-    console.log('pressed----------')
     setDatePickerVisibility(true);
   };
   const onCloseCalander = () => {
@@ -56,6 +55,25 @@ function FilterScreen() {
           onClear={() => setSearchQuery('')}
         />
         <View style={styles.height10} />
+        <View style={styles.searchView}>
+          <Text style={styles.searchStoreText}>Kalarikal Stores</Text>
+          <Text style={styles.searchLocText}>Kakkanad</Text>
+
+        </View>
+        <View style={styles.height10} />
+        <View style={styles.searchView}>
+          <Text style={styles.searchStoreText}>Kalarikal Stores</Text>
+          <Text style={styles.searchLocText}>Kakkanad</Text>
+
+        </View>
+        <View style={styles.height10} />
+        <View style={styles.searchView}>
+          <Text style={styles.searchStoreText}>Kalarikal Stores</Text>
+          <Text style={styles.searchLocText}>Kakkanad</Text>
+
+        </View>
+        <View style={styles.height10} />
+
         <View>
           <Text style={styles.text}>Filter by Date</Text>
         </View>
@@ -76,11 +94,10 @@ function FilterScreen() {
           </View>
         </View>
         <View style={styles.height10} />
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}>
+       
+      </View>
+      <View
+          style={styles.buttonWrapperView}>
           <CommonButton
             onPress={() => navigation.goBack()}
             color={'white'}
@@ -95,13 +112,8 @@ function FilterScreen() {
             width={width * 0.35}
             texttitle={'white'}
           />
-        </View>
+
       </View>
-      {/* <FilterModal
-        visible={calanderVisible}
-        onPress={() => setCalanderVisible(false)}
-        onApply={() => setCalanderVisible(false)}
-      /> */}
 
       <DateTimePickerModal
         isVisible={isFromDatePickerVisible}
@@ -126,13 +138,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   modalStyle: {
-    height: height * 0.39,
+    height: height * 0.28,
     width: width * 0.95,
-    borderRadius: 8,
     padding: 15,
     marginTop: 10,
-    borderColor: 'grey',
-    borderWidth: 0.3,
   },
   text: {
     fontSize: 15,
@@ -160,6 +169,31 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 14,
   },
+  searchStoreText:{
+    fontSize: 15,
+    color:'#005A8D',
+    fontWeight:"bold"
+  },
+  searchLocText:{
+    fontSize: 13,
+    color:'grey',
+  },
+  searchView:{
+    height:height*.08,
+    width:width*.87,
+    borderBottomWidth:.5,
+    borderColor:'grey',
+    justifyContent:'center'
+  },
+  buttonWrapperView:{
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width:width*.85,
+    height:height*.07,
+    position:'absolute',
+    bottom:0,
+    marginVertical:23
+  }
 });
 
 export default FilterScreen;
