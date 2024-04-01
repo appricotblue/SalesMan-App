@@ -1,5 +1,7 @@
 import React, {useEffect} from 'react';
 import {View, Image, StyleSheet} from 'react-native';
+import Colors from '../../Theme/Colors';
+import {height, width} from '../../Theme/Constants';
 
 const SplashScreen = ({navigation}) => {
   useEffect(() => {
@@ -13,7 +15,7 @@ const SplashScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../../assets/png/Splash.png')}
+        source={require('../../assets/png/SplashPNGG.png')}
         style={styles.image}
       />
     </View>
@@ -25,11 +27,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: Colors.primary,
   },
   image: {
-    width: '100%',
-    height: '100%',
     resizeMode: 'cover',
+    height: height * 0.12,
+    width: width * 0.32,
   },
 });
 
