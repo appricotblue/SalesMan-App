@@ -9,6 +9,7 @@ import FilterModal from '../../components/FilterModal';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { configureLayoutAnimationBatch } from 'react-native-reanimated/lib/typescript/reanimated2/core';
 
+
 function FilterScreen() {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
