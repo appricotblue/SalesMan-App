@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -7,7 +7,7 @@ import {
   View,
   TouchableOpacity,
 } from 'react-native';
-import {height, width} from '../../Theme/Constants';
+import { height, width } from '../../Theme/Constants';
 import CustomSearch from '../../components/CustomSearch';
 import Header from '../../components/Header';
 import FilterButton from '../../components/FilterButton';
@@ -99,15 +99,20 @@ const Data = [
   },
 ];
 
-const Home = ({navigation: {navigate}}) => {
+const Home = ({ navigation: { navigate } }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const handleSelectItem = (title) => {
+    setSelectedItem(title);
+  };
 
   const filterPress = () => {
     navigate('filter');
   };
 
-  const _renderItems = ({item}) => {
+  const _renderItems = ({ item }) => {
     return (
       <TouchableOpacity
         onPress={() => navigate('OrderDetails')}
@@ -132,8 +137,8 @@ const Home = ({navigation: {navigate}}) => {
                   item.status == 'Delivered'
                     ? '#D79B00'
                     : item.status == 'Ordered'
-                    ? '#17A400'
-                    : 'black',
+                      ? '#17A400'
+                      : 'black',
               }}>
               {item.status}
             </Text>
@@ -145,8 +150,8 @@ const Home = ({navigation: {navigate}}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title={'Orders'} isNotification={true}  isRouteview={true} />
-      <View style={{flexDirection: 'row'}}>
+      <Header title={'Orders'} isNotification={true} isRouteview={true} />
+      <View style={{ flexDirection: 'row' }}>
         <View
           style={{
             width: width * 0.7,
@@ -168,19 +173,28 @@ const Home = ({navigation: {navigate}}) => {
         </View>
       </View>
       <View style={styles.rowView}>
-        <HomeScreenSelectable title={'Todays Offer'} />
-        <HomeScreenSelectable title={'Draft'} />
-        <HomeScreenSelectable title={'All Orders'} />
+        <HomeScreenSelectable
+          title={'Todays Offer'}
+          onPress={() => handleSelectItem('Todays Offer')}
+          isSelected={selectedItem === 'Todays Offer'} />
+        <HomeScreenSelectable title={'Draft'}
+          onPress={() => handleSelectItem('Draft')}
+          isSelected={selectedItem === 'Draft'}
+        />
+        <HomeScreenSelectable title={'All Orders'}
+          onPress={() => handleSelectItem('All Orders')}
+          isSelected={selectedItem === 'All Orders'}
+        />
       </View>
 
       <FlatList
         data={Data}
         showsVerticalScrollIndicator={false}
-        renderItem={({item}) => <_renderItems item={item} />}
+        renderItem={({ item }) => <_renderItems item={item} />}
         keyExtractor={item => item.id}
       />
       <View style={styles.OrderButton}>
-        <HomeOrderButton onpress={()=> navigate('EditOrder')} title={'New Sales Order'} />
+        <HomeOrderButton onpress={() => navigate('EditOrder')} title={'New Sales Order'} />
       </View>
       <FilterModal
         visible={modalVisible}
