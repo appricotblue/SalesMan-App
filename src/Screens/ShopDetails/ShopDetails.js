@@ -98,7 +98,7 @@ const Data = [
   },
 ];
 
-function ShopDetails() {
+function ShopDetails({ navigation: { navigate } }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [data, setData] = useState([
     {
@@ -112,6 +112,10 @@ function ShopDetails() {
       image: images.supreme,
     },
   ]);
+
+  const filterPress = () => {
+    navigate('filter');
+  };
 
   const _renderItems = ({item}) => {
     return (
@@ -182,7 +186,7 @@ function ShopDetails() {
             width: width * 0.25,
             marginLeft: 6,
           }}>
-          <FilterButton />
+          <FilterButton onPress={() => filterPress()} />
         </View>
       </View>
       <FlatList

@@ -174,17 +174,17 @@ const Home = ({ navigation: { navigate } }) => {
       </View>
       <View style={styles.rowView}>
         <HomeScreenSelectable
-          title={'Todays Offer'}
-          onPress={() => handleSelectItem('Todays Offer')}
-          isSelected={selectedItem === 'Todays Offer'} />
-        <HomeScreenSelectable title={'Draft'}
-          onPress={() => handleSelectItem('Draft')}
-          isSelected={selectedItem === 'Draft'}
+          title={'Orders'}
+          onPress={() => handleSelectItem('Orders')}
+          isSelected={selectedItem === 'Orders'} />
+        <HomeScreenSelectable title={'Deliveries'}
+          onPress={() => handleSelectItem('Deliveries')}
+          isSelected={selectedItem === 'Deliveries'}
         />
-        <HomeScreenSelectable title={'All Orders'}
+        {/* <HomeScreenSelectable title={'All Orders'}
           onPress={() => handleSelectItem('All Orders')}
           isSelected={selectedItem === 'All Orders'}
-        />
+        /> */}
       </View>
 
       <FlatList
@@ -260,12 +260,13 @@ const styles = StyleSheet.create({
   },
   rowView: {
     height: height * 0.06,
-    width: width * 0.97,
+    width: width * 0.90,
     marginHorizontal: 5,
     marginBottom: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    alignSelf: 'center'
   },
   OrderButton: {
     position: 'absolute',

@@ -5,8 +5,11 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  Dimensions
 } from 'react-native';
 import images from './../assets/Images';
+var width = Dimensions.get('window').width; //full width
+var height = Dimensions.get('window').height; //full height
 
 const CustomSearch = ({value, onChangeText, onClear, placeholder}) => {
   return (
@@ -40,6 +43,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderWidth: 0.5,
     borderColor: 'grey',
+    height: height * 0.05,
   },
   input: {
     flex: 1,

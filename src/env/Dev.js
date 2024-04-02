@@ -1,4 +1,4 @@
-// const env_dev = "http://64.227.158.202:8000";
-const env_dev = "https://wonderpoints.com";
+const env_dev = "http://64.227.139.72:8000/";
+// const env_dev = "https://wonderpoints.com";
 
 export { env_dev };

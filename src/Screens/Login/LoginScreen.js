@@ -17,21 +17,24 @@ import { connect } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { setName, setDarkmode } from '../../redux/action';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import local from '../../Storage/Local';
+
 import images from '../../assets/Images';
 import { height, width } from '../../Theme/Constants';
 import Header from '../../components/Header';
 import CustomSearch from '../../components/CustomSearch';
+import { login } from '../../api';
+import Local from '../../Storage/Local';
+
 
 var windowWidth = Dimensions.get('window').width; //full width
 var windowHeight = Dimensions.get('window').height; //full height
 
 const LoginScreen = props => {
   const navigation = useNavigation();
-  const [email, changeemail] = useState('jasna@aindria.com');
+  const [email, changeemail] = useState('');
   const [checkEmail, changecheckEmail] = useState('');
   const [checkPassword, changecheckPassword] = useState('');
-  const [password, changepassword] = useState('1234567');
+  const [password, changepassword] = useState('');
   const [isLogin, changeIsLogin] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -46,9 +49,31 @@ const LoginScreen = props => {
     } else if (password?.length < 6) {
       changecheckPassword('Password must be at least 6 characters long');
     } else {
-      navigation.replace('home');
+      // navigation.replace('home');
+      handleLogin()
     }
   };
+
+  const handleLogin = async () => {
+    try {
+      const response = await login(email, password);
+      // const response = await login('gowthu', 'gowthu');
+      console.log(response, 'login api response')
+      // Handle the response appropriately
+      if (response.message = "Admin user created successfully") {
+        await Local.storeLogin('token', response.token);
+        navigation.replace('home');
+      } else {
+        console.log('Error during login:',);
+        // setError(response.data.message);
+      }
+    } catch (error) {
+
+      console.error('Error during login:', error);
+
+    }
+  };
+
 
 
   return (

@@ -146,14 +146,14 @@ const Return = ({navigation: {navigate}}) => {
   return (
     <SafeAreaView style={styles.container}>
       <Header title={'Return'} isNotification={true} />
-      <View style={{flexDirection: 'row'}}>
+      <View style={{ flexDirection: 'row', marginBottom: 10, marginTop: 10 }}>
         <View
           style={{
             width: width * 0.7,
             marginLeft: 6,
           }}>
           <CustomSearch
-            placeholder={'Search Orders'}
+            placeholder={'Search Returns'}
             value={searchQuery}
             onChangeText={setSearchQuery}
             onClear={() => setSearchQuery('')}
@@ -167,11 +167,11 @@ const Return = ({navigation: {navigate}}) => {
           <FilterButton onPress={() => filterPress()} />
         </View>
       </View>
-      <View style={styles.rowView}>
+      {/* <View style={styles.rowView}>
         <HomeScreenSelectable title={'Todays Offer'} />
         <HomeScreenSelectable title={'Draft'} />
         <HomeScreenSelectable title={'All Orders'} />
-      </View>
+      </View> */}
 
       <FlatList
         data={Data}
@@ -180,7 +180,7 @@ const Return = ({navigation: {navigate}}) => {
         keyExtractor={item => item.id}
       />
       <View style={styles.OrderButton}>
-        <HomeOrderButton  title={'New Return'}/>
+        <HomeOrderButton onpress={() => navigate('AddReturnOrder')} title={'New Return'} />
       </View>
       <FilterModal
         visible={modalVisible}

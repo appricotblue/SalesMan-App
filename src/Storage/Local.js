@@ -1,15 +1,28 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Local = () => {
-  const storeLogin = async value => {
-    try {
-      await AsyncStorage.setItem('isLogin', value);
-    } catch (e) {
-      // saving error
-    }
-  };
+const storeLogin = async (key, value) => {
+  try {
+    await AsyncStorage.setItem(key, value);
+  } catch (error) {
+    console.error('Error storing login token:', error);
+    // Handle error if necessary
+  }
 };
-const local = new Local();
-export default local;
+const getStoredToken = async () => {
+  try {
+    const token = await AsyncStorage.getItem('token');
+    return token;
+  } catch (error) {
+    console.error('Error retrieving login token:', error);
+    return null;
+  }
+};
+
+const Local = {
+  storeLogin,
+  getStoredToken
+};
+
+export default Local;

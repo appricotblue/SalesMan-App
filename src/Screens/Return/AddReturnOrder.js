@@ -17,14 +17,18 @@ import CustomSearch from '../../components/CustomSearch';
 import Calander from '../../components/Calander';
 import CustomSelectionBox from '../../components/CustomSelectionBox';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import CustomTextInput from '../../components/CustomTextInput';
+import { ScrollView } from 'react-native-gesture-handler';
 
-const EditOrder = () => {
+const AddReturnOrder = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [location, setlocation] = useState('');
     const [categories, setCategories] = useState(['Category 1', 'Category 2', 'Category 3']);
     const [isFromDatePickerVisible, setFromDatePickerVisibility] =
         useState(false);
+    const [shopName, setShopName] = useState('');
+    const [checkshopName, changecheckshopName] = useState('');
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
 
@@ -203,11 +207,11 @@ const EditOrder = () => {
 
     return (
         <SafeAreaView>
-            <Header title={'Edit Order'} isBackArrow={true} />
+            <Header title={'AddReturnOrder'} isBackArrow={true} />
+            {/* <ScrollView> */}
             <View style={styles.container}>
                 <View style={styles.mainview}>
                     <View style={styles.earningsview}>
-
                         <View style={styles.fromView}>
                             <CustomSelectionBox
                                 title={'Order Type'}
@@ -215,20 +219,45 @@ const EditOrder = () => {
                                 options={categories}
                                 onSelect={category => setlocation(category)}
                             />
-
                         </View>
                         <View style={styles.toView}>
-                            <Text style={styles.toText}>Delivery Date</Text>
+                            <Text style={styles.toText}>Pickup Date</Text>
                             <Calander date={toDate} onPress={() => onShowFromCalander()} />
                         </View>
-
                     </View>
-
+                    <View style={styles.earningsview}>
+                        <View style={styles.fromView}>
+                            <CustomTextInput
+                                title={'Order No'}
+                                placeholder="Enter Order No"
+                                errorText={checkshopName}
+                                inputwidth={width * .35}
+                                onChangeText={text => {
+                                    setShopName(text);
+                                    changecheckshopName('');
+                                }}
+                                value={shopName}
+                            />
+                        </View>
+                        <View style={styles.toView}>
+                            <CustomSelectionBox
+                                title={'Status'}
+                                value={location == '' ? 'Select' : location}
+                                options={categories}
+                                onSelect={category => setlocation(category)}
+                            />
+                        </View>
+                    </View>
+                    <CustomSelectionBox
+                        title={'Select shop'}
+                        value={location == '' ? 'Select' : location}
+                        options={categories}
+                        onSelect={category => setlocation(category)}
+                    />
                     <Text style={styles.subtitle}>Select shop</Text>
                     <View
                         style={{
-                            width: width * 0.85,
-                            marginLeft: 6,
+                            width: width * 0.9,
                         }}>
                         <CustomSearch
                             placeholder={'Search Items'}
@@ -237,23 +266,7 @@ const EditOrder = () => {
                             onClear={() => setSearchQuery('')}
                         />
                     </View>
-
-                    <Text style={styles.subtitle}>Selec Item</Text>
-                    <View
-                        style={{
-                            width: width * 0.85,
-                            marginLeft: 6,
-                        }}>
-                        <CustomSearch
-                            placeholder={'Search Items'}
-                            value={searchQuery}
-                            onChangeText={setSearchQuery}
-                            onClear={() => setSearchQuery('')}
-                        />
-                    </View>
-
                 </View>
-
                 <View style={styles.listview}>
                     <FlatList
                         data={Data}
@@ -262,10 +275,14 @@ const EditOrder = () => {
                         keyExtractor={item => item.id}
                     />
                 </View>
-                <View style={{ width: width * .9, alignSelf: 'center', marginTop: 10, paddingBottom: 20 }}>
-                    <View style={{ width: width * .9, marginTop: 10, justifyContent: 'space-between', flexDirection: 'row' }}>
+                <View style={{ width: width * .9, alignSelf: 'center', marginTop: 0, paddingBottom: 20, height: height * .8, }}>
+                    <View style={{ width: width * .9, justifyContent: 'space-between', flexDirection: 'row' }}>
                         <Text style={styles.subtitle}>Total Amount</Text>
                         <Text style={[styles.title, { color: 'black' }]}>₹6200</Text>
+                    </View>
+                    <View style={styles.totalview}>
+                        <Text style={[styles.subtitle, { color: '#117C00' }]}>Your Earnings</Text>
+                        <Text style={[styles.title, { color: '#117C00' }]}>₹6200</Text>
 
                     </View>
                     <View style={styles.btnview}>
@@ -288,6 +305,7 @@ const EditOrder = () => {
                     </View>
                 </View>
             </View>
+
             <DateTimePickerModal
                 isVisible={isFromDatePickerVisible}
                 mode="date"
@@ -301,6 +319,7 @@ const EditOrder = () => {
                 onConfirm={handleConfirm}
                 onCancel={onCloseCalander}
             />
+            {/* </ScrollView> */}
         </SafeAreaView>
     );
 };
@@ -311,7 +330,7 @@ const styles = StyleSheet.create({
 
         backgroundColor: '#FFffff',
     },
-    mainview: { width: width * .9, alignSelf: 'center', marginTop: 10, borderBottomColor: 'gray', borderBottomWidth: .5, paddingBottom: 20 },
+    mainview: { width: width * .9, alignSelf: 'center', marginTop: 3, },
     text: {
         color: 'black',
     },
@@ -321,7 +340,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    btnview: { width: width * .9, marginTop: 10, flexDirection: 'row', padding: 5, justifyContent: 'space-between' },
+    btnview: { width: width * .9, marginTop: 1, flexDirection: 'row', padding: 2, justifyContent: 'space-between' },
 
     image: { width: 132, height: 132, borderRadius: 70 },
     title: { color: 'black', fontSize: 16, fontFamily: 'Inter-Regular' },
@@ -337,6 +356,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         flexDirection: 'row',
+        marginTop: 5,
+        marginBottom: 5
         // backgroundColor: 'green'
     },
     subearn: {
@@ -353,9 +374,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         // paddingHorizontal: 16,
-        paddingVertical: 12,
-        borderBottomWidth: .5,
-        borderBottomColor: '#ccc',
+        paddingVertical: 10,
+
         width: width * .9,
     },
     itemtitle: {
@@ -412,7 +432,7 @@ const styles = StyleSheet.create({
         color: 'grey',
         fontSize: 14,
     },
-    listview: { width: width * .9, alignSelf: 'center', height: height * .39, marginTop: 10, borderBottomColor: 'gray', borderBottomWidth: .5, paddingBottom: 20 },
+    listview: { width: width * .9, alignSelf: 'center', height: height * .34, marginTop: 3, paddingBottom: 10 },
     fromView: {
         height: height * 0.1,
         width: width * 0.33,
@@ -433,6 +453,8 @@ const styles = StyleSheet.create({
         color: 'black',
         fontSize: 14,
     },
+    totalview: { width: width * .91, marginTop: 5, justifyContent: 'space-between', flexDirection: 'row', backgroundColor: '#D9D9D9', padding: 5 }
+
 });
 
-export default EditOrder;
+export default AddReturnOrder;

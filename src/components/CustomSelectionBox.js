@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    // backgroundColor:'red',
+    // backgroundColor: 'red',
     borderWidth: 1,
     borderColor: 'grey',
     borderRadius: 10,
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     flex: 1,
-    height: height * 0.06,
+    height: height * 0.05,
    
   },
   dropdownIcon: {

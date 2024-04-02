@@ -120,7 +120,7 @@ const OrderDetails = () => {
         </View>
       </ScrollView>
 
-        <View style={{width:width*.9,alignSelf:'center',marginTop:5,paddingBottom:20,marginBottom:35}}>
+        <View style={{ width: width * .9, alignSelf: 'center', marginTop: 5, paddingBottom: 20, marginBottom: 55, }}>
         <View style={{width:width*.9,marginTop:10,justifyContent:'space-between',flexDirection:'row'}}>
         <Text style={styles.subtitle}>Total Invoice Amount</Text>
             <Text style={[styles.title,{color:'black'}]}>₹6200</Text>

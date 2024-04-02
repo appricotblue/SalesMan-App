@@ -13,10 +13,13 @@ function FilterScreen() {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
   const [calanderVisible, setCalanderVisible] = useState(false);
+
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
   const [isFromDatePickerVisible, setFromDatePickerVisibility] =
     useState(false);
   const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
 
   '--------------------------------'
 
@@ -24,25 +27,34 @@ function FilterScreen() {
   const onShowCalander = () => {
     setDatePickerVisibility(true);
   };
+
   const onCloseCalander = () => {
     setDatePickerVisibility(false);
   };
+
   const handleConfirm = date => {
-    console.log('A to date has been picked: ', date);
+    console.log(date, 'from date ')
+    const formattedDate = date.toISOString().split('T')[0];
+    console.log(formattedDate, 'date from')
+    setFromDate(formattedDate);
     onCloseCalander();
   };
 
   const handleFromConfirm = date => {
-    console.log('A From date has been picked: ', date);git 
-    setFromDate(date);
-    onCloseCalander();
+    console.log(date, 'to date ')
+    const formattedDate = date.toISOString().split('T')[0];
+    setToDate(formattedDate);
+
+    onCloseFromCalander();
   };
 
+
+
   const onShowFromCalander = () => {
-    setDatePickerVisibility(true);
+    setFromDatePickerVisibility(true);
   };
   const onCloseFromCalander = () => {
-    setDatePickerVisibility(false);
+    setFromDatePickerVisibility(false);
   };
 
   return (
@@ -89,11 +101,13 @@ function FilterScreen() {
           }}>
           <View style={styles.fromView}>
             <Text style={styles.fromText}>From</Text>
-            <Calander date={'March 12'} onPress={() => onShowFromCalander()} />
+            {/* <Calander date={fromDate} onPress={() => { handleFromConfirm(), onShowFromCalander() }} /> */}
+            <Calander date={fromDate} onPress={() => onShowCalander()} />
           </View>
           <View style={styles.toView}>
             <Text style={styles.toText}>To</Text>
-            <Calander date={'March 12'} onPress={() => onShowCalander()} />
+            {/* <Calander date={toDate} onPress={() => { handleConfirm(), onShowCalander() }} /> */}
+            <Calander date={toDate} onPress={() => onShowFromCalander()} />
           </View>
         </View>
         <View style={styles.height10} />
@@ -123,6 +137,7 @@ function FilterScreen() {
         mode="date"
         onConfirm={handleFromConfirm}
         onCancel={onCloseFromCalander}
+
       />
       <DateTimePickerModal
         isVisible={isDatePickerVisible}

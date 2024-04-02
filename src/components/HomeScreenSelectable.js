@@ -36,17 +36,17 @@ selectedTextColor = 'black',}) => {
 const styles = StyleSheet.create({
   searchBar: {
     height: height * 0.045,
-    minWidth: width * 0.26,
-    borderRadius: 10,
+    minWidth: width * 0.4,
+    // borderRadius: 10,
     backgroundColor: 'white',
     marginTop: 8,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 8,
-    borderWidth: 0.5,
-    borderColor: 'grey',
+    borderBottomWidth: 2,
+    borderBottomColor: 'grey',
     paddingHorizontal: 12,
-    borderStyle: 'dashed',
+    // borderStyle: 'dashed',
   
   },
   input: {

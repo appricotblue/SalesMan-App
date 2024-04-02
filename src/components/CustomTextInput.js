@@ -10,7 +10,8 @@ function CustomTextInput({
   keyboardType,
   placeholderTextColor,
   errorText,
-  multiline
+  multiline,
+  inputwidth = width * 0.9
 }) {
   return (
     <View style={[styles.container,   {
@@ -21,7 +22,7 @@ function CustomTextInput({
     },]}>
       <Text style={styles.title}>{title}</Text>
       <TextInput
-        style={[styles.inputStyle,  errorText != '' && styles.errorInput,
+        style={[styles.inputStyle, { width: inputwidth }, errorText != '' && styles.errorInput,
         {
           minHeight: multiline
             ? height / 8
@@ -56,8 +57,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   inputStyle: {
-    height: height * 0.06,
-    width: width * 0.9,
+    height: height * 0.05,
+
     borderWidth: 1,
     borderColor: 'grey',
     borderRadius: 10,
