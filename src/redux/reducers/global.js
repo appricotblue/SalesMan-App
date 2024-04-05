@@ -2,7 +2,12 @@ import { FadeFromBottomAndroid } from '@react-navigation/stack/lib/typescript/sr
 
 const INITAL_STATE = {
 
-  movies: [],
+  orders: [],
+  shops: [],
+  shopitems: [],
+  shopdetails: {},
+  shoporders: [],
+  profile: {},
   selectedMovie: null,
   loading: false,
   error: null,
@@ -10,8 +15,19 @@ const INITAL_STATE = {
 export default (state = INITAL_STATE, action) => {
   switch (action.type) {
 
-    case 'SET_MOVIES':
-      return { ...state, movies: action.payload, loading: false, error: null };
+    case 'SET_ORDERS':
+      // console.log(action.payload, 'here redu')
+      return { ...state, orders: action.payload, loading: false, error: null };
+    case 'SET_SHOPS':
+      return { ...state, shops: action.payload, loading: false, error: null };
+    case 'SET_PROFILE':
+      return { ...state, profile: action.payload, loading: false, error: null };
+    case 'SET_SHOPDETAILS':
+      return { ...state, shopdetails: action.payload, loading: false, error: null };
+    case 'SET_SHOPORDERS':
+      return { ...state, shoporders: action.payload, loading: false, error: null };
+    case 'SET_ITEMS':
+      return { ...state, shopitems: action.payload, loading: false, error: null };
     case 'SET_SELECTED_MOVIE':
       return { ...state, selectedMovie: action.payload, loading: false, error: null };
     case 'SET_LOADING':

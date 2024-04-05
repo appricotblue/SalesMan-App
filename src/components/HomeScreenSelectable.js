@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 8,
     borderBottomWidth: 2,
-    borderBottomColor: 'grey',
+    borderBottomColor: 'white',
     paddingHorizontal: 12,
     // borderStyle: 'dashed',
   

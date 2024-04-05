@@ -20,7 +20,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import CustomTextInput from '../../components/CustomTextInput';
 import { ScrollView } from 'react-native-gesture-handler';
 
-const AddReturnOrder = () => {
+const AddSalesOrder = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [location, setlocation] = useState('');
@@ -207,7 +207,7 @@ const AddReturnOrder = () => {
 
     return (
         <SafeAreaView>
-            <Header title={'Add ReturnOrder'} isBackArrow={true} />
+            <Header title={'Add Sales Order'} isBackArrow={true} />
             {/* <ScrollView> */}
             <View style={styles.container}>
                 <View style={styles.mainview}>
@@ -457,4 +457,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default AddReturnOrder;
+export default AddSalesOrder;

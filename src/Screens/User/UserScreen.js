@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -12,21 +12,66 @@ import {useNavigation} from '@react-navigation/native';
 import Header from '../../components/Header';
 import {height, width} from '../../Theme/Constants';
 import images from '../../assets/Images';
+import Local from '../../Storage/Local';
+import { getProfile } from '../../api';
+import { useDispatch, useSelector } from 'react-redux';
+import { setProfile, setItems } from '../../redux/action';
 
 const UserScreen = () => {
   const navigation = useNavigation();
-
+  const { profile, loading, error } = useSelector((state) => state.global);
+  const dispatch = useDispatch();
   const data = [
-    {id: '1', title: 'Stephen Devassy', iconName: images.User},
+    { id: '1', title: profile.name, iconName: images.User },
     {
       id: '2',
-      title: 'stephendevassy@nirapara.co.in',
+      title: profile.emailId,
       iconName: images.Envelope,
     },
-    {id: '3', title: '+91 9567946943', iconName: images.Call},
+    { id: '3', title: profile.phonenumber, iconName: images.Call },
     {id: '4', title: 'Log Out', iconName: images.Logout},
     // Add more items as needed
   ];
+
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const userid = await Local.getUserId();
+        const delay = 2000; // Delay in milliseconds
+        console.log(userid, 'userid kitiyo ?')
+        GetProfile(userid)
+      } catch (error) {
+        console.error('Error checking token:', error);
+
+      }
+    };
+
+    checkToken();
+  }, []);
+
+  const GetProfile = async (userid) => {
+    console.log('here', userid)
+    try {
+      const response = await getProfile(userid);
+
+      dispatch(setProfile(response));
+      console.log(response, 'userid api response')
+      if (response.message = "Getting Orders data Successfully") {
+        dispatch(setProfile(response));
+      } else {
+        console.log('Error during login:',);
+        // setError(response.data.message);
+      }
+    } catch (error) {
+      // Alert(error)
+      console.error('Error during login:hwre', error?.message);
+      if (error.response && error.response.data && error.response.data.message) {
+        Alert.alert('Error', error.response.data.message);
+      } else {
+        Alert.alert('Error', 'An error occurred during login.');
+      }
+    }
+  };
 
   const ListItem = ({item}) => (
     <TouchableOpacity
@@ -43,18 +88,18 @@ const UserScreen = () => {
       <View style={styles.container}>
         <View style={styles.imageview}>
           <Image source={images.Stephen} style={styles.image} />
-          <Text style={styles.title}>Stephen Devassy </Text>
-          <Text style={styles.subtitle}>Sales Representative, Nirapara </Text>
+          <Text style={styles.title}>{profile.name}</Text>
+          <Text style={styles.subtitle}>{profile.role}</Text>
         </View>
         <View style={styles.earningsview}>
           <TouchableOpacity
             onPress={() => navigation.navigate('MyEarnings')}
             style={styles.subearn}>
-            <Text style={styles.title}>₹80,000 </Text>
+            <Text style={styles.title}>{profile.myearning}</Text>
             <Text style={styles.subtitle}>My earnings</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.subearn}>
-            <Text style={styles.title}>272 </Text>
+            <Text style={styles.title}>{profile.orders} </Text>
             <Text style={styles.subtitle}> Orders</Text>
           </TouchableOpacity>
         </View>

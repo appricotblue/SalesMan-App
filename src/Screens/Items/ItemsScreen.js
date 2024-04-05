@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FlatList,
   Image,
@@ -11,6 +11,10 @@ import {height, width} from '../../Theme/Constants';
 import CustomSearch from '../../components/CustomSearch';
 import Header from '../../components/Header';
 import images from '../../assets/Images';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { getItems } from '../../api';
+import { setShops, setItems } from '../../redux/action';
 
 const Data = [
   {
@@ -125,13 +129,51 @@ const Data = [
 
 const ItemsScreen = ({navigation: {navigate}}) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const { shopitems, loading, error } = useSelector((state) => state.global);
+
+  useEffect(() => {
+    console.log(shopitems)
+    GetItems();
+  }
+    , [])
+
+
+  const GetItems = async () => {
+
+    try {
+      const response = await getItems();
+      // const response = await login('userTwo', 'userTwo@123');
+      console.log(response, 'shop api response')
+      dispatch(setItems(response));
+      if (response.message = "Getting Orders data Successfully") {
+        // dispatch(setShops(response));
+        dispatch(setItems(response));
+
+      } else {
+        console.log('Error during login:',);
+        // setError(response.data.message);
+      }
+    } catch (error) {
+      // Alert(error)
+      console.error('Error during login:hwre', error?.message);
+      if (error.response && error.response.data && error.response.data.message) {
+        Alert.alert('Error', error.response.data.message);
+      } else {
+        Alert.alert('Error', 'An error occurred during login.');
+      }
+
+    }
+  };
+
 
   const _renderItems = ({item}) => {
     return (
       <View style={styles.itemContainer}>
         <View style={styles.imageContainer}>
           <Image
-            source={item.image}
+            source={{ uri: item.image }}
             style={{height: 70, width: 72, resizeMode: 'stretch'}}
           />
         </View>
@@ -141,10 +183,10 @@ const ItemsScreen = ({navigation: {navigate}}) => {
           </View>
           <View style={styles.row1}>
             <View style={styles.row2}>
-              <Text style={styles.qtyText}>{item.qty}</Text>
+              <Text style={styles.qtyText}>{item.quantity}</Text>
             </View>
           </View>
-          <Text style={styles.rateText}>₹{item.rate}</Text>
+          <Text style={styles.rateText}>₹{item.price}</Text>
         </View>
       </View>
     );
@@ -169,7 +211,7 @@ const ItemsScreen = ({navigation: {navigate}}) => {
       </View>
 
       <FlatList
-        data={Data}
+        data={shopitems}
         showsVerticalScrollIndicator={false}
         renderItem={({item}) => <_renderItems item={item} />}
         keyExtractor={item => item.id}

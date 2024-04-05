@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   ImageBackground,
+  Alert
 } from 'react-native';
 
 import TextInputBox from '../../components/TextiputBox';
@@ -31,10 +32,10 @@ var windowHeight = Dimensions.get('window').height; //full height
 
 const LoginScreen = props => {
   const navigation = useNavigation();
-  const [email, changeemail] = useState('');
+  const [email, changeemail] = useState('userTwo');
   const [checkEmail, changecheckEmail] = useState('');
   const [checkPassword, changecheckPassword] = useState('');
-  const [password, changepassword] = useState('');
+  const [password, changepassword] = useState('userTwo@123');
   const [isLogin, changeIsLogin] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -42,9 +43,12 @@ const LoginScreen = props => {
     const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (email === '') {
       changecheckEmail('Please enter Email id');
-    } else if (!emailFormat.test(email)) {
-      changecheckEmail('Please enter a valid email address');
-    } else if (password == '') {
+    }
+    // else if (!emailFormat.test(email)) {
+    //   changecheckEmail('Please enter a valid email address');
+    // } 
+
+    else if (password == '') {
       changecheckPassword('Please enter password');
     } else if (password?.length < 6) {
       changecheckPassword('Password must be at least 6 characters long');
@@ -57,19 +61,26 @@ const LoginScreen = props => {
   const handleLogin = async () => {
     try {
       const response = await login(email, password);
-      // const response = await login('gowthu', 'gowthu');
+      // const response = await login('userTwo', 'userTwo@123');
       console.log(response, 'login api response')
-      // Handle the response appropriately
+     
       if (response.message = "Admin user created successfully") {
         await Local.storeLogin('token', response.token);
+        await Local.storeUserId('UserId', `${response.user?.id}`);
+
         navigation.replace('home');
       } else {
         console.log('Error during login:',);
         // setError(response.data.message);
       }
     } catch (error) {
-
-      console.error('Error during login:', error);
+      // Alert(error)
+      // console.error('Error during login:hwre', error?.message);
+      if (error.response && error.response.data && error.response.data.message) {
+        Alert.alert('Error', error.response.data.message);
+      } else {
+        Alert.alert('Error', 'An error occurred during login.');
+      }
 
     }
   };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -14,6 +14,10 @@ import FilterButton from '../../components/FilterButton';
 import HomeScreenSelectable from '../../components/HomeScreenSelectable';
 import HomeOrderButton from '../../components/HomeOrderButton';
 import FilterModal from '../../components/FilterModal';
+import Local from '../../Storage/Local';
+import { getOrders } from '../../api';
+import { useDispatch, useSelector } from 'react-redux';
+import { setOrders, setItems } from '../../redux/action';
 
 const Data = [
   {
@@ -79,30 +83,16 @@ const Data = [
     qty: 12,
     status: 'Ordered',
   },
-  {
-    id: 7,
-    orderId: '#1678954622',
-    time: '20 mins ago',
-    name: ' Green SuperMarket',
-    rate: 3896,
-    qty: 16,
-    status: 'Delivered',
-  },
-  {
-    id: 8,
-    orderId: '#1678954623',
-    time: '3 hour ago',
-    name: ' Golden Stores',
-    rate: 4250,
-    qty: 10,
-    status: 'Draft',
-  },
+
 ];
 
 const Home = ({ navigation: { navigate } }) => {
+
+  const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState('Orders');
+  const { orders, loading, error } = useSelector((state) => state.global);
 
   const handleSelectItem = (title) => {
     setSelectedItem(title);
@@ -111,6 +101,50 @@ const Home = ({ navigation: { navigate } }) => {
   const filterPress = () => {
     navigate('filter');
   };
+  useEffect(() => {
+    console.log(orders, 'hooy')
+  }, []);
+
+
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const userid = await Local.getUserId();
+        const delay = 2000; // Delay in milliseconds
+        console.log(userid, 'userid kitiyo ?', orders)
+        GetOrders(userid)
+      } catch (error) {
+        console.error('Error checking token:', error);
+
+      }
+    };
+
+    checkToken();
+  }, []);
+
+  const GetOrders = async (userid) => {
+    console.log('here', userid)
+    try {
+      const response = await getOrders(userid);
+      // const response = await login('userTwo', 'userTwo@123');
+      console.log(response.orders, 'userid api response')
+      if (response.message = "Getting Orders data Successfully") {
+        dispatch(setOrders(response.orders));
+      } else {
+        console.log('Error during login:',);
+        // setError(response.data.message);
+      }
+    } catch (error) {
+      // Alert(error)
+      console.error('Error during login:hwre', error?.message);
+      if (error.response && error.response.data && error.response.data.message) {
+        Alert.alert('Error', error.response.data.message);
+      } else {
+        Alert.alert('Error', 'An error occurred during login.');
+      }
+    }
+  };
+
 
   const _renderItems = ({ item }) => {
     return (
@@ -118,15 +152,17 @@ const Home = ({ navigation: { navigate } }) => {
         onPress={() => navigate('OrderDetails')}
         style={styles.itemContainer}>
         <View style={styles.row1}>
-          <Text style={styles.orderIdText}>Order{item.orderId}</Text>
-          <Text style={styles.timeText}>{item.time}</Text>
+          <Text style={styles.orderIdText}> {item.orderType} Order {item.id}</Text>
+          <Text style={styles.timeText}>Order Date  {item.createdAt}</Text>
+
         </View>
         <View style={styles.row1}>
-          <Text style={styles.nameText}>{item.name}</Text>
+          <Text style={styles.nameText}>{item.shopName}</Text>
+          <Text style={styles.timeText}>Delivery Date  {item.expecteddate}</Text>
         </View>
         <View style={styles.row1}>
           <View style={styles.row2}>
-            <Text style={styles.rateText}>₹{item.rate}</Text>
+            <Text style={styles.rateText}>₹{item.totalAmount}</Text>
             <Text style={styles.qtyText}>({item.qty} Items)</Text>
           </View>
           <View>
@@ -134,9 +170,9 @@ const Home = ({ navigation: { navigate } }) => {
               style={{
                 fontWeight: 'bold',
                 color:
-                  item.status == 'Delivered'
+                  item.status == 'ordered'
                     ? '#D79B00'
-                    : item.status == 'Ordered'
+                    : item.status == 'Delivered'
                       ? '#17A400'
                       : 'black',
               }}>
@@ -188,13 +224,13 @@ const Home = ({ navigation: { navigate } }) => {
       </View>
 
       <FlatList
-        data={Data}
+        data={orders}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => <_renderItems item={item} />}
         keyExtractor={item => item.id}
       />
       <View style={styles.OrderButton}>
-        <HomeOrderButton onpress={() => navigate('EditOrder')} title={'New Sales Order'} />
+        <HomeOrderButton onpress={() => navigate('AddSalesOrder')} title={'New Sales Order'} />
       </View>
       <FilterModal
         visible={modalVisible}

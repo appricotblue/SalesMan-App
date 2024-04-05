@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -7,11 +7,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {height, width} from '../../Theme/Constants';
+import { height, width } from '../../Theme/Constants';
 import CustomSearch from '../../components/CustomSearch';
 import Header from '../../components/Header';
 import HomeOrderButton from '../../components/HomeOrderButton';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import Local from '../../Storage/Local';
+import { getShops, getShopDetails } from '../../api';
+import { useDispatch, useSelector } from 'react-redux';
+import { setShops, setShopDetails, setShoporder } from '../../redux/action';
 
 const Data = [
   {
@@ -115,30 +119,90 @@ const Data = [
   },
 ];
 
-const ShopsScreen = ({navigation: {navigate}}) => {
+const ShopsScreen = ({ navigation: { navigate } }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const { shops, shopdetails, loading, error } = useSelector((state) => state.global);
 
-  const onShopPress = () => {
-    navigate('shopDetails');
+  const onShopPress = (shopid) => {
+    GetShopDetails(shopid)
+
+  };
+  useEffect(() => {
+    console.log(shops)
+    GetShops();
+  }
+
+    , [])
+
+  const GetShops = async () => {
+
+    try {
+      const response = await getShops();
+      // const response = await login('userTwo', 'userTwo@123');
+      console.log(response, 'shop api response')
+      dispatch(setShops(response));
+      if (response.message = "Getting Orders data Successfully") {
+        dispatch(setShops(response));
+        // dispatch(setItems(response?.items));
+
+      } else {
+        console.log('Error during login:',);
+        // setError(response.data.message);
+      }
+    } catch (error) {
+      // Alert(error)
+      console.error('Error during login:hwre', error?.message);
+      if (error.response && error.response.data && error.response.data.message) {
+        Alert.alert('Error', error.response.data.message);
+      } else {
+        Alert.alert('Error', 'An error occurred during login.');
+      }
+
+    }
+  };
+  const GetShopDetails = async (shopid) => {
+    try {
+      const response = await getShopDetails(shopid);
+      console.log(response.ordersWithItems, 'shop details api response')
+      dispatch(setShopDetails(response.shop));
+      dispatch(setShoporder(response.ordersWithItems));
+
+      navigate('shopDetails');
+      if (response.message = "Getting Orders data Successfully") {
+        dispatch(setShopDetails(response.shop));
+        dispatch(setShoporder(response.ordersWithItems));
+      } else {
+        console.log('Error during login:',);
+      }
+    } catch (error) {
+      console.error('Error during login:hwre', error?.message);
+      if (error.response && error.response.data && error.response.data.message) {
+        Alert.alert('Error', error.response.data.message);
+      } else {
+        Alert.alert('Error', 'An error occurred during login.');
+      }
+
+    }
   };
 
-  const _renderItems = ({item}) => {
+  const _renderItems = ({ item }) => {
     return (
       <View style={styles.itemContainer}>
-        <TouchableOpacity onPress={() => onShopPress()}>
+        <TouchableOpacity onPress={() => onShopPress(item.id)}>
           <View style={styles.row1}>
-            <Text style={styles.nameText}>{item.name}</Text>
+            <Text style={styles.nameText}>{item.shopname}</Text>
           </View>
           <View style={styles.row1}>
             <View style={styles.row2}>
-              <Text style={styles.rateText}>{item.location}</Text>
+              <Text style={styles.rateText}>{item.address}</Text>
               {/* <Text style={styles.qtyText}>({item.qty} Items)</Text> */}
             </View>
             <View>
               <Text
                 style={{
-                  color: item.orders.length === 0 ? null : '#17A400',
+                  color: item?.orders?.length === 0 ? null : '#17A400',
                 }}>
                 {item.orders}
               </Text>
@@ -152,7 +216,7 @@ const ShopsScreen = ({navigation: {navigate}}) => {
   return (
     <SafeAreaView style={styles.container}>
       <Header title={'Shops'} isNotification={true} />
-      <View style={{flexDirection: 'row'}}>
+      <View style={{ flexDirection: 'row' }}>
         <View
           style={{
             width: width * 0.96,
@@ -168,14 +232,14 @@ const ShopsScreen = ({navigation: {navigate}}) => {
       </View>
 
       <FlatList
-        data={Data}
+        data={shops}
         showsVerticalScrollIndicator={false}
-        renderItem={({item}) => <_renderItems item={item} />}
+        renderItem={({ item }) => <_renderItems item={item} />}
         keyExtractor={item => item.id}
       />
 
-<View style={styles.OrderButton}>
-        <HomeOrderButton  onpress={()=>navigation.navigate('AddShop')} title={'Add Shop'}/>
+      <View style={styles.OrderButton}>
+        <HomeOrderButton onpress={() => navigation.navigate('AddShop')} title={'Add Shop'} />
       </View>
     </SafeAreaView>
   );

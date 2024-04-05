@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FlatList,
   Image,
@@ -13,6 +13,8 @@ import CustomSearch from '../../components/CustomSearch';
 import Header from '../../components/Header';
 import images from '../../assets/Images';
 import FilterButton from '../../components/FilterButton';
+import { useDispatch, useSelector } from 'react-redux';
+import { setShops, setShopDetails } from '../../redux/action';
 
 const Data = [
   {
@@ -100,6 +102,7 @@ const Data = [
 
 function ShopDetails({ navigation: { navigate } }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const { shoporders, shopdetails, loading, error } = useSelector((state) => state.global);
   const [data, setData] = useState([
     {
       name: 'Supreme Supermarket',
@@ -117,20 +120,31 @@ function ShopDetails({ navigation: { navigate } }) {
     navigate('filter');
   };
 
+  useEffect(() => {
+    console.log(shoporders, 'kkk')
+  }, [])
+  
+  const formatDate = (dateTimeString) => {
+    const dateObject = new Date(dateTimeString); // Create a Date object from the dateTimeString
+    const formattedDate = dateObject.toLocaleDateString(); // Format date using toLocaleDateString()
+    return formattedDate;
+  };
+
   const _renderItems = ({item}) => {
+    const formattedDate = formatDate(item.order.updatedAt);
     return (
       <View style={styles.itemContainer}>
         <View style={styles.row1}>
-          <Text style={styles.orderIdText}>Order{item.orderId}</Text>
+          <Text style={styles.orderIdText}>Order {item.order.id}</Text>
         </View>
 
         <View style={styles.row1}>
           <View style={styles.row2}>
-            <Text style={styles.rateText}>₹{item.rate}</Text>
+            <Text style={styles.rateText}>₹{item.order.totalAmount}</Text>
             <Text style={styles.qtyText}>({item.qty} Items)</Text>
           </View>
           <View>
-            <Text style={styles.timeText}>{item.time}</Text>
+            <Text style={styles.timeText}>{formattedDate}</Text>
           </View>
         </View>
       </View>
@@ -143,7 +157,7 @@ function ShopDetails({ navigation: { navigate } }) {
       <View style={styles.subContainer}>
         <View style={styles.imageContainer}>
           <Image
-            source={data[0].image}
+            source={{ uri: shopdetails.shopImage }}
             style={{
               height: height * 0.16,
               width: width * 0.37,
@@ -151,19 +165,18 @@ function ShopDetails({ navigation: { navigate } }) {
             }}
           />
         </View>
-        <Text style={styles.nameText}>{data[0].name}</Text>
-        <Text style={styles.locationText}>{data[0].location}</Text>
+        <Text style={styles.nameText}>{shopdetails.shopname}</Text>
+        <Text style={styles.locationText}>{shopdetails.location}</Text>
       </View>
       <Text style={styles.addressTextH}>Address</Text>
-      <Text style={styles.addressText}>{data[0].address1}</Text>
-      <Text style={styles.addressText}>{data[0].address2}</Text>
-      <Text style={styles.addressText}>{data[0].address3}</Text>
+      <Text style={styles.addressText}>{shopdetails.address}</Text>
+
 
       <View style={styles.height15} />
 
       <Text style={styles.addressTextH}>Contact Details</Text>
-      <Text style={styles.addressText}>{data[0].number}</Text>
-      <Text style={styles.addressText}>{data[0].email}</Text>
+      <Text style={styles.addressText}>{shopdetails.contectnumber}</Text>
+      <Text style={styles.addressText}>{shopdetails.emailId}</Text>
       <View style={styles.height15} />
       <View style={styles.middleBar}>
         <Text style={styles.previousText}>Previous Orders</Text>
@@ -190,7 +203,7 @@ function ShopDetails({ navigation: { navigate } }) {
         </View>
       </View>
       <FlatList
-        data={Data}
+        data={shoporders}
         showsVerticalScrollIndicator={false}
         renderItem={({item}) => <_renderItems item={item} />}
         keyExtractor={item => item.id}
