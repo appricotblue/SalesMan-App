@@ -3,7 +3,7 @@ import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {height, width} from '../Theme/Constants';
 
 const HomeScreenSelectable = ({containerStyle, isSelected,title, onPress, selectedBorderColor = 'blue',
-selectedBackgroundColor = 'lightblue',
+  selectedBackgroundColor = 'white',
 selectedTextColor = 'black',}) => {
 
  

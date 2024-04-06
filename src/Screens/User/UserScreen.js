@@ -87,7 +87,7 @@ const UserScreen = () => {
       <Header title={'User'} isNotification={true} />
       <View style={styles.container}>
         <View style={styles.imageview}>
-          <Image source={images.Stephen} style={styles.image} />
+          <Image source={{ uri: profile.userProfileImage }} style={styles.image} />
           <Text style={styles.title}>{profile.name}</Text>
           <Text style={styles.subtitle}>{profile.role}</Text>
         </View>
