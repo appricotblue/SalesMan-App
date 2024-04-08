@@ -43,7 +43,7 @@ function CustomSelectionBox({
               key={option}
               style={styles.option}
               onPress={() => handleSelectOption(option)}>
-              <Text>{option}</Text>
+              <Text sttle={styles.optionText}>{option}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: 5,
     fontWeight: 'bold',
+    color:'black'
   },
   inputContainer: {
     flexDirection: 'row',
@@ -72,11 +73,13 @@ const styles = StyleSheet.create({
   inputStyle: {
     flex: 1,
     height: height * 0.05,
+    color:'black'
    
   },
   dropdownIcon: {
     fontSize: 16,
     marginLeft: 5,
+    color:'black'
   },
   optionsContainer: {
     position: 'absolute',
@@ -94,7 +97,14 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: 'lightgrey',
+    backgroundColor:'pink',
+
   },
+  optionText:{
+    fontSize:20,
+    color:'black',
+
+  }
 });
 
 export default CustomSelectionBox;

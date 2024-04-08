@@ -323,12 +323,13 @@ const styles = StyleSheet.create({
     color: '#005A8D',
     fontSize: 16,
     fontWeight: 'bold',
-    marginLeft: -4,
+    marginLeft: 3,
   },
   rateText: {
     color: 'black',
     fontSize: 14,
     fontWeight: 'bold',
+    marginLeft:3
   },
   qtyText: {
     color: 'black',

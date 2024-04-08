@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: 5,
     fontWeight: 'bold',
+    color:'black'
   },
   inputStyle: {
     height: height * 0.05,

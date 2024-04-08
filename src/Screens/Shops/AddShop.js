@@ -3,9 +3,11 @@ import {
     SafeAreaView,
     ScrollView,
     StyleSheet,
+    Text,
+    TouchableOpacity,
     View,
 } from 'react-native';
-import { width } from '../../Theme/Constants';
+import { height, width } from '../../Theme/Constants';
 import Header from '../../components/Header';
 import CustomTextInput from '../../components/CustomTextInput';
 import CommonButton from '../../components/CommonButton';
@@ -86,6 +88,17 @@ const AddShop = ({ navigation: { navigate } }) => {
                     keyboardType="default"
                     placeholderTextColor="gray"
                 />
+                <View >
+                    <Text style={styles.locationText }>
+                        Add Location
+                    </Text>
+                    <TouchableOpacity style={styles.locationButton}>
+                    <Text style={styles.selectLocationText}>
+                        Select Location
+                    </Text>
+                    </TouchableOpacity>
+
+                </View>
                 <CustomTextInput
                     title={'Contact Number'}
                     placeholder="Contact Number"
@@ -115,8 +128,8 @@ const AddShop = ({ navigation: { navigate } }) => {
                 <CommonButton
                     onPress={() => isValidate()}
                     color={'#003451'}
-                    title={'Save'}
-                    width={width * 0.9}
+                    title={'Add Shop'}
+                    width={width * 0.4}
                     texttitle={'white'}
                 />
             </View>
@@ -131,7 +144,7 @@ const styles = StyleSheet.create({
     },
     scrollContainer: {
         flex: 1,
-        paddingHorizontal: 20,
+        paddingHorizontal: 15,
         paddingTop: 16
     },
     saveButtonContainer: {
@@ -139,6 +152,26 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         alignItems: 'center',
     },
+    locationText:{
+        color:'black',
+         fontSize:14,
+         fontWeight:'700',
+         marginBottom:5
+        },
+        locationButton: {
+            height:height*.05,
+            width:width*.9,
+            borderWidth:.5,
+             borderColor:'black',
+              borderRadius:10,
+              alignItems:'center',
+              justifyContent:'center',
+              marginBottom:5},
+              selectLocationText:{
+                color:'black',
+                 fontSize:14,
+                 marginBottom:5
+              }
 });
 
 export default AddShop;

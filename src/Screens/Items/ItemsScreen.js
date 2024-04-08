@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
     color: '#005A8D',
     fontSize: 16,
     fontWeight: 'bold',
-    marginLeft: -4,
+    marginLeft: 1,
   },
   rateText: {
     color: 'black',
@@ -347,7 +347,6 @@ const styles = StyleSheet.create({
   imageContainer: {
     height: height * 0.09,
     width: width * 0.2,
-    backgroundColor: 'pink',
     marginHorizontal: 3,
     marginRight: 25,
   },

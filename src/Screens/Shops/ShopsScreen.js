@@ -192,7 +192,7 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
       <View style={styles.itemContainer}>
         <TouchableOpacity onPress={() => onShopPress(item.id)}>
           <View style={styles.row1}>
-            <Text style={styles.nameText}>{item.shopname}</Text>
+            <Text style={styles.nameText} numberOfLines={1}>{item.shopname}</Text>
           </View>
           <View style={styles.row1}>
             <View style={styles.row2}>
@@ -286,11 +286,12 @@ const styles = StyleSheet.create({
     color: '#005A8D',
     fontSize: 16,
     fontWeight: 'bold',
-    marginLeft: -4,
+    marginLeft: 1,
   },
   rateText: {
     color: 'grey',
     fontSize: 14,
+    
   },
   qtyText: {
     color: 'black',
