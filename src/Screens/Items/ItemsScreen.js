@@ -13,7 +13,7 @@ import Header from '../../components/Header';
 import images from '../../assets/Images';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-import { getItems } from '../../api';
+import { getItems ,getItemSearch} from '../../api';
 import { setShops, setItems } from '../../redux/action';
 
 const Data = [
@@ -139,6 +139,52 @@ const ItemsScreen = ({navigation: {navigate}}) => {
   }
     , [])
 
+    const handleSearchChange = (text) => {
+      setSearchQuery(text);
+    };
+  
+    const handleClearSearch = () => {
+      setSearchQuery('');
+      GetItems(); 
+    };
+  
+    // const handleSearchSubmit = async () => {
+    //   try {
+    //     // Trigger API call with searchValue
+    //     const results = await getSearchResults(searchValue);
+    //     setSearchResults(results); // Update search results state with API response
+    //   } catch (error) {
+    //     console.error('Error fetching search results:', error);
+    //   }
+    // };
+
+
+    const handleSearchSubmit = async () => {
+
+      try {
+        const response = await getItemSearch(searchQuery);
+        // const response = await login('userTwo', 'userTwo@123');
+        console.log(response, 'search jkey api response')
+        dispatch(setItems(response));
+        if (response.message = "Getting Orders data Successfully") {
+          // dispatch(setShops(response));
+          dispatch(setItems(response));
+  
+        } else {
+          console.log('Error during login:',);
+          // setError(response.data.message);
+        }
+      } catch (error) {
+        // Alert(error)
+        console.error('Error during login:hwre', error?.message);
+        if (error.response && error.response.data && error.response.data.message) {
+          Alert.alert('Error', error.response.data.message);
+        } else {
+          Alert.alert('Error', 'An error occurred during login.');
+        }
+  
+      }
+    };
 
   const GetItems = async () => {
 
@@ -204,8 +250,11 @@ const ItemsScreen = ({navigation: {navigate}}) => {
           <CustomSearch
             placeholder={'Search Items'}
             value={searchQuery}
-            onChangeText={setSearchQuery}
-            onClear={() => setSearchQuery('')}
+            // onChangeText={setSearchQuery}
+            // onClear={() => setSearchQuery('')}
+            onChangeText={handleSearchChange}
+            onClear={handleClearSearch}
+            onSubmit={handleSearchSubmit}
           />
         </View>
       </View>

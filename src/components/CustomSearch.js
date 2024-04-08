@@ -11,7 +11,7 @@ import images from './../assets/Images';
 var width = Dimensions.get('window').width; //full width
 var height = Dimensions.get('window').height; //full height
 
-const CustomSearch = ({value, onChangeText, onClear, placeholder}) => {
+const CustomSearch = ({value, onChangeText, onClear, placeholder,onSubmit}) => {
   return (
     <View style={styles.searchBar}>
       <Image
@@ -24,6 +24,7 @@ const CustomSearch = ({value, onChangeText, onClear, placeholder}) => {
         placeholderTextColor={'grey'}
         value={value}
         onChangeText={onChangeText}
+        onSubmitEditing={onSubmit}
       />
       {value.length > 0 && (
         <TouchableOpacity onPress={onClear}></TouchableOpacity>

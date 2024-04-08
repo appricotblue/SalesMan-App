@@ -6,6 +6,7 @@ import {
   Text,
   View,
   TouchableOpacity,
+  Alert
 } from 'react-native';
 import { height, width } from '../../Theme/Constants';
 import CustomSearch from '../../components/CustomSearch';
@@ -15,7 +16,7 @@ import HomeScreenSelectable from '../../components/HomeScreenSelectable';
 import HomeOrderButton from '../../components/HomeOrderButton';
 import FilterModal from '../../components/FilterModal';
 import Local from '../../Storage/Local';
-import { getOrders } from '../../api';
+import { getOrders, getOrderSearch, getDeliveries } from '../../api';
 import { useDispatch, useSelector } from 'react-redux';
 import { setOrders, setItems } from '../../redux/action';
 
@@ -91,6 +92,7 @@ const Home = ({ navigation: { navigate } }) => {
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [UserId, setUserId] = useState(null);
   const [selectedItem, setSelectedItem] = useState('Orders');
   const { orders, loading, error } = useSelector((state) => state.global);
 
@@ -105,6 +107,15 @@ const Home = ({ navigation: { navigate } }) => {
     console.log(orders, 'hooy')
   }, []);
 
+  const handleSearchChange = (text) => {
+    setSearchQuery(text);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    GetOrders();
+  };
+
 
   useEffect(() => {
     const checkToken = async () => {
@@ -112,7 +123,9 @@ const Home = ({ navigation: { navigate } }) => {
         const userid = await Local.getUserId();
         const delay = 2000; // Delay in milliseconds
         console.log(userid, 'userid kitiyo ?', orders)
-        GetOrders(userid)
+        setUserId(userid)
+
+        await GetOrders(userid, 'Orders');
       } catch (error) {
         console.error('Error checking token:', error);
 
@@ -122,12 +135,37 @@ const Home = ({ navigation: { navigate } }) => {
     checkToken();
   }, []);
 
-  const GetOrders = async (userid) => {
-    console.log('here', userid)
+  const GetSearchOrders = async () => {
+    console.log('here search', searchQuery)
     try {
-      const response = await getOrders(userid);
+      const response = await getOrderSearch(searchQuery);
       // const response = await login('userTwo', 'userTwo@123');
-      console.log(response.orders, 'userid api response')
+      console.log(response, 'search api response')
+      if (response.message = "Getting Orders data Successfully") {
+        dispatch(setOrders(response));
+      } else {
+        console.log('Error during login:',);
+        // setError(response.data.message);
+      }
+    } catch (error) {
+      // Alert(error)
+      console.error('Error during login:hwre', error?.message);
+      if (error.response && error.response.data && error.response.data.message) {
+        Alert.alert('Error', error.response.data.message);
+      } else {
+        Alert.alert('Error', 'An error occurred during login.');
+      }
+    }
+  };
+
+  const GetOrders = async (userId, selectedItem) => {
+    console.log('here click ', userId, selectedItem)
+    try {
+      // const response = await getOrders(userid);
+      const response = await (selectedItem == 'Orders' ? getOrders(userId) : getDeliveries(userId));
+      // const response = await login('userTwo', 'userTwo@123');
+      // console.log(response.orders, 'userid api response')
+      dispatch(setOrders(response.orders));
       if (response.message = "Getting Orders data Successfully") {
         dispatch(setOrders(response.orders));
       } else {
@@ -152,7 +190,7 @@ const Home = ({ navigation: { navigate } }) => {
         onPress={() => navigate('OrderDetails')}
         style={styles.itemContainer}>
         <View style={styles.row1}>
-          <Text style={styles.orderIdText}> {item.orderType} Order {item.id}</Text>
+          <Text style={styles.orderIdText}> {item.orderNo}</Text>
           <Text style={styles.timeText}>Order Date  {item.createdAt}</Text>
 
         </View>
@@ -196,8 +234,11 @@ const Home = ({ navigation: { navigate } }) => {
           <CustomSearch
             placeholder={'Search Orders'}
             value={searchQuery}
-            onChangeText={setSearchQuery}
-            onClear={() => setSearchQuery('')}
+            // onChangeText={setSearchQuery}
+            // onClear={() => setSearchQuery('')}
+            onChangeText={handleSearchChange}
+            onClear={handleClearSearch}
+            onSubmit={GetSearchOrders}
           />
         </View>
         <View
@@ -211,10 +252,10 @@ const Home = ({ navigation: { navigate } }) => {
       <View style={styles.rowView}>
         <HomeScreenSelectable
           title={'Orders'}
-          onPress={() => handleSelectItem('Orders')}
+          onPress={() => { handleSelectItem('Orders'), GetOrders(UserId, 'Orders') }}
           isSelected={selectedItem === 'Orders'} />
         <HomeScreenSelectable title={'Deliveries'}
-          onPress={() => handleSelectItem('Deliveries')}
+          onPress={() => { handleSelectItem('Deliveries'), GetOrders(UserId, 'Deliveries') }}
           isSelected={selectedItem === 'Deliveries'}
         />
         {/* <HomeScreenSelectable title={'All Orders'}

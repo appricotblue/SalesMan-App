@@ -24,6 +24,15 @@ export const getOrders = async (userId) => {
   }
 };
 
+export const getDeliveries = async (userId) => {
+  try {
+    const response = await HTTP_REQUEST.get(`/user/getDeliveries/${userId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getShops = async () => {
   try {
     const response = await HTTP_REQUEST.get(`/user/getshops`);
@@ -50,6 +59,15 @@ export const getItems = async () => {
   }
 };
 
+export const getEarnings = async (userId) => {
+  try {
+    const response = await HTTP_REQUEST.get(`/user/getEarning?userId=${userId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getProfile = async (userId) => {
   try {
     const response = await HTTP_REQUEST.get(`user/getuserprofile/${userId}`);
@@ -62,6 +80,15 @@ export const getProfile = async (userId) => {
 export const getItemSearch = async (searchkey) => {
   try {
     const response = await HTTP_REQUEST.get(`user/searchitem?keyword=${searchkey}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getOrderSearch = async (searchkey) => {
+  try {
+    const response = await HTTP_REQUEST.get(`user/searchorder?keyword=${searchkey}`);
     return response.data;
   } catch (error) {
     throw error;

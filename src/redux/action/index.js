@@ -2,6 +2,7 @@
 export const setOrders = (orders) => ({ type: 'SET_ORDERS', payload: orders });
 export const setShops = (shops) => ({ type: 'SET_SHOPS', payload: shops });
 export const setProfile = (profile) => ({ type: 'SET_PROFILE', payload: profile });
+export const setEarnings = (earnings) => ({ type: 'SET_EARNINGS', payload: earnings });
 export const setShopDetails = (shopdetails) => ({ type: 'SET_SHOPDETAILS', payload: shopdetails });
 export const setShoporder = (shoporders) => ({ type: 'SET_SHOPORDERS', payload: shoporders });
 export const setItems = (shopitems) => ({ type: 'SET_ITEMS', payload: shopitems });

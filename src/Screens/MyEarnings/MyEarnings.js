@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -12,8 +12,14 @@ import {useNavigation} from '@react-navigation/native';
 import Header from '../../components/Header';
 import {height, width} from '../../Theme/Constants';
 import images from '../../assets/Images';
+import Local from '../../Storage/Local';
+import { getOrders, getEarnings, getDeliveries } from '../../api';
+import { useDispatch, useSelector } from 'react-redux';
+import { setEarnings, setItems } from '../../redux/action';
 
 const MyEarnings = () => {
+  const { earnings, profile, loading, error } = useSelector((state) => state.global);
+  const dispatch = useDispatch();
   const data = [
     {
       id: '1',
@@ -42,16 +48,58 @@ const MyEarnings = () => {
     // Add more items as needed
   ];
 
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const userid = await Local.getUserId();
+        const delay = 2000; // Delay in milliseconds
+        console.log(userid, 'userid kitiyo ?', earnings)
+        GetEarnings(userid)
+
+        // await GetOrders(userid, 'Orders');
+      } catch (error) {
+        console.error('Error checking token:', error);
+
+      }
+    };
+    checkToken();
+  }, []);
+
+  const GetEarnings = async (userid) => {
+    console.log('here search', userid)
+    try {
+      const response = await getEarnings(userid);
+      // const response = await login('userTwo', 'userTwo@123');
+      console.log(response, 'earings api response')
+      dispatch(setEarnings(response));
+      if (response.message = "Getting Orders data Successfully") {
+        dispatch(setEarnings(response));
+      } else {
+        console.log('Error during login:',);
+        // setError(response.data.message);
+      }
+    } catch (error) {
+      // Alert(error)
+      console.error('Error during login:hwre', error?.message);
+      if (error.response && error.response.data && error.response.data.message) {
+        Alert.alert('Error', error.response.data.message);
+      } else {
+        Alert.alert('Error', 'An error occurred during login.');
+      }
+    }
+  };
+
+
   const ListItem = ({item}) => (
     <TouchableOpacity
       style={styles.itemContainer}
       onPress={() => console.log('Item pressed')}>
       <View>
-        <Text style={styles.itemtitle}>{item.title}</Text>
-        <Text style={styles.subtitle}>{item.date}</Text>
+        <Text style={styles.itemtitle}>{item.orderNo}</Text>
+        <Text style={styles.subtitle}>{item.updatedAt}</Text>
       </View>
 
-      <Text style={styles.title}>{item.amount}</Text>
+      <Text style={styles.title}>{item.totalAmount}</Text>
     </TouchableOpacity>
   );
 
@@ -61,16 +109,16 @@ const MyEarnings = () => {
       <View style={styles.container}>
         <View style={styles.earningsview}>
           <TouchableOpacity style={styles.subearn}>
-            <Text style={styles.title}>₹80,000 </Text>
+            <Text style={styles.title}>{profile.myearning} </Text>
             <Text style={styles.subtitle}>My earnings</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.subearn}>
-            <Text style={styles.title}>272 </Text>
+            <Text style={styles.title}>{profile.orders}</Text>
             <Text style={styles.subtitle}> Orders</Text>
           </TouchableOpacity>
         </View>
         <FlatList
-          data={data}
+          data={earnings}
           renderItem={({item}) => <ListItem item={item} />}
           keyExtractor={item => item.id}
           ItemSeparatorComponent={() => <View style={styles.separator} />}

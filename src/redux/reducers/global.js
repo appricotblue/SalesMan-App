@@ -7,6 +7,7 @@ const INITAL_STATE = {
   shopitems: [],
   shopdetails: {},
   shoporders: [],
+  earnings:[],
   profile: {},
   selectedMovie: null,
   loading: false,
@@ -22,6 +23,8 @@ export default (state = INITAL_STATE, action) => {
       return { ...state, shops: action.payload, loading: false, error: null };
     case 'SET_PROFILE':
       return { ...state, profile: action.payload, loading: false, error: null };
+      case 'SET_EARNINGS':
+        return { ...state, earnings: action.payload, loading: false, error: null };
     case 'SET_SHOPDETAILS':
       return { ...state, shopdetails: action.payload, loading: false, error: null };
     case 'SET_SHOPORDERS':

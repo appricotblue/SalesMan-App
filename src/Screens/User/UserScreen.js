@@ -54,10 +54,10 @@ const UserScreen = () => {
     try {
       const response = await getProfile(userid);
 
-      dispatch(setProfile(response));
+      dispatch(setProfile(response.userData));
       console.log(response, 'userid api response')
-      if (response.message = "Getting Orders data Successfully") {
-        dispatch(setProfile(response));
+      if (response.message = "Get the user profile detalis") {
+        dispatch(setProfile(response.userData));
       } else {
         console.log('Error during login:',);
         // setError(response.data.message);
