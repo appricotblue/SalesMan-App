@@ -95,6 +95,8 @@ const Home = ({ navigation: { navigate } }) => {
   const [UserId, setUserId] = useState(null);
   const [selectedItem, setSelectedItem] = useState('Orders');
   const { orders, loading, error } = useSelector((state) => state.global);
+  const [currentPage, setCurrentPage] = useState(1); // Initial page for pagination
+  const [pageSize, setPagesize] = useState(0);
 
   const handleSelectItem = (title) => {
     setSelectedItem(title);
@@ -116,7 +118,6 @@ const Home = ({ navigation: { navigate } }) => {
     GetOrders();
   };
 
-
   useEffect(() => {
     const checkToken = async () => {
       try {
@@ -125,7 +126,7 @@ const Home = ({ navigation: { navigate } }) => {
         console.log(userid, 'userid kitiyo ?', orders)
         setUserId(userid)
 
-        await GetOrders(userid, 'Orders');
+        await GetOrders(userid, 'Orders', 1);
       } catch (error) {
         console.error('Error checking token:', error);
 
@@ -139,16 +140,13 @@ const Home = ({ navigation: { navigate } }) => {
     console.log('here search', searchQuery)
     try {
       const response = await getOrderSearch(searchQuery);
-      // const response = await login('userTwo', 'userTwo@123');
       console.log(response, 'search api response')
       if (response.message = "Getting Orders data Successfully") {
         dispatch(setOrders(response));
       } else {
         console.log('Error during login:',);
-        // setError(response.data.message);
       }
     } catch (error) {
-      // Alert(error)
       console.error('Error during login:hwre', error?.message);
       if (error.response && error.response.data && error.response.data.message) {
         Alert.alert('Error', error.response.data.message);
@@ -158,32 +156,31 @@ const Home = ({ navigation: { navigate } }) => {
     }
   };
 
-  const GetOrders = async (userId, selectedItem) => {
-    console.log('here click ', userId, selectedItem)
+  const GetOrders = async (userId, selectedItem, page = currentPage) => {
+    console.log('here click ', userId, selectedItem, page, orders)
     try {
-      // const response = await getOrders(userid);
-      const response = await (selectedItem == 'Orders' ? getOrders(userId) : getDeliveries(userId));
-      // const response = await login('userTwo', 'userTwo@123');
-      // console.log(response.orders, 'userid api response')
-      dispatch(setOrders(response.orders));
-      if (response.message = "Getting Orders data Successfully") {
-        dispatch(setOrders(response.orders));
-      } else {
-        console.log('Error during login:',);
-        // setError(response.data.message);
-      }
+      const response = await (selectedItem == 'Orders'
+        ? getOrders(userId, page)
+        : getDeliveries(userId, page));
+      console.log(response.orders, 'here')
+      setPagesize(response?.totalPages)
+      const newOrders = response.orders;
+      const updatedOrders = [...orders, ...newOrders];
+      console.log(updatedOrders, 'gvghfggtf')
+      dispatch(setOrders(updatedOrders));
+
     } catch (error) {
-      // Alert(error)
-      console.error('Error during login:hwre', error?.message);
-      if (error.response && error.response.data && error.response.data.message) {
-        Alert.alert('Error', error.response.data.message);
-      } else {
-        Alert.alert('Error', 'An error occurred during login.');
-      }
+      console.error('Error during fetching orders:', error?.message);
     }
   };
 
-
+  const loadMore = () => {
+    console.log(currentPage, pageSize, 'pagesss')
+    if (currentPage < pageSize) {
+      setCurrentPage(currentPage + 1);
+      GetOrders(UserId, selectedItem, currentPage + 1);
+    }
+  };
   const _renderItems = ({ item }) => {
     return (
       <TouchableOpacity
@@ -252,23 +249,22 @@ const Home = ({ navigation: { navigate } }) => {
       <View style={styles.rowView}>
         <HomeScreenSelectable
           title={'Orders'}
-          onPress={() => { handleSelectItem('Orders'), GetOrders(UserId, 'Orders') }}
+          onPress={() => { handleSelectItem('Orders'), GetOrders(UserId, 'Orders', 1) }}
           isSelected={selectedItem === 'Orders'} />
         <HomeScreenSelectable title={'Deliveries'}
-          onPress={() => { handleSelectItem('Deliveries'), GetOrders(UserId, 'Deliveries') }}
+          onPress={() => { handleSelectItem('Deliveries'), GetOrders(UserId, 'Deliveries', 1), dispatch(setOrders([])) }}
           isSelected={selectedItem === 'Deliveries'}
         />
-        {/* <HomeScreenSelectable title={'All Orders'}
-          onPress={() => handleSelectItem('All Orders')}
-          isSelected={selectedItem === 'All Orders'}
-        /> */}
+
       </View>
 
       <FlatList
         data={orders}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => <_renderItems item={item} />}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item?.id}
+        onEndReached={loadMore} // Call loadMore function when user reaches the end of the list
+        onEndReachedThreshold={0.5} 
       />
       <View style={styles.OrderButton}>
         <HomeOrderButton onpress={() => navigate('AddSalesOrder')} title={'New Sales Order'} />

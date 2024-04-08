@@ -132,6 +132,8 @@ const ItemsScreen = ({navigation: {navigate}}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { shopitems, loading, error } = useSelector((state) => state.global);
+  const [currentPage, setCurrentPage] = useState(1); // Initial page for pagination
+  const [pageSize, setPagesize] = useState(0);
 
   useEffect(() => {
     console.log(shopitems)
@@ -163,56 +165,52 @@ const ItemsScreen = ({navigation: {navigate}}) => {
 
       try {
         const response = await getItemSearch(searchQuery);
-        // const response = await login('userTwo', 'userTwo@123');
         console.log(response, 'search jkey api response')
         dispatch(setItems(response));
         if (response.message = "Getting Orders data Successfully") {
-          // dispatch(setShops(response));
-          dispatch(setItems(response));
-  
+
         } else {
           console.log('Error during login:',);
-          // setError(response.data.message);
         }
       } catch (error) {
-        // Alert(error)
         console.error('Error during login:hwre', error?.message);
         if (error.response && error.response.data && error.response.data.message) {
           Alert.alert('Error', error.response.data.message);
         } else {
           Alert.alert('Error', 'An error occurred during login.');
-        }
-  
+        } 
       }
     };
 
-  const GetItems = async () => {
-
+  const GetItems = async (page = currentPage) => {
     try {
-      const response = await getItems();
-      // const response = await login('userTwo', 'userTwo@123');
-      console.log(response, 'shop api response')
-      dispatch(setItems(response));
+      const response = await getItems(page);
+      console.log(response, 'item api response')
+      setPagesize(response?.totalPages)
+      const newOrders = response.items;
+      const updatedOrders = [...shopitems, ...newOrders];
+      dispatch(setItems(updatedOrders));
       if (response.message = "Getting Orders data Successfully") {
-        // dispatch(setShops(response));
-        dispatch(setItems(response));
-
       } else {
-        console.log('Error during login:',);
-        // setError(response.data.message);
+       console.log('Error during login:',);
       }
     } catch (error) {
-      // Alert(error)
       console.error('Error during login:hwre', error?.message);
       if (error.response && error.response.data && error.response.data.message) {
         Alert.alert('Error', error.response.data.message);
       } else {
         Alert.alert('Error', 'An error occurred during login.');
       }
-
     }
   };
 
+  const loadMore = () => {
+    console.log(currentPage, pageSize, 'pagesss')
+    if (currentPage < pageSize) {
+      setCurrentPage(currentPage + 1);
+      GetItems(currentPage + 1);
+    }
+  };
 
   const _renderItems = ({item}) => {
     return (
@@ -250,8 +248,6 @@ const ItemsScreen = ({navigation: {navigate}}) => {
           <CustomSearch
             placeholder={'Search Items'}
             value={searchQuery}
-            // onChangeText={setSearchQuery}
-            // onClear={() => setSearchQuery('')}
             onChangeText={handleSearchChange}
             onClear={handleClearSearch}
             onSubmit={handleSearchSubmit}
@@ -264,6 +260,8 @@ const ItemsScreen = ({navigation: {navigate}}) => {
         showsVerticalScrollIndicator={false}
         renderItem={({item}) => <_renderItems item={item} />}
         keyExtractor={item => item.id}
+        onEndReached={loadMore} // Call loadMore function when user reaches the end of the list
+        onEndReachedThreshold={0.5} 
       />
     </SafeAreaView>
   );

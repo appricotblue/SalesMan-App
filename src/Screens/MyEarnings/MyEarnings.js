@@ -19,6 +19,9 @@ import { setEarnings, setItems } from '../../redux/action';
 
 const MyEarnings = () => {
   const { earnings, profile, loading, error } = useSelector((state) => state.global);
+  const [currentPage, setCurrentPage] = useState(1); // Initial page for pagination
+  const [pageSize, setPagesize] = useState(0);
+  const [UserId, setUserId] = useState(null);
   const dispatch = useDispatch();
   const data = [
     {
@@ -45,7 +48,7 @@ const MyEarnings = () => {
       date: '12:05 PM | Oct 5, 2023',
       amount: '₹200',
     },
-    // Add more items as needed
+
   ];
 
   useEffect(() => {
@@ -54,32 +57,29 @@ const MyEarnings = () => {
         const userid = await Local.getUserId();
         const delay = 2000; // Delay in milliseconds
         console.log(userid, 'userid kitiyo ?', earnings)
+        setUserId(userid)
         GetEarnings(userid)
-
-        // await GetOrders(userid, 'Orders');
       } catch (error) {
         console.error('Error checking token:', error);
-
       }
     };
     checkToken();
   }, []);
 
-  const GetEarnings = async (userid) => {
-    console.log('here search', userid)
+  const GetEarnings = async (userid, page = currentPage) => {
+    console.log('here search', userid, page)
     try {
-      const response = await getEarnings(userid);
-      // const response = await login('userTwo', 'userTwo@123');
+      const response = await getEarnings(userid, page);
       console.log(response, 'earings api response')
-      dispatch(setEarnings(response));
+      setPagesize(response?.totalPages)
+      const newEarnings = response.orders;
+      const updatedEarnings = [...earnings, ...newEarnings];
+      dispatch(setEarnings(updatedEarnings));
       if (response.message = "Getting Orders data Successfully") {
-        dispatch(setEarnings(response));
       } else {
         console.log('Error during login:',);
-        // setError(response.data.message);
       }
     } catch (error) {
-      // Alert(error)
       console.error('Error during login:hwre', error?.message);
       if (error.response && error.response.data && error.response.data.message) {
         Alert.alert('Error', error.response.data.message);
@@ -90,6 +90,13 @@ const MyEarnings = () => {
   };
 
 
+  const loadMore = () => {
+    console.log(currentPage, pageSize, 'pagesss')
+    if (currentPage < pageSize) {
+      setCurrentPage(currentPage + 1);
+      GetEarnings(UserId, currentPage + 1);
+    }
+  };
   const ListItem = ({item}) => (
     <TouchableOpacity
       style={styles.itemContainer}
@@ -122,6 +129,8 @@ const MyEarnings = () => {
           renderItem={({item}) => <ListItem item={item} />}
           keyExtractor={item => item.id}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
+          onEndReached={loadMore} // Call loadMore function when user reaches the end of the list
+          onEndReachedThreshold={0.5}
         />
       </View>
     </SafeAreaView>
