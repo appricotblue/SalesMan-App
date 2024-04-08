@@ -15,27 +15,27 @@ export const login = async (username, password) => {
   }
 };
 
-export const getOrders = async (userId) => {
+export const getOrders = async (userId, pageNumber) => {
   try {
-    const response = await HTTP_REQUEST.get(`/user/getOrderslist/${userId}`);
+    const response = await HTTP_REQUEST.get(`/user/getOrderslist/${userId}?page=${pageNumber}`);
     return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-export const getDeliveries = async (userId) => {
+export const getDeliveries = async (userId, pageNumber) => {
   try {
-    const response = await HTTP_REQUEST.get(`/user/getDeliveries/${userId}`);
+    const response = await HTTP_REQUEST.get(`/user/getDeliveries/${userId}?page=${pageNumber}`);
     return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-export const getShops = async () => {
+export const getShops = async (pageNumber) => {
   try {
-    const response = await HTTP_REQUEST.get(`/user/getshops`);
+    const response = await HTTP_REQUEST.get(`/user/getshops?page=${pageNumber}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -50,18 +50,19 @@ export const getShopDetails = async (shopId) => {
   }
 };
 
-export const getItems = async () => {
+export const getItems = async (pageNumber) => {
   try {
-    const response = await HTTP_REQUEST.get(`user/getItems`);
+    const response = await HTTP_REQUEST.get(`user/getItems?page=${pageNumber}`);
     return response.data;
   } catch (error) {
     throw error;
   }
 };
 
-export const getEarnings = async (userId) => {
+export const getEarnings = async (userId, pageNumber) => {
+  console.log(userId, pageNumber, 'earningsd')
   try {
-    const response = await HTTP_REQUEST.get(`/user/getEarning?userId=${userId}`);
+    const response = await HTTP_REQUEST.get(`/user/getEarning?userId=${userId}&page=${pageNumber}`);
     return response.data;
   } catch (error) {
     throw error;

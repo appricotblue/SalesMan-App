@@ -124,6 +124,8 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { shops, shopdetails, loading, error } = useSelector((state) => state.global);
+  const [currentPage, setCurrentPage] = useState(1); // Initial page for pagination
+  const [pageSize, setPagesize] = useState(0);
 
   const onShopPress = (shopid) => {
     GetShopDetails(shopid)
@@ -136,15 +138,22 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
 
     , [])
 
-  const GetShops = async () => {
+  const GetShops = async (page = currentPage) => {
 
     try {
-      const response = await getShops();
+      const response = await getShops(page);
       // const response = await login('userTwo', 'userTwo@123');
       console.log(response, 'shop api response')
-      dispatch(setShops(response));
+
+      setPagesize(response?.totalPages)
+      const newShops = response.shops;
+
+      // Concatenate newOrders with the existing orders array using spread operator
+      const updatedShops = [...shops, ...newShops];
+      console.log(updatedShops, 'gvghfggtf')
+      dispatch(setShops(updatedShops));
       if (response.message = "Getting Orders data Successfully") {
-        dispatch(setShops(response));
+        // dispatch(setShops(response));
         // dispatch(setItems(response?.items));
 
       } else {
@@ -187,6 +196,13 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
     }
   };
 
+  const loadMore = () => {
+    console.log(currentPage, pageSize, 'pagesss')
+    if (currentPage < pageSize) { // Check if the current list length is greater than or equal to the page size
+      setCurrentPage(currentPage + 1);
+      GetShops(currentPage + 1);
+    }
+  };
   const _renderItems = ({ item }) => {
     return (
       <View style={styles.itemContainer}>
@@ -236,6 +252,8 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => <_renderItems item={item} />}
         keyExtractor={item => item.id}
+        onEndReached={loadMore} // Call loadMore function when user reaches the end of the list
+        onEndReachedThreshold={0.5} 
       />
 
       <View style={styles.OrderButton}>
