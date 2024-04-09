@@ -12,6 +12,7 @@ const INITAL_STATE = {
   selectedMovie: null,
   loading: false,
   error: null,
+  deliveries: []
 };
 export default (state = INITAL_STATE, action) => {
   switch (action.type) {
@@ -25,6 +26,8 @@ export default (state = INITAL_STATE, action) => {
       return { ...state, profile: action.payload, loading: false, error: null };
       case 'SET_EARNINGS':
         return { ...state, earnings: action.payload, loading: false, error: null };
+    case 'SET_DELIVERIES':
+      return { ...state, deliveries: action.payload, loading: false, error: null };
     case 'SET_SHOPDETAILS':
       return { ...state, shopdetails: action.payload, loading: false, error: null };
     case 'SET_SHOPORDERS':

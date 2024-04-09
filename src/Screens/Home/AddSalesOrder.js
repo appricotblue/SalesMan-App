@@ -24,7 +24,7 @@ const AddSalesOrder = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [location, setlocation] = useState('');
-    const [categories, setCategories] = useState(['Category 1', 'Category 2', 'Category 3']);
+    const [categories, setCategories] = useState([{ id: 1, name: 'Category 1' }, { id: 2, name: 'Category 2' }, { id: 3, name: 'Category 3' }]);
     const [isFromDatePickerVisible, setFromDatePickerVisibility] =
         useState(false);
     const [shopName, setShopName] = useState('');
@@ -243,7 +243,7 @@ const AddSalesOrder = () => {
                             <CustomSelectionBox
                                 title={'Status'}
                                 value={location == '' ? 'Select' : location}
-                                options={categories}
+                                options={categories.map(category => category.name)}
                                 onSelect={category => setlocation(category)}
                             />
                         </View>
@@ -300,8 +300,6 @@ const AddSalesOrder = () => {
                             width={width * 0.4}
                             texttitle={'white'}
                         />
-
-
                     </View>
                 </View>
             </View>
@@ -311,7 +309,6 @@ const AddSalesOrder = () => {
                 mode="date"
                 onConfirm={handleFromConfirm}
                 onCancel={onCloseFromCalander}
-
             />
             <DateTimePickerModal
                 isVisible={isDatePickerVisible}

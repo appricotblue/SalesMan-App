@@ -15,6 +15,7 @@ function CustomSelectionBox({
   const [showOptions, setShowOptions] = useState(false);
 
   const handleSelectOption = option => {
+    console.log(option, 'selectiom')
     onSelect(option);
     setShowOptions(false);
   };
@@ -43,7 +44,7 @@ function CustomSelectionBox({
               key={option}
               style={styles.option}
               onPress={() => handleSelectOption(option)}>
-              <Text>{option}</Text>
+              <Text >{option}</Text>
             </TouchableOpacity>
           ))}
         </View>

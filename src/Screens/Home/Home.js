@@ -18,7 +18,7 @@ import FilterModal from '../../components/FilterModal';
 import Local from '../../Storage/Local';
 import { getOrders, getOrderSearch, getDeliveries } from '../../api';
 import { useDispatch, useSelector } from 'react-redux';
-import { setOrders, setItems } from '../../redux/action';
+import { setOrders, setItems, setDeliveries } from '../../redux/action';
 
 const Data = [
   {
@@ -94,7 +94,7 @@ const Home = ({ navigation: { navigate } }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [UserId, setUserId] = useState(null);
   const [selectedItem, setSelectedItem] = useState('Orders');
-  const { orders, loading, error } = useSelector((state) => state.global);
+  const { orders, deliveries, loading, error } = useSelector((state) => state.global);
   const [currentPage, setCurrentPage] = useState(1); // Initial page for pagination
   const [pageSize, setPagesize] = useState(0);
 
@@ -137,6 +137,7 @@ const Home = ({ navigation: { navigate } }) => {
   }, []);
 
   const GetSearchOrders = async () => {
+    dispatch(setOrders([]));
     console.log('here search', searchQuery)
     try {
       const response = await getOrderSearch(searchQuery);
@@ -158,16 +159,24 @@ const Home = ({ navigation: { navigate } }) => {
 
   const GetOrders = async (userId, selectedItem, page = currentPage) => {
     console.log('here click ', userId, selectedItem, page, orders)
+    dispatch(setOrders([]));
     try {
       const response = await (selectedItem == 'Orders'
         ? getOrders(userId, page)
         : getDeliveries(userId, page));
       console.log(response.orders, 'here')
-      setPagesize(response?.totalPages)
-      const newOrders = response.orders;
-      const updatedOrders = [...orders, ...newOrders];
-      console.log(updatedOrders, 'gvghfggtf')
-      dispatch(setOrders(updatedOrders));
+      if (selectedItem == 'Orders') {
+        setPagesize(response?.totalPages)
+        const newOrders = response.orders;
+        const updatedOrders = [...orders, ...newOrders];
+        console.log(updatedOrders, 'gvghfggtf')
+        dispatch(setOrders(updatedOrders));
+      } else {
+        dispatch(setDeliveries(response.orders));
+
+      }
+
+
 
     } catch (error) {
       console.error('Error during fetching orders:', error?.message);
@@ -259,7 +268,7 @@ const Home = ({ navigation: { navigate } }) => {
       </View>
 
       <FlatList
-        data={orders}
+        data={selectedItem == 'Orders' ? orders : deliveries}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => <_renderItems item={item} />}
         keyExtractor={item => item?.id}

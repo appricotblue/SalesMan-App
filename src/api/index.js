@@ -97,5 +97,24 @@ export const getOrderSearch = async (searchkey) => {
 };
 
 
+
+export const getShopSearch = async (searchkey) => {
+  try {
+    const response = await HTTP_REQUEST.get(`user/searchshop?keyword=${searchkey}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getReturnOrder = async (userId) => {
+  try {
+    const response = await HTTP_REQUEST.get(`user/getuserprofile/${userId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const trial = async (PAYLOAD) =>
   HTTP_REQUEST.post("/user-home-screen/", PAYLOAD);
