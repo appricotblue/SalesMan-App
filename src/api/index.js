@@ -96,6 +96,38 @@ export const getOrderSearch = async (searchkey) => {
   }
 };
 
+export const getOrderStatus = async () => {
+  try {
+    const response = await HTTP_REQUEST.get(`user/getStatus`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getShopLists = async () => {
+  try {
+    const response = await HTTP_REQUEST.get(`user/getShops?page=1`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+export const getShopItems = async () => {
+  try {
+    const response = await HTTP_REQUEST.get(`getItems?page=1`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+
+
+
 
 export const trial = async (PAYLOAD) =>
   HTTP_REQUEST.post("/user-home-screen/", PAYLOAD);

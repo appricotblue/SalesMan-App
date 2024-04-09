@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {
     SafeAreaView,
     StyleSheet,
@@ -19,18 +19,30 @@ import CustomSelectionBox from '../../components/CustomSelectionBox';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import CustomTextInput from '../../components/CustomTextInput';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useDispatch, useSelector } from 'react-redux';
+import { setStatus,setShopList,setShopItems } from '../../redux/action';
+import { getOrderStatus,getShopLists,getShopItems,getItemSearch } from '../../api';
+
 
 const AddSalesOrder = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [location, setlocation] = useState('');
+    const [selectStatus, setSelectStatus] = useState('');
+    const [selectShop, setSelectShop] = useState('');
+
+    const dispatch = useDispatch();
     const [categories, setCategories] = useState(['Category 1', 'Category 2', 'Category 3']);
+    const [statuses, setStatuses] = useState(['Ordered', 'Invoiced', 'In transist','Delivered']);
+
     const [isFromDatePickerVisible, setFromDatePickerVisibility] =
         useState(false);
     const [shopName, setShopName] = useState('');
     const [checkshopName, changecheckshopName] = useState('');
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
+    const { status,shops,searchshopitems } = useSelector((state) => state.global);
+    const [statusOptions, setStatusOptions] = useState([]);
 
     const onShowCalander = () => {
         setDatePickerVisibility(true);
@@ -61,6 +73,56 @@ const AddSalesOrder = () => {
     const onCloseFromCalander = () => {
         setFromDatePickerVisibility(false);
     };
+
+useEffect(() => {
+    GetStatuses()
+    GetShops()
+    GetShopsItems()
+}, [])
+
+    
+
+
+    const GetStatuses = async () => {
+        try {
+          const response = await getOrderStatus();
+          dispatch(setStatus(response.status));
+        } catch (error) {
+          console.log(error)
+    
+        }
+      };
+      const GetShops = async () => {
+        try {
+          const response = await getShopLists();
+          dispatch(setShopList(response.shops));
+        } catch (error) {
+          console.log(error)
+    
+        }
+      };
+
+      const GetShopsItems = async () => {
+        try {
+          const response = await getItemSearch(searchQuery);
+          dispatch(setShopItems(response));
+        } catch (error) {
+          console.log(error)
+        }
+      };
+
+      const handleSearchChange = (text) => {
+        setSearchQuery(text);
+      };
+    
+      const handleClearSearch = () => {
+        setSearchQuery('');
+        GetItems(); 
+      };
+
+      
+   
+
 
 
 
@@ -180,7 +242,7 @@ const AddSalesOrder = () => {
             <View style={styles.itemContainer}>
                 <View style={styles.imageContainer}>
                     <Image
-                        source={item.image}
+                        source={{uri :item.image}}
                         style={{ height: 70, width: 72, resizeMode: 'stretch' }}
                     />
                 </View>
@@ -221,7 +283,7 @@ const AddSalesOrder = () => {
                             />
                         </View>
                         <View style={styles.toView}>
-                            <Text style={styles.toText}>Pickup Date</Text>
+                            <Text style={styles.toText}>Delivery Date</Text>
                             <Calander date={toDate} onPress={() => onShowFromCalander()} />
                         </View>
                     </View>
@@ -242,17 +304,17 @@ const AddSalesOrder = () => {
                         <View style={styles.toView}>
                             <CustomSelectionBox
                                 title={'Status'}
-                                value={location == '' ? 'Select' : location}
-                                options={categories}
-                                onSelect={category => setlocation(category)}
+                                value={selectStatus == '' ? 'Select' : selectStatus}
+                                options={status.map(item => item.status)}
+                                onSelect={item => setSelectStatus(item)}
                             />
                         </View>
                     </View>
                     <CustomSelectionBox
                         title={'Select shop'}
-                        value={location == '' ? 'Select' : location}
-                        options={categories}
-                        onSelect={category => setlocation(category)}
+                        value={selectShop == '' ? 'Select' : selectShop}
+                        options={shops.map(item => item.shopname)}
+                        onSelect={item => setSelectShop(item)}
                     />
                     <Text style={styles.subtitle}>Select shop</Text>
                     <View
@@ -262,14 +324,15 @@ const AddSalesOrder = () => {
                         <CustomSearch
                             placeholder={'Search Items'}
                             value={searchQuery}
-                            onChangeText={setSearchQuery}
-                            onClear={() => setSearchQuery('')}
+                            onChangeText={handleSearchChange}
+                            onClear={handleClearSearch}
+                            onSubmit={GetShopsItems}
                         />
                     </View>
                 </View>
                 <View style={styles.listview}>
                     <FlatList
-                        data={Data}
+                        data={searchshopitems}
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item }) => <_renderItems item={item} />}
                         keyExtractor={item => item.id}

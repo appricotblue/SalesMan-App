@@ -17,6 +17,7 @@ function CustomSelectionBox({
   const handleSelectOption = option => {
     onSelect(option);
     setShowOptions(false);
+    console.log(option,'==========')
   };
 
   return (
@@ -43,7 +44,7 @@ function CustomSelectionBox({
               key={option}
               style={styles.option}
               onPress={() => handleSelectOption(option)}>
-              <Text sttle={styles.optionText}>{option}</Text>
+              <Text>{option}</Text>
             </TouchableOpacity>
           ))}
         </View>

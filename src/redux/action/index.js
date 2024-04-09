@@ -9,3 +9,10 @@ export const setItems = (shopitems) => ({ type: 'SET_ITEMS', payload: shopitems 
 export const setSelectedMovie = (movie) => ({ type: 'SET_SELECTED_MOVIE', payload: movie });
 export const setLoading = (loading) => ({ type: 'SET_LOADING', payload: loading });
 export const setError = (error) => ({ type: 'SET_ERROR', payload: error });
+export const setStatus = (status) => ({ type: 'SET_STATUS', payload: status });
+export const setShopList = (shops) => ({ type: 'SET_SHOPS', payload: shops });
+export const setShopItems = (items) => ({ type: 'SET_SHOPITEMS', payload: items });
+
+
+
+
