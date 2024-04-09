@@ -92,7 +92,7 @@ const MyEarnings = () => {
 
   const loadMore = () => {
     console.log(currentPage, pageSize, 'pagesss')
-    if (currentPage < pageSize) {
+    if (currentPage <= pageSize) {
       setCurrentPage(currentPage + 1);
       GetEarnings(UserId, currentPage + 1);
     }

@@ -13,7 +13,7 @@ import Header from '../../components/Header';
 import HomeOrderButton from '../../components/HomeOrderButton';
 import { useNavigation } from '@react-navigation/native';
 import Local from '../../Storage/Local';
-import { getShops, getShopDetails } from '../../api';
+import { getShops, getShopDetails, getShopSearch } from '../../api';
 import { useDispatch, useSelector } from 'react-redux';
 import { setShops, setShopDetails, setShoporder } from '../../redux/action';
 
@@ -138,6 +138,37 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
 
     , [])
 
+  const handleSearchChange = (text) => {
+    setSearchQuery(text);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    GetItems();
+  };
+
+  const handleSearchSubmit = async () => {
+
+    try {
+      const response = await getShopSearch(searchQuery);
+      console.log(response, 'search jkey api response')
+      dispatch(setShops(response));
+      if (response.message = "Getting Orders data Successfully") {
+
+      } else {
+        console.log('Error during login:',);
+      }
+    } catch (error) {
+      console.error('Error during login:hwre', error?.message);
+      if (error.response && error.response.data && error.response.data.message) {
+        Alert.alert('Error', error.response.data.message);
+      } else {
+        Alert.alert('Error', 'An error occurred during login.');
+      }
+    }
+  };
+
+
   const GetShops = async (page = currentPage) => {
 
     try {
@@ -241,8 +272,9 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
           <CustomSearch
             placeholder={'Search Shops'}
             value={searchQuery}
-            onChangeText={setSearchQuery}
-            onClear={() => setSearchQuery('')}
+            onChangeText={handleSearchChange}
+            onClear={handleClearSearch}
+            onSubmit={handleSearchSubmit}
           />
         </View>
       </View>

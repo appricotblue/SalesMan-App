@@ -14,8 +14,9 @@ const INITAL_STATE = {
   error: null,
   status: [],
   shops:[],
-  searchshopitems:[]
+  searchshopitems:[],
 
+  deliveries: []
 };
 export default (state = INITAL_STATE, action) => {
   switch (action.type) {
@@ -29,6 +30,8 @@ export default (state = INITAL_STATE, action) => {
       return { ...state, profile: action.payload, loading: false, error: null };
       case 'SET_EARNINGS':
         return { ...state, earnings: action.payload, loading: false, error: null };
+    case 'SET_DELIVERIES':
+      return { ...state, deliveries: action.payload, loading: false, error: null };
     case 'SET_SHOPDETAILS':
       return { ...state, shopdetails: action.payload, loading: false, error: null };
     case 'SET_SHOPORDERS':

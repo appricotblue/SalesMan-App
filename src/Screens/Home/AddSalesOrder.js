@@ -32,7 +32,7 @@ const AddSalesOrder = () => {
     const [selectShop, setSelectShop] = useState('');
 
     const dispatch = useDispatch();
-    const [categories, setCategories] = useState(['Category 1', 'Category 2', 'Category 3']);
+    const [categories, setCategories] = useState([{ id: 1, name: 'Category 1' }, { id: 2, name: 'Category 2' }, { id: 3, name: 'Category 3' }]);
     const [statuses, setStatuses] = useState(['Ordered', 'Invoiced', 'In transist','Delivered']);
 
     const [isFromDatePickerVisible, setFromDatePickerVisibility] =
@@ -363,8 +363,6 @@ useEffect(() => {
                             width={width * 0.4}
                             texttitle={'white'}
                         />
-
-
                     </View>
                 </View>
             </View>
@@ -374,7 +372,6 @@ useEffect(() => {
                 mode="date"
                 onConfirm={handleFromConfirm}
                 onCancel={onCloseFromCalander}
-
             />
             <DateTimePickerModal
                 isVisible={isDatePickerVisible}
