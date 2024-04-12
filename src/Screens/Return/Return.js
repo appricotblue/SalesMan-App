@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -6,6 +6,7 @@ import {
   Text,
   View,
   TouchableOpacity,
+  Alert
 } from 'react-native';
 import {height, width} from '../../Theme/Constants';
 import CustomSearch from '../../components/CustomSearch';
@@ -14,6 +15,10 @@ import FilterButton from '../../components/FilterButton';
 import HomeScreenSelectable from '../../components/HomeScreenSelectable';
 import HomeOrderButton from '../../components/HomeOrderButton';
 import FilterModal from '../../components/FilterModal';
+import Local from '../../Storage/Local';
+import { getOrders, getOrderSearch, getReturnOrder } from '../../api';
+import { useDispatch, useSelector } from 'react-redux';
+import { setOrders, setReturnOrders, setDeliveries } from '../../redux/action';
 
 const Data = [
   {
@@ -102,26 +107,73 @@ const Data = [
 const Return = ({navigation: {navigate}}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState('Orders');
+  const { orders, returnorder, deliveries, loading, error } = useSelector((state) => state.global);
+  const [currentPage, setCurrentPage] = useState(1); // Initial page for pagination
+  const [pageSize, setPagesize] = useState(0);
+  const [UserId, setUserId] = useState(null);
+  const dispatch = useDispatch();
 
   const filterPress = () => {
     navigate('filter');
   };
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const userid = await Local.getUserId();
+        const delay = 2000; // Delay in milliseconds
+        console.log(userid, 'userid kitiyo ?', returnorder)
+        setUserId(userid)
 
-  const _renderItems = ({item}) => {
+        await GetReturnOrder(userid);
+      } catch (error) {
+        console.error('Error checking token:', error);
+
+      }
+    };
+
+    checkToken();
+  }, []);
+
+
+  const GetReturnOrder = async (userid) => {
+
+    console.log('here search', searchQuery)
+    try {
+      const response = await getReturnOrder(userid);
+      console.log(response, 'return order  api response')
+      if (response.message = "Getting Orders data Successfully") {
+        dispatch(setReturnOrders(response));
+      } else {
+        console.log('Error during login:',);
+      }
+    } catch (error) {
+      console.error('Error during login:hwre', error?.message);
+      if (error.response && error.response.data && error.response.data.message) {
+        // Alert.alert('Error', error.response.data.message);
+      } else {
+        // Alert.alert('Error', 'An error occurred during login.');
+      }
+    }
+  }
+
+  const _renderItems = ({ item }) => {
     return (
       <TouchableOpacity
-        onPress={() => navigate('OrderDetails')}
+        onPress={() => ''}
         style={styles.itemContainer}>
         <View style={styles.row1}>
-          <Text style={styles.orderIdText}>Order{item.orderId}</Text>
-          <Text style={styles.timeText}>{item.time}</Text>
+          <Text style={styles.orderIdText}> {item.orderNo}</Text>
+          <Text style={styles.timeText}>Order Date  {item.createdAt}</Text>
+
         </View>
         <View style={styles.row1}>
-          <Text style={styles.nameText}>{item.name}</Text>
+          <Text style={styles.nameText}>{item.shopName}</Text>
+          <Text style={styles.timeText}>Delivery Date  {item.expecteddate}</Text>
         </View>
         <View style={styles.row1}>
           <View style={styles.row2}>
-            <Text style={styles.rateText}>₹{item.rate}</Text>
+            <Text style={styles.rateText}>₹{item.totalAmount}</Text>
             <Text style={styles.qtyText}>({item.qty} Items)</Text>
           </View>
           <View>
@@ -129,11 +181,11 @@ const Return = ({navigation: {navigate}}) => {
               style={{
                 fontWeight: 'bold',
                 color:
-                  item.status == 'Delivered'
+                  item.status == 'ordered'
                     ? '#D79B00'
-                    : item.status == 'Ordered'
-                    ? '#17A400'
-                    : 'black',
+                    : item.status == 'Delivered'
+                      ? '#17A400'
+                      : 'black',
               }}>
               {item.status}
             </Text>
@@ -174,7 +226,7 @@ const Return = ({navigation: {navigate}}) => {
       </View> */}
 
       <FlatList
-        data={Data}
+        data={returnorder}
         showsVerticalScrollIndicator={false}
         renderItem={({item}) => <_renderItems item={item} />}
         keyExtractor={item => item.id}

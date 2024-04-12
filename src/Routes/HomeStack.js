@@ -12,6 +12,7 @@ import AddShop from '../Screens/Shops/AddShop';
 import Route from '../Screens/Home/Route';
 import AddReturnOrder from '../Screens/Return/AddReturnOrder';
 import AddSalesOrder from '../Screens/Home/AddSalesOrder';
+import LocationScreen from '../Screens/Shops/LocationScreen';
 
 
 const Stack = createStackNavigator();
@@ -34,6 +35,7 @@ const HomeStack = () => {
       <Stack.Screen name="Route" component={Route} />
       <Stack.Screen name="AddReturnOrder" component={AddReturnOrder} />
       <Stack.Screen name="AddSalesOrder" component={AddSalesOrder} />
+      <Stack.Screen name="LocationScreen" component={LocationScreen} />
     </Stack.Navigator>
   );
 };

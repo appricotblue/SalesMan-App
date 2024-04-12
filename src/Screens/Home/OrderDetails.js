@@ -14,9 +14,11 @@ import Header from '../../components/Header';
 import {height, width} from '../../Theme/Constants';
 import images from '../../assets/Images';
 import CommonButton from '../../components/CommonButton';
+import { useDispatch, useSelector } from 'react-redux';
 
 const OrderDetails = () => {
     const navigation = useNavigation();
+  const { orders, orderdetails, loading, error } = useSelector((state) => state.global);
   const data = [
     {
       id: '1',
@@ -63,11 +65,11 @@ const OrderDetails = () => {
       style={styles.itemContainer}
       onPress={() => console.log('Item pressed')}>
       <View>
-        <Text style={styles.itemtitle}>{item.title}</Text>
-        <Text style={styles.subtitle}>{item.date}</Text>
+        <Text style={styles.itemtitle}>{item.item.name}</Text>
+        <Text style={styles.subtitle}>₹{item.item.price}  X {item.quantity}</Text>
       </View>
 
-      <Text style={styles.title}>{item.amount}</Text>
+      <Text style={styles.title}>₹{item.item.totalPrice} </Text>
     </TouchableOpacity>
   );
 
@@ -78,27 +80,36 @@ const OrderDetails = () => {
       <ScrollView>
 
         <View style={{width:width*.9,alignSelf:'center',marginTop:10,borderBottomColor:'gray',borderBottomWidth:.5,paddingBottom:20}}>
-        <Text style={styles.subtitle}>Order#16546688544</Text>
-            <Text style={styles.title}>Supreme Supermarket </Text>
-            <Text style={styles.subtitle}>Kakkanad</Text>
-            <Text style={styles.title}>+91 95447 96311 </Text>
+
             <View style={styles.earningsview}>
-          <View style={styles.subearn}>
-           
-            <Text style={styles.subtitle}>Expected Delivery Date</Text>
-            <Text style={styles.title}>March 12,2024 </Text>
-          </View>
-          <View style={styles.subearn}>
-            
-            <Text style={styles.subtitle}>Actual Delivery Date</Text>
-            <Text style={styles.title}>March 13,2024</Text>
-          </View>
-        </View>
-        <View style={{width:width*.9,alignSelf:'center',marginTop:10}}>
+              <View style={styles.subearn}>
+
+                <Text style={styles.subtitle}>Order No</Text>
+                <Text style={styles.title}>{orderdetails.orderNo}</Text>
+              </View>
+              <View style={styles.subearn}>
+
+                <Text style={styles.subtitle}>Delivery Date</Text>
+                <Text style={styles.title}>{orderdetails.deliveryDate}</Text>
+              </View>
+            </View>
+            <View style={styles.earningsview}>
+              <View style={styles.subearn}>
+
+                <Text style={styles.subtitle}>Shop</Text>
+                <Text style={styles.title}>{orderdetails?.shopName}</Text>
+              </View>
+              <View style={styles.subearn}>
+
+                <Text style={styles.subtitle}>Order Status</Text>
+                <Text style={styles.title}>{orderdetails.orderStatus}</Text>
+              </View>
+            </View>
+            {/* <View style={{width:width*.9,alignSelf:'center',marginTop:10}}>
         <Text style={styles.subtitle}>Order Status</Text>
             <Text style={[styles.title,{color:'#D79B00'}]}>Waiting For Pickup </Text>
-          
-        </View>
+
+        </View> */}
 
    
         </View>
@@ -111,7 +122,7 @@ const OrderDetails = () => {
           keyExtractor={item => item.id}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
         /> */}
-        {data.map((item,index) => {
+            {orderdetails.orderItems.map((item, index) => {
           return(
             <ListItem item={item}/>
           )
@@ -123,12 +134,12 @@ const OrderDetails = () => {
         <View style={{ width: width * .9, alignSelf: 'center', marginTop: 5, paddingBottom: 20, marginBottom: 55, }}>
         <View style={{width:width*.9,marginTop:10,justifyContent:'space-between',flexDirection:'row'}}>
         <Text style={styles.subtitle}>Total Invoice Amount</Text>
-            <Text style={[styles.title,{color:'black'}]}>₹6200</Text>
+            <Text style={[styles.title,{color:'black'}]}>₹{orderdetails.totalAmount}</Text>
           
         </View>
         <View style={styles.totalview}>
         <Text style={[styles.subtitle,{color:'#117C00'}] }>Your Earnings</Text>
-            <Text style={[styles.title,{color:'#117C00'}]}>₹6200</Text>
+            <Text style={[styles.title,{color:'#117C00'}]}>₹{orderdetails.yourEarnings}</Text>
           
         </View>
         
@@ -183,11 +194,12 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     height: height * 0.1,
-    width: width * 1,
+    width: width / 1.1,
     borderBottomColor: 'grey',
     borderBottomWidth: 0.4,
     padding: 8,
     flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   itemtitle: {
     fontSize: 14,

@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     SafeAreaView,
     StyleSheet,
@@ -7,6 +7,10 @@ import {
     Image,
     TouchableOpacity,
     FlatList,
+    Modal,
+    Button,
+    TextInput,
+    Alert
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../../components/Header';
@@ -20,8 +24,8 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import CustomTextInput from '../../components/CustomTextInput';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
-import { setStatus,setShopList,setShopItems } from '../../redux/action';
-import { getOrderStatus,getShopLists,getShopItems,getItemSearch } from '../../api';
+import { setStatus, setShopList, setShopItems } from '../../redux/action';
+import { getOrderStatus, getShopLists, getShopItems, getItemSearch } from '../../api';
 
 
 const AddSalesOrder = () => {
@@ -32,8 +36,8 @@ const AddSalesOrder = () => {
     const [selectShop, setSelectShop] = useState('');
 
     const dispatch = useDispatch();
-    const [categories, setCategories] = useState([{ id: 1, name: 'Category 1' }, { id: 2, name: 'Category 2' }, { id: 3, name: 'Category 3' }]);
-    const [statuses, setStatuses] = useState(['Ordered', 'Invoiced', 'In transist','Delivered']);
+    const [categories, setCategories] = useState([{ id: 1, name: 'sales' },]);
+    const [statuses, setStatuses] = useState(['Ordered', 'Invoiced', 'In transist', 'Delivered']);
 
     const [isFromDatePickerVisible, setFromDatePickerVisibility] =
         useState(false);
@@ -41,8 +45,13 @@ const AddSalesOrder = () => {
     const [checkshopName, changecheckshopName] = useState('');
     const [fromDate, setFromDate] = useState('');
     const [toDate, setToDate] = useState('');
-    const { status,shops,searchshopitems } = useSelector((state) => state.global);
+    const { status, shops, searchshopitems } = useSelector((state) => state.global);
     const [statusOptions, setStatusOptions] = useState([]);
+    const [isAddItemModalVisible, setIsAddItemModalVisible] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedItems, setSelectedItems] = useState([]);
+    const [selectedItemQuantity, setSelectedItemQuantity] = useState('');
+    const [itemQuantity, setItemQuantity] = useState('');
 
     const onShowCalander = () => {
         setDatePickerVisibility(true);
@@ -74,200 +83,105 @@ const AddSalesOrder = () => {
         setFromDatePickerVisibility(false);
     };
 
-useEffect(() => {
-    GetStatuses()
-    GetShops()
-    GetShopsItems()
-}, [])
-
-    
-
+    useEffect(() => {
+        GetStatuses()
+        GetShops()
+        // GetShopsItems()
+    }, [])
 
     const GetStatuses = async () => {
         try {
-          const response = await getOrderStatus();
-          dispatch(setStatus(response.status));
+            const response = await getOrderStatus();
+            dispatch(setStatus(response.status));
         } catch (error) {
-          console.log(error)
-    
-        }
-      };
-      const GetShops = async () => {
-        try {
-          const response = await getShopLists();
-          dispatch(setShopList(response.shops));
-        } catch (error) {
-          console.log(error)
-    
-        }
-      };
+            console.log(error)
 
-      const GetShopsItems = async () => {
-        try {
-          const response = await getItemSearch(searchQuery);
-          dispatch(setShopItems(response));
-        } catch (error) {
-          console.log(error)
         }
-      };
+    };
+    const GetShops = async () => {
+        try {
+            const response = await getShopLists();
+            dispatch(setShopList(response.shops));
+        } catch (error) {
+            console.log(error)
+        }
+    };
+    const GetShopsItems = async () => {
+        setIsAddItemModalVisible(true)
+        try {
+            const response = await getItemSearch(searchQuery);
+            dispatch(setShopItems(response));
+        } catch (error) {
+            console.log(error)
+        }
+    };
 
-      const handleSearchChange = (text) => {
+    const handleSearchChange = (text) => {
         setSearchQuery(text);
-      };
-    
-      const handleClearSearch = () => {
-        setSearchQuery('');
-        GetItems(); 
-      };
+    };
 
-      
-   
-
-
-
-
-    const Data = [
-        {
-            id: 0,
-            orderId: '#1678954621',
-            time: '10 mins ago',
-            name: 'Nirapara Ragi Puttu Podi',
-            rate: 1638,
-            qty: '500g',
-            status: 'Ordered',
-            location: 'Aluva',
-            orders: '1 New Order',
-            image: images.png2,
-        },
-        {
-            id: 1,
-            orderId: '#1678954622',
-            time: '20 mins ago',
-            name: 'Nirapara Corn Puttu Podi',
-            rate: 3896,
-            qty: '200g',
-            status: 'Delivered',
-            location: 'Ponikkara',
-            orders: '1 New Order',
-            image: images.png1,
-        },
-        {
-            id: 2,
-            orderId: '#1678954623',
-            time: '30 mins ago',
-            name: 'Nirapara Oats Puttu Podi',
-            rate: 4250,
-            qty: '500g',
-            status: 'Draft',
-            location: 'Kakkanad',
-            orders: '',
-            image: images.png3,
-        },
-        {
-            id: 3,
-            orderId: '#1678954621',
-            time: '10 mins ago',
-            name: 'Nirapara Kashmiri Chilli Powder',
-            rate: 1638,
-            qty: '200g',
-            status: 'Ordered',
-            location: 'Fort Kochi',
-            orders: '',
-            image: images.png1,
-        },
-        {
-            id: 4,
-            orderId: '#1678954622',
-            time: '20 mins ago',
-            name: 'Nirapara Oats Puttu Podi',
-            rate: 3896,
-            qty: '200g',
-            status: 'Delivered',
-            location: 'Edachira',
-            orders: '',
-            image: images.png3,
-        },
-        {
-            id: 5,
-            orderId: '#1678954623',
-            time: '30 mins ago',
-            name: 'Nirapara Pepper Powder',
-            rate: 4250,
-            qty: '200g',
-            status: 'Draft',
-            location: 'Ponikkara',
-            orders: '',
-            image: images.png1,
-        },
-        {
-            id: 6,
-            orderId: '#1678954621',
-            time: '1 hour ago',
-            name: 'Nirapara Oats Puttu Podi',
-            rate: 1638,
-            qty: '200g',
-            status: 'Ordered',
-            location: 'Fort Kochi',
-            orders: '',
-            image: images.png3,
-        },
-        {
-            id: 7,
-            orderId: '#1678954622',
-            time: '20 mins ago',
-            name: 'Nirapara Oats Puttu Podi',
-            rate: 3896,
-            qty: '200g',
-            status: 'Delivered',
-            location: 'Kakkanad',
-            orders: '',
-            image: images.png1,
-        },
-        {
-            id: 8,
-            orderId: '#1678954623',
-            time: '3 hour ago',
-            name: ' Nirapara Pepper Powder',
-            rate: 4250,
-            qty: '200g',
-            status: 'Draft',
-            location: 'Fort Kochi',
-            orders: '',
-            image: images.png3,
-        },
-    ];
-
+    const handleClearSearch = () => {
+        setSearchQuery(tesdffdf);
+        // GetItems();
+    };
     const _renderItems = ({ item }) => {
         return (
             <View style={styles.itemContainer}>
                 <View style={styles.imageContainer}>
                     <Image
-                        source={{uri :item.image}}
+                        source={{ uri: item?.image }}
                         style={{ height: 70, width: 72, resizeMode: 'stretch' }}
                     />
                 </View>
                 <View>
                     <View style={styles.row1}>
-                        <Text style={styles.nameText}>{item.name}</Text>
+                        <Text style={styles.nameText}>{item?.name}</Text>
                     </View>
                     <View style={styles.row1}>
                         <View style={styles.row2}>
-                            <Text style={styles.qtyText}>{item.qty}</Text>
+                            <Text style={styles.qtyText}>{item?.quantity}</Text>
                         </View>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: width * .6 }}>
-                        <Text style={styles.rateText}>₹{item.rate}</Text>
+                        <Text style={styles.rateText}>₹{item?.price}</Text>
+                        <View style={{ height: 29, width: 65, borderColor: 'gray', borderWidth: .5, justifyContent: 'center', alignItems: 'center' }} >
+                            <TextInput
+                                style={styles.quantityInput}
+                                keyboardType="numeric" // Set keyboard type to numeric for number input
+                                placeholder="Qnty"
+                                value={itemQuantity}
+                                onChangeText={(text) => setItemQuantity(text)} // Update state with entered value
+                            />
 
-                        <View style={{ height: 25, width: 55, borderColor: 'gray', borderWidth: .5, justifyContent: 'center', alignItems: 'center' }} >
-                            <Text style={{ fontSize: 15, color: 'black' }}>15</Text>
                         </View>
+                        <TouchableOpacity style={styles.addButton} onPress={() => {
+                            const filteredItems = selectedItems.filter((selectedItem) => selectedItem?.id !== item?.id);
+                            setSelectedItems(filteredItems);
+                            // setSelectedItem(item);
+                            // setIsAddItemModalVisible(true);
+                        }}>
+                            <Text style={{ color: 'white', fontSize: 16 }}>delete</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </View>
         );
     };
 
+
+    const handleAddItem = () => {
+        // Add the selected item to the selectedItems array
+        setSelectedItems([...selectedItems, selectedItem]);
+        setIsAddItemModalVisible(false);
+        setSelectedItem(null);
+        setSelectedItemQuantity('');
+    };
+
+
+
+
     return (
+
         <SafeAreaView>
             <Header title={'Add Sales Order'} isBackArrow={true} />
             {/* <ScrollView> */}
@@ -278,7 +192,7 @@ useEffect(() => {
                             <CustomSelectionBox
                                 title={'Order Type'}
                                 value={location == '' ? 'Select' : location}
-                                options={categories}
+                                options={categories.map(item => item.name)}
                                 onSelect={category => setlocation(category)}
                             />
                         </View>
@@ -316,7 +230,7 @@ useEffect(() => {
                         options={shops.map(item => item.shopname)}
                         onSelect={item => setSelectShop(item)}
                     />
-                    <Text style={styles.subtitle}>Select shop</Text>
+                    <Text style={styles.subtitle}>Select Item</Text>
                     <View
                         style={{
                             width: width * 0.9,
@@ -332,10 +246,11 @@ useEffect(() => {
                 </View>
                 <View style={styles.listview}>
                     <FlatList
-                        data={searchshopitems}
+                        // data={searchshopitems}
+                        data={selectedItems}
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item }) => <_renderItems item={item} />}
-                        keyExtractor={item => item.id}
+                        keyExtractor={item => item?.id}
                     />
                 </View>
                 <View style={{ width: width * .9, alignSelf: 'center', marginTop: 0, paddingBottom: 20, height: height * .8, }}>
@@ -380,6 +295,69 @@ useEffect(() => {
                 onCancel={onCloseCalander}
             />
             {/* </ScrollView> */}
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isAddItemModalVisible}
+                onRequestClose={() => {
+                    setIsAddItemModalVisible(false);
+                }}
+            >
+                <View style={styles.modalContainer}>
+                    <Text style={styles.modalTitle}>Add Item</Text>
+                    <FlatList
+                        data={searchshopitems}
+                        // data={selectedItems} // Display only the selected item
+                        renderItem={({ item }) => (
+                            <View style={styles.itemContainer}>
+                                <View style={styles.imageContainer}>
+                                    <Image
+                                        source={{ uri: item?.image }}
+                                        style={{ height: 70, width: 72, resizeMode: 'stretch' }}
+                                    />
+                                </View>
+                                <View>
+                                    <View style={styles.row1}>
+                                        <Text style={styles.nameText}>{item.name}</Text>
+                                    </View>
+                                    <View style={styles.row1}>
+                                        <View style={styles.row2}>
+                                            <Text style={styles.qtyText}>{item.quantity}</Text>
+                                        </View>
+                                    </View>
+                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: width * .6 }}>
+                                        <Text style={styles.rateText}>₹{item.price}</Text>
+
+                                        <View style={{ height: 29, width: 65, borderColor: 'gray', borderWidth: .5, justifyContent: 'center', alignItems: 'center' }} >
+
+                                            <TextInput
+                                                style={styles.quantityInput}
+                                                keyboardType="numeric" // Set keyboard type to numeric for number input
+                                                placeholder="Qnty"
+                                                value={itemQuantity}
+                                                onChangeText={(text) => setItemQuantity(text)} // Update state with entered value
+                                            />
+
+                                        </View>
+                                        <TouchableOpacity style={styles.addButton} onPress={() => {
+                                            handleAddItem,
+                                                setSelectedItem(item)
+                                            // setIsAddItemModalVisible(false)
+
+                                        }}>
+                                            <Text style={{ color: 'white', fontSize: 16 }}>Select</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            </View>
+                        )}
+                        keyExtractor={item => item?.id}
+                    />
+                    <Button title="Confirm" onPress={handleAddItem} />
+                    <Button title="Cancel" onPress={() => setIsAddItemModalVisible(false)} />
+                </View>
+            </Modal>
         </SafeAreaView>
     );
 };
@@ -513,8 +491,40 @@ const styles = StyleSheet.create({
         color: 'black',
         fontSize: 14,
     },
-    totalview: { width: width * .91, marginTop: 5, justifyContent: 'space-between', flexDirection: 'row', backgroundColor: '#D9D9D9', padding: 5 }
-
+    totalview: { width: width * .91, marginTop: 5, justifyContent: 'space-between', flexDirection: 'row', backgroundColor: '#D9D9D9', padding: 5 },
+    addButton: {
+        backgroundColor: '#005A8D',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        borderRadius: 5,
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        // backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: 'white',
+    },
+    modalTitle: {
+        fontSize: 20,
+        marginBottom: 20,
+    },
+    modalItem: {
+        marginBottom: 10,
+        padding: 10,
+        backgroundColor: '#eee',
+        borderRadius: 5,
+    },
+    modalItemName: {
+        fontSize: 16,
+    },
+    quantityInput: {
+        left: 2,
+        width: '90%',
+        minHeight: 50,
+    }
 });
 
 export default AddSalesOrder;

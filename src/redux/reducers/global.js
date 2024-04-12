@@ -7,16 +7,17 @@ const INITAL_STATE = {
   shopitems: [],
   shopdetails: {},
   shoporders: [],
-  earnings:[],
+  earnings: [],
   profile: {},
   selectedMovie: null,
   loading: false,
   error: null,
   status: [],
-  shops:[],
-  searchshopitems:[],
-
-  deliveries: []
+  shops: [],
+  searchshopitems: [],
+  returnorder: [],
+  deliveries: [],
+  orderdetails:{}
 };
 export default (state = INITAL_STATE, action) => {
   switch (action.type) {
@@ -24,12 +25,16 @@ export default (state = INITAL_STATE, action) => {
     case 'SET_ORDERS':
       // console.log(action.payload, 'here redu')
       return { ...state, orders: action.payload, loading: false, error: null };
+    case 'SET_RETURNORDERS':
+      return { ...state, returnorder: action.payload, loading: false, error: null };
+      case 'SET_ORDERDETAILS':
+        return { ...state, orderdetails: action.payload, loading: false, error: null };
     case 'SET_SHOPS':
       return { ...state, shops: action.payload, loading: false, error: null };
     case 'SET_PROFILE':
       return { ...state, profile: action.payload, loading: false, error: null };
-      case 'SET_EARNINGS':
-        return { ...state, earnings: action.payload, loading: false, error: null };
+    case 'SET_EARNINGS':
+      return { ...state, earnings: action.payload, loading: false, error: null };
     case 'SET_DELIVERIES':
       return { ...state, deliveries: action.payload, loading: false, error: null };
     case 'SET_SHOPDETAILS':
@@ -42,15 +47,14 @@ export default (state = INITAL_STATE, action) => {
       return { ...state, selectedMovie: action.payload, loading: false, error: null };
     case 'SET_LOADING':
       return { ...state, loading: action.payload, error: null };
-      case 'SET_STATUS':
+    case 'SET_STATUS':
       return { ...state, status: action.payload, error: null };
-      case 'SET_SHOPS':
+    case 'SET_SHOPS':
       return { ...state, shops: action.payload, error: null };
     case 'SET_ERROR':
       return { ...state, error: action.payload, loading: false };
-      case 'SET_SHOPITEMS':
-        return { ...state, searchshopitems: action.payload, error: null };
-      
+    case 'SET_SHOPITEMS':
+      return { ...state, searchshopitems: action.payload, error: null };
     default:
       return state;
   }

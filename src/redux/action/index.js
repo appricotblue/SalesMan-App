@@ -13,6 +13,8 @@ export const setError = (error) => ({ type: 'SET_ERROR', payload: error });
 export const setStatus = (status) => ({ type: 'SET_STATUS', payload: status });
 export const setShopList = (shops) => ({ type: 'SET_SHOPS', payload: shops });
 export const setShopItems = (items) => ({ type: 'SET_SHOPITEMS', payload: items });
+export const setReturnOrders = (returnorder) => ({ type: 'SET_RETURNORDERS', payload: returnorder });
+export const setOrderDetails = (orderdetails) => ({ type: 'SET_ORDERDETAILS', payload: orderdetails });
 
 
 

@@ -5,6 +5,7 @@ const HTTP_REQUEST = axios.create({
   baseURL: env_dev,
 });
 
+
 // export const login = async (PAYLOAD) => HTTP_REQUEST.get("admin/admin/singup",PAYLOAD);
 export const login = async (username, password) => {
   try {
@@ -18,6 +19,15 @@ export const login = async (username, password) => {
 export const getOrders = async (userId, pageNumber) => {
   try {
     const response = await HTTP_REQUEST.get(`/user/getOrderslist/${userId}?page=${pageNumber}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getOrderDetails = async (orderId) => {
+  try {
+    const response = await HTTP_REQUEST.get(`/user/getOrderDetails/${orderId}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -41,6 +51,35 @@ export const getShops = async (pageNumber) => {
     throw error;
   }
 };
+// export const CreateShop = async (userId) => {
+//   try {
+//     const response = await HTTP_REQUEST.get(`/user/createshop/${userId}`);
+//     return response.data;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
+
+export const createShopAPI = async (userId, formData) => {
+  console.log(userId, formData, 'api calll ')
+  try {
+    const response = await HTTP_REQUEST.post(
+      `user/createshop/${userId}`,
+       formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+
+    return response.data; // Handle the response data as needed (success message, error handling)
+  } catch (error) {
+    console.error('Error creating shop 123:', error?.message);
+    throw error; // Re-throw the error for further handling if needed
+  }
+};
+
 export const getShopDetails = async (shopId) => {
   try {
     const response = await HTTP_REQUEST.get(`/user/getshopsDetails/${shopId}`);
@@ -141,7 +180,7 @@ export const getShopSearch = async (searchkey) => {
 
 export const getReturnOrder = async (userId) => {
   try {
-    const response = await HTTP_REQUEST.get(`user/getuserprofile/${userId}`);
+    const response = await HTTP_REQUEST.get(`user/getReturnOrder/${userId}`);
     return response.data;
   } catch (error) {
     throw error;
