@@ -187,5 +187,16 @@ export const getReturnOrder = async (userId) => {
   }
 };
 
+export const getOrderbyShopDate = async (shop, fromDate, toDate) => {
+  try {
+    const response = await HTTP_REQUEST.get(`user/searchAndFilterShops?shopName=${shop}&fromDate=${fromDate}&toDate=${toDate}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const trial = async (PAYLOAD) =>
   HTTP_REQUEST.post("/user-home-screen/", PAYLOAD);
+
+

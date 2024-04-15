@@ -26,13 +26,17 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
 import { setStatus, setShopList, setShopItems } from '../../redux/action';
 import { getOrderStatus, getShopLists, getShopItems, getItemSearch } from '../../api';
+import Local from '../../Storage/Local';
+
+
+
 
 
 const AddSalesOrder = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [location, setlocation] = useState('');
-    const [selectStatus, setSelectStatus] = useState('');
+    const [selectStatus, setSelectStatus] = useState({ id: '', status: 'Select' });
     const [selectShop, setSelectShop] = useState('');
 
     const dispatch = useDispatch();
@@ -52,7 +56,80 @@ const AddSalesOrder = () => {
     const [selectedItems, setSelectedItems] = useState([]);
     const [selectedItemQuantity, setSelectedItemQuantity] = useState('');
     const [itemQuantity, setItemQuantity] = useState('');
+    const [totalAmount, setTotalAmount] = useState(0);
+    const [selectedShop, setSelectedShop] = useState({ id: '', shopname: 'Select' });
+    const [UserId, setUserId] = useState(null);
 
+    useEffect(() => {
+        const checkToken = async () => {
+            try {
+                const userid = await Local.getUserId();
+                const delay = 2000; // Delay in milliseconds
+                console.log(userid, 'userid?')
+                setUserId(userid)
+
+
+            } catch (error) {
+                console.error('Error checking token:', error);
+
+            }
+        };
+
+        checkToken();
+    }, []);
+
+
+    const isFormValid = () => {
+        if (!location) {
+            Alert.alert('Error', 'Please select an Order Type');
+            return false;
+        }
+        if (!toDate) {
+            Alert.alert('Error', 'Please select a Delivery Date');
+            return false;
+        }
+        if (!shopName) {
+            Alert.alert('Error', 'Please enter an Order Number');
+            return false;
+        }
+        if (!selectStatus.id) {
+            Alert.alert('Error', 'Please select a Status');
+            return false;
+        }
+        if (!selectedShop.id) {
+            Alert.alert('Error', 'Please select a Shop');
+            return false;
+        }
+        if (selectedItems.length === 0) {
+            Alert.alert('Error', 'Please select at least one Item');
+            return false;
+        }
+        return true;
+    };
+
+    const handleShopSelect = async (shop) => {
+        await setSelectedShop(shop);
+        console.log(selectedShop?.id, 'shop iddddd')
+    };
+    const handleStatusSelect = async (item) => {
+        await setSelectStatus(item);
+        console.log(selectStatus?.id, ' status iddddd')
+    };
+
+    const handleorderSelect = async (item) => {
+        await setlocation(item);
+        console.log(location?.id, ' cat iddddd')
+    };
+
+    useEffect(() => {
+        // This code will run after selectedShop state is updated
+        console.log(selectStatus?.id, 'iddddd')
+    }, [selectStatus]);
+
+    useEffect(() => {
+        // This code will run after selectedShop state is updated
+        console.log(selectedShop?.id, 'iddddd useee');
+    }, [selectedShop]);
     const onShowCalander = () => {
         setDatePickerVisibility(true);
     };
@@ -73,7 +150,7 @@ const AddSalesOrder = () => {
         console.log(date, 'to date ')
         const formattedDate = date.toISOString().split('T')[0];
         setToDate(formattedDate);
-
+        console.log(formattedDate, 'date to')
         onCloseFromCalander();
     };
     const onShowFromCalander = () => {
@@ -85,7 +162,8 @@ const AddSalesOrder = () => {
 
     useEffect(() => {
         GetStatuses()
-        GetShops()
+        GetShops(),
+            console.log(shops, 'heree')
         // GetShopsItems()
     }, [])
 
@@ -124,22 +202,60 @@ const AddSalesOrder = () => {
         setSearchQuery(tesdffdf);
         // GetItems();
     };
+
+    const createOrder = async () => {
+        if (!isFormValid()) {
+            return;
+        }
+        try {
+            const itemIds = selectedItems.map(item => item.id);
+            const quantities = selectedItems.map(item => item.count);
+            const requestBody = {
+                expecteddate: toDate,
+                shopId: selectedShop?.id,
+                yourearing: 10,
+                totalAmount: totalAmount,
+                orderNo: 'ORD-' + shopName,
+                itemId: itemIds,
+                status: selectStatus?.id,
+                orderType: location?.name,
+                quantity: quantities
+            };
+            console.log(requestBody, 'gettt')
+
+            const response = await fetch(`http://64.227.139.72:8000/user/createorder/${UserId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+            const data = await response.json();
+            console.log('Order created:', data);
+        } catch (error) {
+            console.error('Error creating order:', error);
+        }
+    };
+
+
     const _renderItems = ({ item }) => {
+        const selectedItem = selectedItems.find(selectedItem => selectedItem?.id === item?.id);
+        const quantity = selectedItem ? selectedItem.quantity : '';
         return (
             <View style={styles.itemContainer}>
                 <View style={styles.imageContainer}>
                     <Image
-                        source={{ uri: item?.image }}
+                        source={{ uri: selectedItem?.image }}
                         style={{ height: 70, width: 72, resizeMode: 'stretch' }}
                     />
                 </View>
                 <View>
                     <View style={styles.row1}>
-                        <Text style={styles.nameText}>{item?.name}</Text>
+                        <Text style={styles.nameText}>{selectedItem?.name}</Text>
                     </View>
                     <View style={styles.row1}>
                         <View style={styles.row2}>
-                            <Text style={styles.qtyText}>{item?.quantity}</Text>
+                            <Text style={styles.qtyText}>{selectedItem?.quantity}</Text>
                         </View>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: width * .6 }}>
@@ -149,16 +265,17 @@ const AddSalesOrder = () => {
                                 style={styles.quantityInput}
                                 keyboardType="numeric" // Set keyboard type to numeric for number input
                                 placeholder="Qnty"
-                                value={itemQuantity}
-                                onChangeText={(text) => setItemQuantity(text)} // Update state with entered value
+                                value={item?.count?.toString()}
+                                onChangeText={(text) => handleQuantityChange(item.id, text)}
+
                             />
 
                         </View>
                         <TouchableOpacity style={styles.addButton} onPress={() => {
                             const filteredItems = selectedItems.filter((selectedItem) => selectedItem?.id !== item?.id);
                             setSelectedItems(filteredItems);
-                            // setSelectedItem(item);
-                            // setIsAddItemModalVisible(true);
+                            handleDeleteItem(item?.id)
+
                         }}>
                             <Text style={{ color: 'white', fontSize: 16 }}>delete</Text>
                         </TouchableOpacity>
@@ -170,13 +287,40 @@ const AddSalesOrder = () => {
 
 
     const handleAddItem = () => {
-        // Add the selected item to the selectedItems array
-        setSelectedItems([...selectedItems, selectedItem]);
-        setIsAddItemModalVisible(false);
-        setSelectedItem(null);
-        setSelectedItemQuantity('');
+        if (selectedItem && selectedItemQuantity !== '') {
+            const count = parseInt(selectedItemQuantity, 10) || 0;
+            const newItem = { ...selectedItem, count };
+
+            setSelectedItems([...selectedItems, newItem]);
+            setTotalAmount(totalAmount + (newItem.price * count));
+
+            setIsAddItemModalVisible(false);
+            setSelectedItem(null);
+            setSelectedItemQuantity('');
+        }
     };
 
+
+    const handleQuantityChange = (itemId, count) => {
+        const updatedSelectedItems = selectedItems.map(item => {
+            if (item.id === itemId) {
+                return { ...item, count };
+            }
+            return item;
+        });
+        setSelectedItems(updatedSelectedItems);
+    };
+
+    const handleDeleteItem = (itemId) => {
+
+        const itemToDelete = selectedItems.find(item => item.id === itemId);
+        if (itemToDelete) {
+            const itemValue = itemToDelete.price * itemToDelete.count;
+            const updatedItems = selectedItems.filter(item => item.id !== itemId);
+            setTotalAmount(totalAmount - itemValue);
+            setSelectedItems(updatedItems);
+        }
+    };
 
 
 
@@ -191,9 +335,10 @@ const AddSalesOrder = () => {
                         <View style={styles.fromView}>
                             <CustomSelectionBox
                                 title={'Order Type'}
-                                value={location == '' ? 'Select' : location}
-                                options={categories.map(item => item.name)}
-                                onSelect={category => setlocation(category)}
+                                value={location ? location.name : 'Select'}
+                                options={categories}
+                                onSelect={handleorderSelect}
+                                displayProperty="name"
                             />
                         </View>
                         <View style={styles.toView}>
@@ -218,17 +363,20 @@ const AddSalesOrder = () => {
                         <View style={styles.toView}>
                             <CustomSelectionBox
                                 title={'Status'}
-                                value={selectStatus == '' ? 'Select' : selectStatus}
-                                options={status.map(item => item.status)}
-                                onSelect={item => setSelectStatus(item)}
+                                value={selectStatus ? selectStatus.status : 'Select'}
+                                options={status}
+                                onSelect={handleStatusSelect}
+                                displayProperty="status"
                             />
                         </View>
                     </View>
+
                     <CustomSelectionBox
                         title={'Select shop'}
-                        value={selectShop == '' ? 'Select' : selectShop}
-                        options={shops.map(item => item.shopname)}
-                        onSelect={item => setSelectShop(item)}
+                        value={selectedShop ? selectedShop.shopname : 'Select'}
+                        options={shops}
+                        onSelect={handleShopSelect}
+                        displayProperty="shopname" // Specify the property to display as shop name
                     />
                     <Text style={styles.subtitle}>Select Item</Text>
                     <View
@@ -256,13 +404,13 @@ const AddSalesOrder = () => {
                 <View style={{ width: width * .9, alignSelf: 'center', marginTop: 0, paddingBottom: 20, height: height * .8, }}>
                     <View style={{ width: width * .9, justifyContent: 'space-between', flexDirection: 'row' }}>
                         <Text style={styles.subtitle}>Total Amount</Text>
-                        <Text style={[styles.title, { color: 'black' }]}>₹6200</Text>
+                        <Text style={[styles.title, { color: 'black' }]}>₹{totalAmount}</Text>
                     </View>
-                    <View style={styles.totalview}>
+                    {/* <View style={styles.totalview}>
                         <Text style={[styles.subtitle, { color: '#117C00' }]}>Your Earnings</Text>
                         <Text style={[styles.title, { color: '#117C00' }]}>₹6200</Text>
 
-                    </View>
+                    </View> */}
                     <View style={styles.btnview}>
                         <CommonButton
                             onPress={() => ''}
@@ -272,7 +420,7 @@ const AddSalesOrder = () => {
                             texttitle={'#005A8D'}
                         />
                         <CommonButton
-                            onPress={() => ''}
+                            onPress={() => createOrder()}
                             color={'#005A8D'}
                             title={'Create Order'}
                             width={width * 0.4}
@@ -335,16 +483,14 @@ const AddSalesOrder = () => {
                                                 style={styles.quantityInput}
                                                 keyboardType="numeric" // Set keyboard type to numeric for number input
                                                 placeholder="Qnty"
-                                                value={itemQuantity}
-                                                onChangeText={(text) => setItemQuantity(text)} // Update state with entered value
+                                                value={selectedItemQuantity}
+                                                onChangeText={(text) => { handleQuantityChange(item.id, text), setSelectedItemQuantity(text) }} // Update state with entered value
                                             />
 
                                         </View>
                                         <TouchableOpacity style={styles.addButton} onPress={() => {
                                             handleAddItem,
                                                 setSelectedItem(item)
-                                            // setIsAddItemModalVisible(false)
-
                                         }}>
                                             <Text style={{ color: 'white', fontSize: 16 }}>Select</Text>
                                         </TouchableOpacity>
@@ -354,8 +500,11 @@ const AddSalesOrder = () => {
                         )}
                         keyExtractor={item => item?.id}
                     />
+                    <View style={{ justifyContent: 'space-between', width: width - 150, flexDirection: 'row', marginBottom: 10 }}>
                     <Button title="Confirm" onPress={handleAddItem} />
                     <Button title="Cancel" onPress={() => setIsAddItemModalVisible(false)} />
+                    </View>
+
                 </View>
             </Modal>
         </SafeAreaView>

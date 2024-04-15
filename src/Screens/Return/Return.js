@@ -164,7 +164,7 @@ const Return = ({navigation: {navigate}}) => {
         style={styles.itemContainer}>
         <View style={styles.row1}>
           <Text style={styles.orderIdText}> {item.orderNo}</Text>
-          <Text style={styles.timeText}>Order Date  {item.createdAt}</Text>
+          <Text style={styles.timeText}>Pickup Date  {item.createdAt}</Text>
 
         </View>
         <View style={styles.row1}>

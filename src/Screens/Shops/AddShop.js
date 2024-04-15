@@ -34,7 +34,7 @@ const AddShop = ({ navigation: { navigate } }) => {
     const [email, setEmail] = useState('');
     const [checkEmail, changecheckEmail] = useState('');
     const [locationData, setLocationData] = useState(null);
-    const [lattitude, setlattitude] = useState('');
+    const [latitude, setlattitude] = useState('');
     const [longitude, setlongitude] = useState('');
     const [images, setImages] = useState([]);
 
@@ -84,60 +84,82 @@ const AddShop = ({ navigation: { navigate } }) => {
         checkToken();
     }, []);
 
-
     const handleCreateShop = async () => {
         const formData = new FormData();
-        formData.append('shopname', 'jessssss');
-        formData.append('location', 'fort kochi ');
-        formData.append('address', 'marketing Solutions 4A, Sunpaul Blueberry Dezira Infopark expressway Kakkanad');
-        formData.append('emailId', 'info@gmail.com');
-        formData.append('contectnumber', '1234567890');
+        formData.append('shopname', shopName);
+        formData.append('location', location);
+        formData.append('address', shopAddress);
+        formData.append('emailId', email);
+        formData.append('contectnumber', contactNumber);
+        formData.append('locationCode', JSON.stringify({ latitude: latitude, longitude: longitude }));
 
-        // Assuming you have image URIs or file paths stored in variables:
-        const image1 = { uri: 'path/to/image1.jpg', name: 'image1.jpg', type: 'image/jpeg' };
-
-        // ... (add more images if needed)
-        const imageUri = 'file:///data/user/0/com.rn/cache/rn_image_picker_lib_temp_4edc97f5-1fd3-4de0-9930-acffa27ced8c.jpg';
-
-        // Extracting path from URI
-        const path = imageUri.replace('file://', ''); // Remove 'file://' prefix
-
-        // Getting URI
-        const uri = imageUri;
-
-        // Determining file type (assuming it's a JPEG image based on the .jpg extension)
-        const type = 'image/jpeg';
-        const image2 = { uri: imageUri, name: path, type: 'image/jpeg' };
-        // formData.append('shopImage', { uri: "file:///data/user/0/com.rn/cache/rn_image_picker_lib_temp_4edc97f5-1fd3-4de0-9930-acffa27ced8c.jpg" });
-        formData.append('shopImage', image2);
-        // ... (append more images)
-
-        formData.append('locationCode', '{"latitude":40.7128,"longitude":-74.006}');
-
-        // const shopImage = formData._parts.find(([key]) => key === 'shopImage')[1];
-
-        // console.log(shopImage, 'hr');
-
+        // Append each image from the images array to FormData
+        images.forEach((imageUri, index) => {
+            const imageFile = {
+                uri: imageUri,
+                name: `image_${index}.jpg`, // Use a unique name for each image
+                type: 'image/jpeg',
+            };
+            formData.append(`shopImage_${index}`, imageFile);
+        });
 
         try {
-
-            console.log('ertr',)
-            // const response = await createShopAPI(UserId,formData);
-            //   setShopCreated(true);
             const response = await axios.post(
-                'http://64.227.139.72:8000/user/createshop/2', // Replace with your actual API endpoint
+                `http://64.227.139.72:8000/user/createshop/${UserId}`,
                 formData,
                 {
                     headers: {
-                        'Content-Type': 'multipart/form-data', // Set the content type for file uploads
+                        'Content-Type': 'multipart/form-data',
                     },
                 }
             );
             console.log('Shop created successfully:', response);
+            navigate('shops')
         } catch (error) {
             console.error('Error creating shop:', error);
         }
-    }
+    };
+    // const handleCreateShop = async () => {
+    //     const formData = new FormData();
+    //     formData.append('shopname', 'jessssss');
+    //     formData.append('location', 'fort kochi ');
+    //     formData.append('address', 'marketing Solutions 4A, Sunpaul Blueberry Dezira Infopark expressway Kakkanad');
+    //     formData.append('emailId', 'info@gmail.com');
+    //     formData.append('contectnumber', '1234567890');
+    //     const image1 = { uri: 'path/to/image1.jpg', name: 'image1.jpg', type: 'image/jpeg' };
+    //     const imageUri = 'file:///data/user/0/com.rn/cache/rn_image_picker_lib_temp_4edc97f5-1fd3-4de0-9930-acffa27ced8c.jpg';
+    //     const path = imageUri.replace('file://', ''); // Remove 'file://' prefix
+    //     const uri = imageUri;
+    //     const type = 'image/jpeg';
+    //     const image2 = { uri: imageUri, name: path, type: 'image/jpeg' };
+    //     // formData.append('shopImage', { uri: "file:///data/user/0/com.rn/cache/rn_image_picker_lib_temp_4edc97f5-1fd3-4de0-9930-acffa27ced8c.jpg" });
+    //     formData.append('shopImage', image2);
+    //     // ... (append more images)
+
+    //     formData.append('locationCode', '{"latitude":40.7128,"longitude":-74.006}');
+
+    //     // const shopImage = formData._parts.find(([key]) => key === 'shopImage')[1];
+
+    //     // console.log(shopImage, 'hr');
+
+
+    //     try {
+
+    //         console.log('ertr',)
+    //         const response = await axios.post(
+    //             'http://64.227.139.72:8000/user/createshop/2', // Replace with your actual API endpoint
+    //             formData,
+    //             {
+    //                 headers: {
+    //                     'Content-Type': 'multipart/form-data', // Set the content type for file uploads
+    //                 },
+    //             }
+    //         );
+    //         console.log('Shop created successfully:', response);
+    //     } catch (error) {
+    //         console.error('Error creating shop:', error);
+    //     }
+    // }
 
 
 
@@ -163,9 +185,9 @@ const AddShop = ({ navigation: { navigate } }) => {
 
     const pickImage = async () => {
         const options = {
-            selectionLimit: 5, // Allow up to 5 images to be selected
-            mediaType: 'photo', // Only allow images
-            includeBase64: true, // Include the image data as base64 string
+            selectionLimit: 5,
+            mediaType: 'photo',
+            includeBase64: true, 
         };
 
         launchImageLibrary(options, (response) => {
@@ -322,15 +344,12 @@ const AddShop = ({ navigation: { navigate } }) => {
                     keyboardType="email-address"
                     placeholderTextColor="gray"
                 />
-                <TouchableOpacity style={styles.imageButton} onPress={() => requestCameraPermission()}>
+                {/* <TouchableOpacity style={styles.imageButton} onPress={() => requestCameraPermission()}>
                     <Text style={styles.buttonText}>Select Images</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
+                <Text style={styles.buttonText}>Upload Images</Text>
                 {renderImageSelection()}
-                {/* <ScrollView horizontal={true} style={styles.imageContainer}>
-                    {images.map((imageUri, index) => (
-                        <Image key={index} source={{ uri: imageUri }} style={styles.image} />
-                    ))}
-                </ScrollView> */}
+
             </ScrollView>
             <View style={styles.saveButtonContainer}>
                 <CommonButton
@@ -393,7 +412,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     buttonText: {
-        color: 'white',
+        color: 'black',
         fontSize: 16,
     },
     imageContainer: {
@@ -413,14 +432,18 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         marginTop: 20,
+        marginBottom: 30,
+        // backgroundColor: 'red'
+
     },
     selectedImageWrapper: {
         marginRight: 10,
         marginBottom: 10,
-        width: width / 3,
-        height: width / 3,
+        width: width / 5.5,
+        height: width / 5.5,
         borderWidth: 1,
         borderColor: '#ccc',
+
     },
     selectedImage: {
         width: '100%',
@@ -430,8 +453,8 @@ const styles = StyleSheet.create({
     imageSlot: {
         marginRight: 10,
         marginBottom: 10,
-        width: width / 3,
-        height: width / 3,
+        width: width / 5.5,
+        height: width / 5.5,
         borderWidth: 1,
         borderColor: '#ccc',
         alignItems: 'center',
@@ -445,6 +468,7 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         alignItems: 'center',
         justifyContent: 'center',
+        // backgroundColor: 'red'
     },
     plusIcon: {
         fontSize: 30,

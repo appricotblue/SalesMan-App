@@ -11,15 +11,30 @@ function CustomSelectionBox({
   placeholderTextColor,
   onSelect,
   options,
+  displayProperty
 }) {
   const [showOptions, setShowOptions] = useState(false);
 
-  const handleSelectOption = option => {
-    console.log(option, 'selectiom')
-    onSelect(option);
+  // const handleSelectOption = option => {
+  //   console.log(option, 'selectiom')
+  //   onSelect(option);
+  //   setShowOptions(false);
+  //   console.log(option,'==========')
+  // };
+  // const handleSelectOption = option => {
+  //   console.log(option, 'selectiom')
+  //   onSelect(option); // Pass the entire shop object
+  //   setShowOptions(false);
+  //   console.log(option,'==========')
+  // };
+
+
+  const handleSelectOption = shop => {
+    onSelect(shop); // Pass the entire shop object to onSelect
     setShowOptions(false);
-    console.log(option,'==========')
+    console.log(shop, '==========')
   };
+
 
   return (
     <View style={styles.container}>
@@ -40,12 +55,12 @@ function CustomSelectionBox({
       </TouchableOpacity>
       {showOptions && (
         <View style={styles.optionsContainer}>
-          {options.map(option => (
+            {options.map(shop => (
             <TouchableOpacity
-              key={option}
+              key={shop?.id}
               style={styles.option}
-              onPress={() => handleSelectOption(option)}>
-              <Text >{option}</Text>
+              onPress={() => handleSelectOption(shop)}>
+              <Text>{shop[displayProperty]}</Text>
             </TouchableOpacity>
           ))}
         </View>
