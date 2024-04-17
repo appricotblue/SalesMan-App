@@ -7,6 +7,7 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
+  Alert
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Header from '../../components/Header';
@@ -72,11 +73,19 @@ const UserScreen = () => {
       }
     }
   };
+  const itemPressed = async (id) => {
+    console.log(id, 'ulll')
+    if (id == 4) {
+      navigation.navigate('LoginScreen');
+      await Local.storeLogin('token', '');
 
+
+    }
+  }
   const ListItem = ({item}) => (
     <TouchableOpacity
       style={styles.itemContainer}
-      onPress={() => console.log('Item pressed')}>
+      onPress={() => itemPressed(item.id)}>
       <Image source={item.iconName} resizeMode="stretch" style={styles.icon} />
       <Text style={styles.itemtitle}>{item.title}</Text>
     </TouchableOpacity>

@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Alert
 } from 'react-native';
 import { height, width } from '../../Theme/Constants';
 import CustomSearch from '../../components/CustomSearch';
@@ -16,6 +17,7 @@ import Local from '../../Storage/Local';
 import { getShops, getShopDetails, getShopSearch } from '../../api';
 import { useDispatch, useSelector } from 'react-redux';
 import { setShops, setShopDetails, setShoporder } from '../../redux/action';
+import { useIsFocused } from '@react-navigation/native';
 
 const Data = [
   {
@@ -120,6 +122,7 @@ const Data = [
 ];
 
 const ShopsScreen = ({ navigation: { navigate } }) => {
+  const isFocused = useIsFocused();
   const [searchQuery, setSearchQuery] = useState('');
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -127,16 +130,45 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
   const [currentPage, setCurrentPage] = useState(1); // Initial page for pagination
   const [pageSize, setPagesize] = useState(0);
 
+
   const onShopPress = (shopid) => {
     GetShopDetails(shopid)
 
   };
-  useEffect(() => {
-    console.log(shops)
-    GetShops();
-  }
+  // useEffect(() => {
+  //   console.log(shops)
+  //   GetShops();
+  // }
 
-    , [])
+  //   , [])
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isFocused) {
+        console.log('Return screen is focused');
+
+        // Fetch user ID from local storage
+        try {
+          const userid = await Local.getUserId();
+          console.log('User ID:', userid);
+          // setUserId(userid);
+
+          // Call API to fetch orders for the user
+          GetShops();
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+      }
+    };
+
+    fetchData(); // Call the async function immediately inside useEffect
+
+    return () => {
+      // Cleanup function (optional)
+      // This function will be called when the component unmounts or before re-runs of effect
+      // You can perform cleanup tasks here if needed
+    };
+  }, [isFocused]);
+
 
   const handleSearchChange = (text) => {
     setSearchQuery(text);
@@ -217,7 +249,7 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
         console.log('Error during login:',);
       }
     } catch (error) {
-      console.error('Error during login:hwre', error?.message);
+      console.error('Error during login:details', shopid, error?.message);
       if (error.response && error.response.data && error.response.data.message) {
         Alert.alert('Error', error.response.data.message);
       } else {

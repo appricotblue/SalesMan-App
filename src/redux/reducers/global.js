@@ -17,7 +17,8 @@ const INITAL_STATE = {
   searchshopitems: [],
   returnorder: [],
   deliveries: [],
-  orderdetails:{}
+  orderdetails: {},
+  filterorder: []
 };
 export default (state = INITAL_STATE, action) => {
   switch (action.type) {
@@ -55,6 +56,8 @@ export default (state = INITAL_STATE, action) => {
       return { ...state, error: action.payload, loading: false };
     case 'SET_SHOPITEMS':
       return { ...state, searchshopitems: action.payload, error: null };
+    case 'SET_FILTERORDERS':
+      return { ...state, filterorder: action.payload, error: null };
     default:
       return state;
   }

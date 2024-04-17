@@ -65,11 +65,11 @@ const OrderDetails = () => {
       style={styles.itemContainer}
       onPress={() => console.log('Item pressed')}>
       <View>
-        <Text style={styles.itemtitle}>{item.item.name}</Text>
-        <Text style={styles.subtitle}>₹{item.item.price}  X {item.quantity}</Text>
+        <Text style={styles.itemtitle}>{item.name}</Text>
+        <Text style={styles.subtitle}>₹{item.price}  X {item.quantityCount}</Text>
       </View>
 
-      <Text style={styles.title}>₹{item.item.totalPrice} </Text>
+      <Text style={styles.title}>₹{item.totalPrice} </Text>
     </TouchableOpacity>
   );
 
@@ -85,12 +85,12 @@ const OrderDetails = () => {
               <View style={styles.subearn}>
 
                 <Text style={styles.subtitle}>Order No</Text>
-                <Text style={styles.title}>{orderdetails.orderNo}</Text>
+                <Text style={styles.title}>{orderdetails?.orderNo}</Text>
               </View>
               <View style={styles.subearn}>
 
                 <Text style={styles.subtitle}>Delivery Date</Text>
-                <Text style={styles.title}>{orderdetails.deliveryDate}</Text>
+                <Text style={styles.title}>{orderdetails?.deliveryDate}</Text>
               </View>
             </View>
             <View style={styles.earningsview}>
@@ -173,9 +173,9 @@ const styles = StyleSheet.create({
   },
 
   image: {width: 132, height: 132, borderRadius: 70},
-  title: {color: 'black', fontSize: 16, fontFamily: 'Inter-Regular'},
+  title: { color: 'black', fontSize: 16, fontFamily: 'Inter-Bold' },
   subtitle: {
-    color: 'grey',
+    color: 'black',
     fontSize: 14,
     fontFamily: 'Inter-Regular',
     marginTop: 4,
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   },
   itemtitle: {
     fontSize: 14,
-    fontFamily: 'Inter-Regular',
+    fontFamily: 'Inter-Bold',
     color: 'black',
   },
   icon: {

@@ -19,6 +19,8 @@ import Local from '../../Storage/Local';
 import { getOrders, getOrderSearch, getReturnOrder } from '../../api';
 import { useDispatch, useSelector } from 'react-redux';
 import { setOrders, setReturnOrders, setDeliveries } from '../../redux/action';
+import { useIsFocused } from '@react-navigation/native';
+
 
 const Data = [
   {
@@ -105,6 +107,7 @@ const Data = [
 ];
 
 const Return = ({navigation: {navigate}}) => {
+  const isFocused = useIsFocused();
   const [searchQuery, setSearchQuery] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState('Orders');
@@ -117,24 +120,51 @@ const Return = ({navigation: {navigate}}) => {
   const filterPress = () => {
     navigate('filter');
   };
+  // useEffect(() => {
+  //   const checkToken = async () => {
+  //     try {
+  //       const userid = await Local.getUserId();
+  //       const delay = 2000; // Delay in milliseconds
+  //       console.log(userid, 'userid kitiyo ?', returnorder)
+  //       setUserId(userid)
+
+  //       await GetReturnOrder(userid);
+  //     } catch (error) {
+  //       console.error('Error checking token:', error);
+
+  //     }
+  //   };
+
+  //   checkToken();
+  // }, []);
+
   useEffect(() => {
-    const checkToken = async () => {
-      try {
-        const userid = await Local.getUserId();
-        const delay = 2000; // Delay in milliseconds
-        console.log(userid, 'userid kitiyo ?', returnorder)
-        setUserId(userid)
+    const fetchData = async () => {
+      if (isFocused) {
+        console.log('Return screen is focused');
 
-        await GetReturnOrder(userid);
-      } catch (error) {
-        console.error('Error checking token:', error);
+        // Fetch user ID from local storage
+        try {
+          const userid = await Local.getUserId();
+          console.log('User ID:', userid);
+          setUserId(userid);
 
+          // Call API to fetch orders for the user
+          await GetReturnOrder(userid);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
       }
     };
 
-    checkToken();
-  }, []);
+    fetchData(); // Call the async function immediately inside useEffect
 
+    return () => {
+      // Cleanup function (optional)
+      // This function will be called when the component unmounts or before re-runs of effect
+      // You can perform cleanup tasks here if needed
+    };
+  }, [isFocused]);
 
   const GetReturnOrder = async (userid) => {
 
@@ -164,13 +194,13 @@ const Return = ({navigation: {navigate}}) => {
         style={styles.itemContainer}>
         <View style={styles.row1}>
           <Text style={styles.orderIdText}> {item.orderNo}</Text>
-          <Text style={styles.timeText}>Pickup Date  {item.createdAt}</Text>
+          <Text style={styles.timeText}>Pickup Date  {item.deliveryDate}</Text>
 
         </View>
-        <View style={styles.row1}>
+        {/* <View style={styles.row1}>
           <Text style={styles.nameText}>{item.shopName}</Text>
-          <Text style={styles.timeText}>Delivery Date  {item.expecteddate}</Text>
-        </View>
+          <Text style={styles.timeText}>Delivery Date  {item.deliveryDate}</Text>
+        </View> */}
         <View style={styles.row1}>
           <View style={styles.row2}>
             <Text style={styles.rateText}>₹{item.totalAmount}</Text>
@@ -181,13 +211,13 @@ const Return = ({navigation: {navigate}}) => {
               style={{
                 fontWeight: 'bold',
                 color:
-                  item.status == 'ordered'
+                  item.statusId == 3
                     ? '#D79B00'
-                    : item.status == 'Delivered'
+                    : item.statusId == 4
                       ? '#17A400'
                       : 'black',
               }}>
-              {item.status}
+              {item?.status?.status}
             </Text>
           </View>
         </View>

@@ -8,7 +8,8 @@ import {
     View,
     PermissionsAndroid,
     Platform,
-    Image
+    Image,
+    Alert
 } from 'react-native';
 import { height, width } from '../../Theme/Constants';
 import Header from '../../components/Header';
@@ -27,7 +28,7 @@ const AddShop = ({ navigation: { navigate } }) => {
     const [checkshopName, changecheckshopName] = useState('');
     const [shopAddress, setShopAddress] = useState('');
     const [checkshopAddress, changeshopAddress] = useState('');
-    const [location, setlocation] = useState('');
+    const [location, setlocation] = useState({ id: '', name: 'Select' });
     const [contactNumber, setContactNumber] = useState('');
     const [checkcontactNumber, changecontactNumber] = useState('');
 
@@ -39,9 +40,12 @@ const AddShop = ({ navigation: { navigate } }) => {
     const [images, setImages] = useState([]);
 
     const [UserId, setUserId] = useState(null);
-
-    const [categories, setCategories] = useState(['Category 1', 'Category 2', 'Category 3']);
-
+    const [categories, setCategories] = useState([{ id: 1, name: 'Kakkanad' }, { id: 2, name: 'Kakkanad express' }]);
+    // const [categories, setCategories] = useState({ id: '', status: 'Select' });
+    const handleorderSelect = async (item) => {
+        await setlocation(item);
+        console.log(location?.id, item, ' cat iddddd')
+    };
     const isValidate = async () => {
         const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (shopName == '') {
@@ -52,6 +56,12 @@ const AddShop = ({ navigation: { navigate } }) => {
         }
         else if (contactNumber == '') {
             changecontactNumber('Please enter contactNumber');
+        }
+        else if (location?.id == '') {
+            Alert.alert('Error', 'Please select location');
+        }
+        else if (latitude || longitude == '') {
+            Alert.alert('Error', 'Please select location');
         }
         else if (email === '') {
             changecheckEmail('Please enter Email id');
@@ -87,7 +97,7 @@ const AddShop = ({ navigation: { navigate } }) => {
     const handleCreateShop = async () => {
         const formData = new FormData();
         formData.append('shopname', shopName);
-        formData.append('location', location);
+        formData.append('location', location?.name);
         formData.append('address', shopAddress);
         formData.append('emailId', email);
         formData.append('contectnumber', contactNumber);
@@ -102,7 +112,7 @@ const AddShop = ({ navigation: { navigate } }) => {
             };
             formData.append(`shopImage_${index}`, imageFile);
         });
-
+        console.log(formData, 'form data')
         try {
             const response = await axios.post(
                 `http://64.227.139.72:8000/user/createshop/${UserId}`,
@@ -119,49 +129,6 @@ const AddShop = ({ navigation: { navigate } }) => {
             console.error('Error creating shop:', error);
         }
     };
-    // const handleCreateShop = async () => {
-    //     const formData = new FormData();
-    //     formData.append('shopname', 'jessssss');
-    //     formData.append('location', 'fort kochi ');
-    //     formData.append('address', 'marketing Solutions 4A, Sunpaul Blueberry Dezira Infopark expressway Kakkanad');
-    //     formData.append('emailId', 'info@gmail.com');
-    //     formData.append('contectnumber', '1234567890');
-    //     const image1 = { uri: 'path/to/image1.jpg', name: 'image1.jpg', type: 'image/jpeg' };
-    //     const imageUri = 'file:///data/user/0/com.rn/cache/rn_image_picker_lib_temp_4edc97f5-1fd3-4de0-9930-acffa27ced8c.jpg';
-    //     const path = imageUri.replace('file://', ''); // Remove 'file://' prefix
-    //     const uri = imageUri;
-    //     const type = 'image/jpeg';
-    //     const image2 = { uri: imageUri, name: path, type: 'image/jpeg' };
-    //     // formData.append('shopImage', { uri: "file:///data/user/0/com.rn/cache/rn_image_picker_lib_temp_4edc97f5-1fd3-4de0-9930-acffa27ced8c.jpg" });
-    //     formData.append('shopImage', image2);
-    //     // ... (append more images)
-
-    //     formData.append('locationCode', '{"latitude":40.7128,"longitude":-74.006}');
-
-    //     // const shopImage = formData._parts.find(([key]) => key === 'shopImage')[1];
-
-    //     // console.log(shopImage, 'hr');
-
-
-    //     try {
-
-    //         console.log('ertr',)
-    //         const response = await axios.post(
-    //             'http://64.227.139.72:8000/user/createshop/2', // Replace with your actual API endpoint
-    //             formData,
-    //             {
-    //                 headers: {
-    //                     'Content-Type': 'multipart/form-data', // Set the content type for file uploads
-    //                 },
-    //             }
-    //         );
-    //         console.log('Shop created successfully:', response);
-    //     } catch (error) {
-    //         console.error('Error creating shop:', error);
-    //     }
-    // }
-
-
 
     const requestCameraPermission = async () => {
         if (Platform.OS === 'android') {
@@ -288,10 +255,17 @@ const AddShop = ({ navigation: { navigate } }) => {
                 />
                 <CustomSelectionBox
                     title={'Location'}
+                    value={location ? location.name : 'Select'}
+                    options={categories}
+                    onSelect={handleorderSelect}
+                    displayProperty="name"
+                />
+                {/* <CustomSelectionBox
+                    title={'Location'}
                     value={location == '' ? 'Select Location' : location}
                     options={categories}
                     onSelect={category => setlocation(category)}
-                />
+                /> */}
                 <CustomTextInput
                     title={'Address'}
                     placeholder="Address"
@@ -375,9 +349,12 @@ const styles = StyleSheet.create({
         paddingTop: 16
     },
     saveButtonContainer: {
-        paddingBottom: 20,
-        paddingHorizontal: 20,
+        paddingBottom: 10,
+        // paddingHorizontal: 10,
         alignItems: 'center',
+        justifyContent: 'center',
+        // backgroundColor: 'red',
+        height: 60
     },
     locationText: {
         color: 'black',
@@ -387,7 +364,7 @@ const styles = StyleSheet.create({
     },
     locationButton: {
         height: height * .05,
-        width: width * .9,
+        width: width * .9 - 2,
         borderWidth: .5,
         borderColor: 'black',
         borderRadius: 10,

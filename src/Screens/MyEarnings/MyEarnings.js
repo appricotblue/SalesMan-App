@@ -106,7 +106,7 @@ const MyEarnings = () => {
         <Text style={styles.subtitle}>{item.updatedAt}</Text>
       </View>
 
-      <Text style={styles.title}>{item.totalAmount}</Text>
+      <Text style={styles.title}>₹{item.totalAmount}</Text>
     </TouchableOpacity>
   );
 
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   },
 
   image: {width: 132, height: 132, borderRadius: 70},
-  title: {color: '#005A8D', fontSize: 20, fontFamily: 'Inter-Bold'},
+  title: { color: '#005A8D', fontSize: 17, fontFamily: 'Inter-Bold' },
   subtitle: {
     color: 'grey',
     fontSize: 14,
@@ -188,8 +188,8 @@ const styles = StyleSheet.create({
     width: width,
   },
   itemtitle: {
-    fontSize: 18,
-    fontFamily: 'Inter-Regular',
+    fontSize: 16,
+    fontFamily: 'Inter-Bold',
     color: 'black',
   },
   icon: {

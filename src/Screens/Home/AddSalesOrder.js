@@ -33,6 +33,7 @@ import Local from '../../Storage/Local';
 
 
 const AddSalesOrder = () => {
+    const navigation = useNavigation();
     const [searchQuery, setSearchQuery] = useState('');
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [location, setlocation] = useState('');
@@ -215,7 +216,7 @@ const AddSalesOrder = () => {
                 shopId: selectedShop?.id,
                 yourearing: 10,
                 totalAmount: totalAmount,
-                orderNo: 'ORD-' + shopName,
+                orderNo: 'Order-' + shopName,
                 itemId: itemIds,
                 status: selectStatus?.id,
                 orderType: location?.name,
@@ -232,6 +233,7 @@ const AddSalesOrder = () => {
             });
             const data = await response.json();
             console.log('Order created:', data);
+            navigation.navigate('Home')
         } catch (error) {
             console.error('Error creating order:', error);
         }
@@ -262,6 +264,7 @@ const AddSalesOrder = () => {
                         <Text style={styles.rateText}>₹{item?.price}</Text>
                         <View style={{ height: 29, width: 65, borderColor: 'gray', borderWidth: .5, justifyContent: 'center', alignItems: 'center' }} >
                             <TextInput
+                                editable={false}
                                 style={styles.quantityInput}
                                 keyboardType="numeric" // Set keyboard type to numeric for number input
                                 placeholder="Qnty"
@@ -297,6 +300,12 @@ const AddSalesOrder = () => {
             setIsAddItemModalVisible(false);
             setSelectedItem(null);
             setSelectedItemQuantity('');
+        }
+        else if (selectedItemQuantity == '') {
+            // Show validation error or handle invalid quantity input
+            Alert.alert('Error', 'Please enter a valid quantity.');
+        } else {
+            Alert.alert('Error', 'Please select an item to continue');
         }
     };
 

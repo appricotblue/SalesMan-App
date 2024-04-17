@@ -24,7 +24,7 @@ const Header = ({ title, isBackArrow, isNotification, isRouteview }) => {
 
       <View style={{ flexDirection: 'row' }}>
         {isRouteview ? (
-          <TouchableOpacity onPress={() => navigation.navigate('Route')} style={styles.routeview}>
+          <TouchableOpacity onPress={() => ''} style={styles.routeview}>
             <View >
               <Text style={{ color: 'white', fontSize: 9 }}>Today’s Route</Text>
               <Text style={{ color: 'white', fontSize: 11 }}>Kakkanad </Text>

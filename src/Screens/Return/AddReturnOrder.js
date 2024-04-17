@@ -30,6 +30,7 @@ import Local from '../../Storage/Local';
 
 
 const AddReturnOrder = () => {
+    const navigation = useNavigation();
     const [searchQuery, setSearchQuery] = useState('');
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [location, setlocation] = useState('');
@@ -229,6 +230,10 @@ const AddReturnOrder = () => {
             });
             const data = await response.json();
             console.log('Order created:', data);
+            if (data.message == 'Return order created successfully') {
+                navigation.navigate('Return')
+            }
+
         } catch (error) {
             console.error('Error creating order:', error);
         }
@@ -259,6 +264,7 @@ const AddReturnOrder = () => {
                         <Text style={styles.rateText}>₹{item?.price}</Text>
                         <View style={{ height: 29, width: 65, borderColor: 'gray', borderWidth: .5, justifyContent: 'center', alignItems: 'center' }} >
                             <TextInput
+                                editable={false}
                                 style={styles.quantityInput}
                                 keyboardType="numeric" // Set keyboard type to numeric for number input
                                 placeholder="Qnty"
@@ -294,6 +300,12 @@ const AddReturnOrder = () => {
             setIsAddItemModalVisible(false);
             setSelectedItem(null);
             setSelectedItemQuantity('');
+        }
+        else if (selectedItemQuantity == '') {
+            // Show validation error or handle invalid quantity input
+            Alert.alert('Error', 'Please enter a valid quantity.');
+        } else {
+            Alert.alert('Error', 'Please select an item to continue');
         }
     };
 

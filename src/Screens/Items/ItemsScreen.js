@@ -167,6 +167,7 @@ const ItemsScreen = ({navigation: {navigate}}) => {
         const response = await getItemSearch(searchQuery);
         console.log(response, 'search jkey api response')
         dispatch(setItems(response));
+        console.log(response, 'item response')
         if (response.message = "Getting Orders data Successfully") {
 
         } else {

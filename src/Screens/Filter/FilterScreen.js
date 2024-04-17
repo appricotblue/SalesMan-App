@@ -12,7 +12,7 @@ import Local from '../../Storage/Local';
 import { getShopSearch, getOrderSearch, getShopLists, getOrderDetails, getOrderbyShopDate, } from '../../api';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomSelectionBox from '../../components/CustomSelectionBox';
-import { setShops, setShopDetails, setShoporder, setShopList } from '../../redux/action';
+import { setShops, setFilterOrder, setShopDetails, setShoporder, setShopList } from '../../redux/action';
 
 function FilterScreen() {
   const navigation = useNavigation();
@@ -58,9 +58,11 @@ function FilterScreen() {
     console.log('here search', selectedShop?.shopname,)
     try {
       const response = await getOrderbyShopDate(selectedShop?.shopname, fromDate, toDate);
-      console.log(response, 'search api response')
+      console.log(response, 'filter api response')
+      setFilterOrder(response?.shop)
       if (response.message = "Getting Orders data Successfully") {
         // dispatch(setOrders(response));
+        navigation.navigate('OrderFilterScreen')
       } else {
         console.log('Error during login:',);
       }
@@ -107,7 +109,7 @@ function FilterScreen() {
       console.log(response, 'search jkey api response')
       dispatch(setShops(response));
       if (response.message = "Getting Orders data Successfully") {
-
+        navigation.navigate('OrderFilterScreen')
       } else {
         console.log('Error during login:',);
       }

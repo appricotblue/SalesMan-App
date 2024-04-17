@@ -15,6 +15,7 @@ export const setShopList = (shops) => ({ type: 'SET_SHOPS', payload: shops });
 export const setShopItems = (items) => ({ type: 'SET_SHOPITEMS', payload: items });
 export const setReturnOrders = (returnorder) => ({ type: 'SET_RETURNORDERS', payload: returnorder });
 export const setOrderDetails = (orderdetails) => ({ type: 'SET_ORDERDETAILS', payload: orderdetails });
+export const setFilterOrder = (filterorder) => ({ type: 'SET_FILTERORDERS', payload: filterorder });
 
 
 

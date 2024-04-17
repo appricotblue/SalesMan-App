@@ -19,6 +19,7 @@ import Local from '../../Storage/Local';
 import { getOrders, getOrderSearch, getDeliveries, getOrderDetails } from '../../api';
 import { useDispatch, useSelector } from 'react-redux';
 import { setOrders, setItems, setOrderDetails, setDeliveries } from '../../redux/action';
+import { useIsFocused } from '@react-navigation/native';
 
 const Data = [
   {
@@ -89,6 +90,7 @@ const Data = [
 
 const Home = ({ navigation: { navigate } }) => {
 
+  const isFocused = useIsFocused();
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -136,6 +138,58 @@ const Home = ({ navigation: { navigate } }) => {
     checkToken();
   }, []);
 
+  // useEffect(() => {
+  //   if (isFocused) {
+  //     // Screen is focused, trigger actions (e.g., API calls)
+  //     console.log('Home screen is focused');
+  //     // Call your API function here
+  //     // Example: fetchData();
+
+  //     GetOrders(2, 'Orders', 1);
+  //     try {
+  //       const userid =  await Local.getUserId();
+  //       const delay = 2000; // Delay in milliseconds
+  //       console.log(userid, 'userid kitiyo ?', orders)
+  //       setUserId(userid)
+
+  //       GetOrders(userid, 'Orders', 1);
+  //     } catch (error) {
+  //       console.error('Error checking token:', error);
+
+  //     }
+  //   }
+  // }, [isFocused]);
+  
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isFocused) {
+        console.log('Home screen is focused');
+
+        // Fetch user ID from local storage
+        try {
+          const userid = await Local.getUserId();
+          console.log('User ID:', userid);
+          setUserId(userid);
+
+          // Call API to fetch orders for the user
+          await GetOrders(userid, 'Orders', 1);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      }
+    };
+
+    fetchData(); // Call the async function immediately inside useEffect
+
+    return () => {
+      // Cleanup function (optional)
+      // This function will be called when the component unmounts or before re-runs of effect
+      // You can perform cleanup tasks here if needed
+    };
+  }, [isFocused]);
+
+
   const GetSearchOrders = async () => {
     dispatch(setOrders([]));
     console.log('here search', searchQuery)
@@ -179,7 +233,7 @@ const Home = ({ navigation: { navigate } }) => {
 
 
     } catch (error) {
-      console.error('Error during fetching orders:', error?.message);
+      console.error('Error during fetching orders:home ', error?.message);
     }
   };
 
@@ -228,9 +282,9 @@ const Home = ({ navigation: { navigate } }) => {
               style={{
                 fontWeight: 'bold',
                 color:
-                  item.status == 'ordered'
+                  item.statusid == 1
                     ? '#D79B00'
-                    : item.status == 'Delivered'
+                    : item.status == 4
                       ? '#17A400'
                       : 'black',
               }}>
