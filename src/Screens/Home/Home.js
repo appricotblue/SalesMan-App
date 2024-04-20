@@ -138,27 +138,7 @@ const Home = ({ navigation: { navigate } }) => {
     checkToken();
   }, []);
 
-  // useEffect(() => {
-  //   if (isFocused) {
-  //     // Screen is focused, trigger actions (e.g., API calls)
-  //     console.log('Home screen is focused');
-  //     // Call your API function here
-  //     // Example: fetchData();
 
-  //     GetOrders(2, 'Orders', 1);
-  //     try {
-  //       const userid =  await Local.getUserId();
-  //       const delay = 2000; // Delay in milliseconds
-  //       console.log(userid, 'userid kitiyo ?', orders)
-  //       setUserId(userid)
-
-  //       GetOrders(userid, 'Orders', 1);
-  //     } catch (error) {
-  //       console.error('Error checking token:', error);
-
-  //     }
-  //   }
-  // }, [isFocused]);
   
 
   useEffect(() => {

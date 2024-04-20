@@ -63,7 +63,10 @@ const LoginScreen = props => {
       const response = await login(email, password);
       // const response = await login('userTwo', 'userTwo@123');
       console.log(response, 'login api response')
-     
+      await Local.storeLogin('token', response.token);
+      await Local.storeUserId('UserId', `${response.user?.id}`);
+
+      navigation.replace('home');
       if (response.message = "Admin user created successfully") {
         await Local.storeLogin('token', response.token);
         await Local.storeUserId('UserId', `${response.user?.id}`);

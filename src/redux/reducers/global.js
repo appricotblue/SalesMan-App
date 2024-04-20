@@ -18,7 +18,8 @@ const INITAL_STATE = {
   returnorder: [],
   deliveries: [],
   orderdetails: {},
-  filterorder: []
+  filterorder: [],
+  locationlist:[]
 };
 export default (state = INITAL_STATE, action) => {
   switch (action.type) {
@@ -57,7 +58,9 @@ export default (state = INITAL_STATE, action) => {
     case 'SET_SHOPITEMS':
       return { ...state, searchshopitems: action.payload, error: null };
     case 'SET_FILTERORDERS':
-      return { ...state, filterorder: action.payload, error: null };
+      return { ...state, filterorder: action.payload, error: null }; 
+    case 'SET_LOCATIONLIST':
+      return { ...state, locationlist: action.payload, error: null };
     default:
       return state;
   }

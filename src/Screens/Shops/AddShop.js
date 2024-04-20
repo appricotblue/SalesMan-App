@@ -18,27 +18,32 @@ import CommonButton from '../../components/CommonButton';
 import CustomSelectionBox from '../../components/CustomSelectionBox';
 import Geolocation from '@react-native-community/geolocation';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { createShopAPI } from '../../api';
+import { createShopAPI, getLocationList } from '../../api';
 import Local from '../../Storage/Local';
 import axios from "axios";
+import { useDispatch, useSelector } from 'react-redux';
+import { setOrders, setItems, setLocationList, setDeliveries } from '../../redux/action';
+
 
 
 const AddShop = ({ navigation: { navigate } }) => {
     const [shopName, setShopName] = useState('');
+    const [shopCode, setShopCode] = useState('');
+    const [checkshopCode, changecheckShopCode] = useState('');
     const [checkshopName, changecheckshopName] = useState('');
     const [shopAddress, setShopAddress] = useState('');
     const [checkshopAddress, changeshopAddress] = useState('');
-    const [location, setlocation] = useState({ id: '', name: 'Select' });
+    const [location, setlocation] = useState({ id: '', LocationName: 'Select' });
     const [contactNumber, setContactNumber] = useState('');
     const [checkcontactNumber, changecontactNumber] = useState('');
-
+    const { orders, locationlist, loading, error } = useSelector((state) => state.global);
     const [email, setEmail] = useState('');
     const [checkEmail, changecheckEmail] = useState('');
     const [locationData, setLocationData] = useState(null);
     const [latitude, setlattitude] = useState('');
     const [longitude, setlongitude] = useState('');
     const [images, setImages] = useState([]);
-
+    const dispatch = useDispatch();
     const [UserId, setUserId] = useState(null);
     const [categories, setCategories] = useState([{ id: 1, name: 'Kakkanad' }, { id: 2, name: 'Kakkanad express' }]);
     // const [categories, setCategories] = useState({ id: '', status: 'Select' });
@@ -60,9 +65,9 @@ const AddShop = ({ navigation: { navigate } }) => {
         else if (location?.id == '') {
             Alert.alert('Error', 'Please select location');
         }
-        else if (latitude || longitude == '') {
-            Alert.alert('Error', 'Please select location');
-        }
+            // else if (latitude || longitude == '') {
+            //     Alert.alert('Error', 'Please select location');
+            // }
         else if (email === '') {
             changecheckEmail('Please enter Email id');
         } else if (!emailFormat.test(email)) {
@@ -84,6 +89,7 @@ const AddShop = ({ navigation: { navigate } }) => {
                 const delay = 2000; // Delay in milliseconds
                 console.log(userid, 'userid ?')
                 setUserId(userid)
+                GetLocationList()
                 // await GetOrders(userid, 'Orders', 1);
             } catch (error) {
                 console.error('Error checking token:', error);
@@ -93,6 +99,17 @@ const AddShop = ({ navigation: { navigate } }) => {
 
         checkToken();
     }, []);
+
+    const GetLocationList = async () => {
+        try {
+            const response = await getLocationList();
+            console.log(response.locations, 'locationsss')
+            dispatch(setLocationList(response?.locations));
+        } catch (error) {
+            console.log(error)
+        }
+    };
+
 
     const handleCreateShop = async () => {
         const formData = new FormData();
@@ -249,16 +266,34 @@ const AddShop = ({ navigation: { navigate } }) => {
                     errorText={checkshopName}
                     onChangeText={text => {
                         setShopName(text);
+
                         changecheckshopName('');
                     }}
                     value={shopName}
                 />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: width * .9 }}>
+                    <CustomTextInput
+                        title={'Shop Code'}
+                        placeholder="Enter shop code"
+                        errorText={checkshopCode}
+                        inputwidth={width * .4}
+                        onChangeText={text => {
+                            setShopCode(text);
+                            changecheckShopCode('');
+                        }}
+                        value={shopCode}
+                    />
+                    <View style={{ width: width * .4, backgroundColor: '#CCE1ED', height: 40, justifyContent: 'center', alignItems: 'center', marginTop: 25, borderRadius: 10 }}>
+                        <Text>0</Text>
+                    </View>
+                </View>
+
                 <CustomSelectionBox
                     title={'Location'}
-                    value={location ? location.name : 'Select'}
-                    options={categories}
+                    value={location ? location?.LocationName : 'Select'}
+                    options={locationlist}
                     onSelect={handleorderSelect}
-                    displayProperty="name"
+                    displayProperty="LocationName"
                 />
                 {/* <CustomSelectionBox
                     title={'Location'}

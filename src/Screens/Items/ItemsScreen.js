@@ -150,16 +150,6 @@ const ItemsScreen = ({navigation: {navigate}}) => {
       GetItems(); 
     };
   
-    // const handleSearchSubmit = async () => {
-    //   try {
-    //     // Trigger API call with searchValue
-    //     const results = await getSearchResults(searchValue);
-    //     setSearchResults(results); // Update search results state with API response
-    //   } catch (error) {
-    //     console.error('Error fetching search results:', error);
-    //   }
-    // };
-
 
     const handleSearchSubmit = async () => {
 

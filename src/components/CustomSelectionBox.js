@@ -1,6 +1,6 @@
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
-import { height, width } from '../Theme/Constants';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { height } from '../Theme/Constants';
 
 function CustomSelectionBox({
   title,
@@ -15,26 +15,10 @@ function CustomSelectionBox({
 }) {
   const [showOptions, setShowOptions] = useState(false);
 
-  // const handleSelectOption = option => {
-  //   console.log(option, 'selectiom')
-  //   onSelect(option);
-  //   setShowOptions(false);
-  //   console.log(option,'==========')
-  // };
-  // const handleSelectOption = option => {
-  //   console.log(option, 'selectiom')
-  //   onSelect(option); // Pass the entire shop object
-  //   setShowOptions(false);
-  //   console.log(option,'==========')
-  // };
-
-
   const handleSelectOption = shop => {
-    onSelect(shop); // Pass the entire shop object to onSelect
+    onSelect(shop);
     setShowOptions(false);
-    console.log(shop, '==========')
   };
-
 
   return (
     <View style={styles.container}>
@@ -55,12 +39,12 @@ function CustomSelectionBox({
       </TouchableOpacity>
       {showOptions && (
         <View style={styles.optionsContainer}>
-            {options.map(shop => (
+          {options.map(shop => (
             <TouchableOpacity
               key={shop?.id}
               style={styles.option}
               onPress={() => handleSelectOption(shop)}>
-              <Text>{shop[displayProperty]}</Text>
+              <Text style={{ color: 'black' }}>{shop[displayProperty]}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -76,12 +60,11 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: 5,
     fontWeight: 'bold',
-    color:'black'
+    color: 'black',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    // backgroundColor: 'red',
     borderWidth: 1,
     borderColor: 'grey',
     borderRadius: 10,
@@ -90,13 +73,12 @@ const styles = StyleSheet.create({
   inputStyle: {
     flex: 1,
     height: height * 0.05,
-    color:'black'
-   
+    color: 'black',
   },
   dropdownIcon: {
     fontSize: 16,
     marginLeft: 5,
-    color:'black'
+    color: 'black',
   },
   optionsContainer: {
     position: 'absolute',
@@ -114,14 +96,8 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: 'lightgrey',
-    backgroundColor:'pink',
-
+    // backgroundColor: 'pink',
   },
-  optionText:{
-    fontSize:20,
-    color:'black',
-
-  }
 });
 
 export default CustomSelectionBox;

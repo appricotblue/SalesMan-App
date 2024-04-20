@@ -9,9 +9,11 @@ const HTTP_REQUEST = axios.create({
 // export const login = async (PAYLOAD) => HTTP_REQUEST.get("admin/admin/singup",PAYLOAD);
 export const login = async (username, password) => {
   try {
+    console.log(env_dev + '/user/userlogin')
     const response = await HTTP_REQUEST.post("/user/userlogin", { username, password });
     return response.data;
   } catch (error) {
+    console.log(error, 'tesrr')
     throw error;
   }
 };
@@ -163,6 +165,15 @@ export const getShopItems = async () => {
   }
 };
 
+
+export const getLocationList = async () => {
+  try {
+    const response = await HTTP_REQUEST.get(`/user/getLocation`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 
 

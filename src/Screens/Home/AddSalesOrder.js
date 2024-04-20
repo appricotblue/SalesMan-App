@@ -410,16 +410,20 @@ const AddSalesOrder = () => {
                         keyExtractor={item => item?.id}
                     />
                 </View>
-                <View style={{ width: width * .9, alignSelf: 'center', marginTop: 0, paddingBottom: 20, height: height * .8, }}>
-                    <View style={{ width: width * .9, justifyContent: 'space-between', flexDirection: 'row' }}>
+                <View style={{
+                    width: width * 1, alignSelf: 'center', marginTop: 5, paddingBottom: 20, height: height * .8, backgroundColor: 'white',
+
+
+                    shadowColor: '#000',
+                    shadowOpacity: 0.2,
+                    shadowRadius: 4,
+                    elevation: 5,
+                }}>
+                    <View style={{ width: width * .9, justifyContent: 'space-between', flexDirection: 'row', alignSelf: 'center' }}>
                         <Text style={styles.subtitle}>Total Amount</Text>
                         <Text style={[styles.title, { color: 'black' }]}>₹{totalAmount}</Text>
                     </View>
-                    {/* <View style={styles.totalview}>
-                        <Text style={[styles.subtitle, { color: '#117C00' }]}>Your Earnings</Text>
-                        <Text style={[styles.title, { color: '#117C00' }]}>₹6200</Text>
 
-                    </View> */}
                     <View style={styles.btnview}>
                         <CommonButton
                             onPress={() => ''}
@@ -536,7 +540,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    btnview: { width: width * .9, marginTop: 1, flexDirection: 'row', padding: 2, justifyContent: 'space-between' },
+    btnview: {
+        width: width * .9,
+        marginTop: 1,
+        flexDirection: 'row',
+        padding: 2,
+        justifyContent: 'space-between',
+        alignSelf: 'center'
+
+
+    },
 
     image: { width: 132, height: 132, borderRadius: 70 },
     title: { color: 'black', fontSize: 16, fontFamily: 'Inter-Regular' },
