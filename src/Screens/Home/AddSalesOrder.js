@@ -27,6 +27,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setStatus, setShopList, setShopItems } from '../../redux/action';
 import { getOrderStatus, getShopLists, getShopItems, getItemSearch } from '../../api';
 import Local from '../../Storage/Local';
+import { env_dev } from "../../env/Dev";
+import moment from 'moment';
+
 
 
 
@@ -60,6 +63,7 @@ const AddSalesOrder = () => {
     const [totalAmount, setTotalAmount] = useState(0);
     const [selectedShop, setSelectedShop] = useState({ id: '', shopname: 'Select' });
     const [UserId, setUserId] = useState(null);
+    const [selectedItemId, setSelectedItemId] = useState(null);
 
     useEffect(() => {
         const checkToken = async () => {
@@ -224,7 +228,7 @@ const AddSalesOrder = () => {
             };
             console.log(requestBody, 'gettt')
 
-            const response = await fetch(`http://64.227.139.72:8000/user/createorder/${UserId}`, {
+            const response = await fetch(env_dev + `/user/createorder/${UserId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -274,7 +278,9 @@ const AddSalesOrder = () => {
                             />
 
                         </View>
-                        <TouchableOpacity style={styles.addButton} onPress={() => {
+                        <TouchableOpacity
+                            style={styles.addButton}
+                            onPress={() => {
                             const filteredItems = selectedItems.filter((selectedItem) => selectedItem?.id !== item?.id);
                             setSelectedItems(filteredItems);
                             handleDeleteItem(item?.id)
@@ -344,6 +350,7 @@ const AddSalesOrder = () => {
                         <View style={styles.fromView}>
                             <CustomSelectionBox
                                 title={'Order Type'}
+                                isRequired={true}
                                 value={location ? location.name : 'Select'}
                                 options={categories}
                                 onSelect={handleorderSelect}
@@ -351,7 +358,7 @@ const AddSalesOrder = () => {
                             />
                         </View>
                         <View style={styles.toView}>
-                            <Text style={styles.toText}>Delivery Date</Text>
+                            <Text style={styles.toText}>Delivery Date <Text style={styles.requiredText}>*</Text></Text>
                             <Calander date={toDate} onPress={() => onShowFromCalander()} />
                         </View>
                     </View>
@@ -359,6 +366,7 @@ const AddSalesOrder = () => {
                         <View style={styles.fromView}>
                             <CustomTextInput
                                 title={'Order No'}
+                                isRequired={true}
                                 placeholder="Enter Order No"
                                 errorText={checkshopName}
                                 inputwidth={width * .35}
@@ -372,6 +380,7 @@ const AddSalesOrder = () => {
                         <View style={styles.toView}>
                             <CustomSelectionBox
                                 title={'Status'}
+                                isRequired={true}
                                 value={selectStatus ? selectStatus.status : 'Select'}
                                 options={status}
                                 onSelect={handleStatusSelect}
@@ -382,12 +391,13 @@ const AddSalesOrder = () => {
 
                     <CustomSelectionBox
                         title={'Select shop'}
+                        isRequired={true}
                         value={selectedShop ? selectedShop.shopname : 'Select'}
                         options={shops}
                         onSelect={handleShopSelect}
                         displayProperty="shopname" // Specify the property to display as shop name
                     />
-                    <Text style={styles.subtitle}>Select Item</Text>
+                    <Text style={styles.subtitle}>Select Item<Text style={styles.requiredText}>*</Text></Text>
                     <View
                         style={{
                             width: width * 0.9,
@@ -446,12 +456,14 @@ const AddSalesOrder = () => {
             <DateTimePickerModal
                 isVisible={isFromDatePickerVisible}
                 mode="date"
+                minimumDate={moment().toDate()}
                 onConfirm={handleFromConfirm}
                 onCancel={onCloseFromCalander}
             />
             <DateTimePickerModal
                 isVisible={isDatePickerVisible}
                 mode="date"
+                minimumDate={moment().toDate()}
                 onConfirm={handleConfirm}
                 onCancel={onCloseCalander}
             />
@@ -501,11 +513,17 @@ const AddSalesOrder = () => {
                                             />
 
                                         </View>
-                                        <TouchableOpacity style={styles.addButton} onPress={() => {
+                                        <TouchableOpacity
+                                            style={[
+                                                styles.addButton,
+                                                { backgroundColor: selectedItemId === item.id ? 'green' : '#005A8D' }
+                                            ]}
+                                            onPress={() => {
                                             handleAddItem,
                                                 setSelectedItem(item)
+                                                setSelectedItemId(item.id)
                                         }}>
-                                            <Text style={{ color: 'white', fontSize: 16 }}>Select</Text>
+                                            <Text style={{ color: 'white', fontSize: 14 }}>{selectedItemId === item.id ? 'Selected' : 'Select'}</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -695,7 +713,11 @@ const styles = StyleSheet.create({
         left: 2,
         width: '90%',
         minHeight: 50,
-    }
+    },
+    requiredText: {
+        color: 'red',
+        marginLeft: 5,
+    },
 });
 
 export default AddSalesOrder;

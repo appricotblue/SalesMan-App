@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setShops, setShopDetails, setShoporder } from '../../redux/action';
 import { useIsFocused } from '@react-navigation/native';
 
+
 const Data = [
   {
     id: 0,
@@ -129,7 +130,10 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
   const { shops, shopdetails, loading, error } = useSelector((state) => state.global);
   const [currentPage, setCurrentPage] = useState(1); // Initial page for pagination
   const [pageSize, setPagesize] = useState(0);
-
+  const [position, setPosition] = useState({
+    latitude: '',
+    longitude: ''
+  })
 
   const onShopPress = (shopid) => {
     GetShopDetails(shopid)
@@ -235,6 +239,7 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
     }
   };
   const GetShopDetails = async (shopid) => {
+    console.log(shopid, '')
     try {
       const response = await getShopDetails(shopid);
       console.log(response.ordersWithItems, 'shop details api response')
@@ -321,7 +326,7 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
       />
 
       <View style={styles.OrderButton}>
-        <HomeOrderButton onpress={() => navigation.navigate('AddShop')} title={'Add Shop'} />
+        <HomeOrderButton onpress={() => navigation.navigate('AddShop', { locationdata: position })} title={'Add Shop'} />
       </View>
     </SafeAreaView>
   );

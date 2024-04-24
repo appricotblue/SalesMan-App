@@ -14,6 +14,7 @@ import AddReturnOrder from '../Screens/Return/AddReturnOrder';
 import AddSalesOrder from '../Screens/Home/AddSalesOrder';
 import LocationScreen from '../Screens/Shops/LocationScreen';
 import OrderFilterScreen from '../Screens/Home/OrderFilterScreen';
+import InvoiceScreen from '../Screens/Home/InvoiceScreen';
 
 
 const Stack = createStackNavigator();
@@ -38,6 +39,7 @@ const HomeStack = () => {
       <Stack.Screen name="AddSalesOrder" component={AddSalesOrder} />
       <Stack.Screen name="LocationScreen" component={LocationScreen} />
       <Stack.Screen name="OrderFilterScreen" component={OrderFilterScreen} />
+      <Stack.Screen name="InvoiceScreen" component={InvoiceScreen} />
     </Stack.Navigator>
   );
 };

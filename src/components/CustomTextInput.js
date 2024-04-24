@@ -11,7 +11,8 @@ function CustomTextInput({
   placeholderTextColor,
   errorText,
   multiline,
-  inputwidth = width * 0.9
+  inputwidth = width * 0.9,
+  isRequired = false
 }) {
   return (
     <View style={[styles.container,   {
@@ -20,13 +21,18 @@ function CustomTextInput({
         : height / 28,
       justifyContent: multiline ? 'flex-start' : 'center',
     },]}>
-      <Text style={styles.title}>{title}</Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>{title}</Text>
+        {isRequired && <Text style={styles.requiredText}>*</Text>}
+      </View>
+
       <TextInput
         style={[styles.inputStyle, { width: inputwidth }, errorText != '' && styles.errorInput,
         {
           minHeight: multiline
             ? height / 8
             : height / 28,
+          color: 'black',
           justifyContent: multiline ? 'flex-start' : 'center',
         },]}
         onChangeText={text => onChangeText(text)}
@@ -72,6 +78,15 @@ const styles = StyleSheet.create({
     shadowColor: 'trasnparant',
     borderWidth: 1,
     borderColor: '#ff6666',
+  },
+  requiredText: {
+    color: 'red',
+    marginLeft: 5,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
   },
 });
 

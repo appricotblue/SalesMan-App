@@ -23,10 +23,15 @@ import Local from '../../Storage/Local';
 import axios from "axios";
 import { useDispatch, useSelector } from 'react-redux';
 import { setOrders, setItems, setLocationList, setDeliveries } from '../../redux/action';
+import { env_dev } from "../../env/Dev";
+import { useRoute } from '@react-navigation/native';
+
+
 
 
 
 const AddShop = ({ navigation: { navigate } }) => {
+    const route = useRoute();
     const [shopName, setShopName] = useState('');
     const [shopCode, setShopCode] = useState('');
     const [checkshopCode, changecheckShopCode] = useState('');
@@ -46,6 +51,13 @@ const AddShop = ({ navigation: { navigate } }) => {
     const dispatch = useDispatch();
     const [UserId, setUserId] = useState(null);
     const [categories, setCategories] = useState([{ id: 1, name: 'Kakkanad' }, { id: 2, name: 'Kakkanad express' }]);
+    const [selectedLocation, setSelectedLocation] = useState(null);
+    const { locationdata } = route.params;
+
+    // Now you can use locationdata.latitude and locationdata.longitude
+    // const loclatitude = locationdata?.latitude;
+    // const loclongitude = locationdata?.longitude;
+
     // const [categories, setCategories] = useState({ id: '', status: 'Select' });
     const handleorderSelect = async (item) => {
         await setlocation(item);
@@ -62,12 +74,19 @@ const AddShop = ({ navigation: { navigate } }) => {
         else if (contactNumber == '') {
             changecontactNumber('Please enter contactNumber');
         }
+        else if (contactNumber?.length != 10) {
+            changecontactNumber('Please enter  valid contactNumber');
+        }
+
         else if (location?.id == '') {
             Alert.alert('Error', 'Please select location');
         }
-            // else if (latitude || longitude == '') {
-            //     Alert.alert('Error', 'Please select location');
-            // }
+        else if (locationdata?.latitude == '') {
+            Alert.alert('Error', 'Please select location');
+        }
+        else if (locationdata?.longitude == '') {
+            Alert.alert('Error', 'Please select location');
+        }
         else if (email === '') {
             changecheckEmail('Please enter Email id');
         } else if (!emailFormat.test(email)) {
@@ -81,13 +100,19 @@ const AddShop = ({ navigation: { navigate } }) => {
     const onSave = () => {
         navigate('Home');
     };
+    // useEffect(() => {
+    //     const { data } = route.params;
+    //     console.log(' movies?', data)
+
+    //     setSelectedLocation(data)
+    // }, []);
 
     useEffect(() => {
         const checkToken = async () => {
             try {
                 const userid = await Local.getUserId();
                 const delay = 2000; // Delay in milliseconds
-                console.log(userid, 'userid ?')
+                console.log(userid, 'userid ?', locationdata?.latitude)
                 setUserId(userid)
                 GetLocationList()
                 // await GetOrders(userid, 'Orders', 1);
@@ -114,25 +139,26 @@ const AddShop = ({ navigation: { navigate } }) => {
     const handleCreateShop = async () => {
         const formData = new FormData();
         formData.append('shopname', shopName);
-        formData.append('location', location?.name);
+        formData.append('location', location?.LocationName);
         formData.append('address', shopAddress);
         formData.append('emailId', email);
         formData.append('contectnumber', contactNumber);
-        formData.append('locationCode', JSON.stringify({ latitude: latitude, longitude: longitude }));
-
+        formData.append('locationCode', JSON.stringify({ latitude: locationdata?.latitude, longitude: locationdata?.longitude }));
+        formData.append('shopCode', shopCode);
+        formData.append('availability', true);
         // Append each image from the images array to FormData
         images.forEach((imageUri, index) => {
             const imageFile = {
                 uri: imageUri,
-                name: `image_${index}.jpg`, // Use a unique name for each image
+                name: `image_${index}.jpg`, 
                 type: 'image/jpeg',
             };
-            formData.append(`shopImage_${index}`, imageFile);
+            formData.append(`shopImage`, imageFile);
         });
         console.log(formData, 'form data')
         try {
             const response = await axios.post(
-                `http://64.227.139.72:8000/user/createshop/${UserId}`,
+                env_dev + `/user/createshop/${UserId}`,
                 formData,
                 {
                     headers: {
@@ -140,7 +166,7 @@ const AddShop = ({ navigation: { navigate } }) => {
                     },
                 }
             );
-            console.log('Shop created successfully:', response);
+            console.log('Shop created successfully:', response, formData);
             navigate('shops')
         } catch (error) {
             console.error('Error creating shop:', error);
@@ -196,7 +222,7 @@ const AddShop = ({ navigation: { navigate } }) => {
                 setlattitude(latitude)
                 setlongitude(longitude)
                 console.log(latitude, longitude, 'locations ')
-                // navigate('LocationScreen', { data: { latitude: lattitude, longitude: longitude } })
+                navigate('LocationScreen', { data: { latitude: latitude, longitude: longitude } })
             },
             error => console.log('Error getting location: ' + error.message),
             { enableHighAccuracy: true, timeout: 10000, maximumAge: 1000 },
@@ -263,6 +289,7 @@ const AddShop = ({ navigation: { navigate } }) => {
                 <CustomTextInput
                     title={'Name Of Shop'}
                     placeholder="Enter shop name"
+                    isRequired={true}
                     errorText={checkshopName}
                     onChangeText={text => {
                         setShopName(text);
@@ -275,6 +302,7 @@ const AddShop = ({ navigation: { navigate } }) => {
                     <CustomTextInput
                         title={'Shop Code'}
                         placeholder="Enter shop code"
+                        isRequired={true}
                         errorText={checkshopCode}
                         inputwidth={width * .4}
                         onChangeText={text => {
@@ -283,13 +311,14 @@ const AddShop = ({ navigation: { navigate } }) => {
                         }}
                         value={shopCode}
                     />
-                    <View style={{ width: width * .4, backgroundColor: '#CCE1ED', height: 40, justifyContent: 'center', alignItems: 'center', marginTop: 25, borderRadius: 10 }}>
+                    <View style={{ width: width * .4, backgroundColor: '#CCE1ED', height: height / 20, justifyContent: 'center', alignItems: 'center', marginTop: 25, borderRadius: 10 }}>
                         <Text>0</Text>
                     </View>
                 </View>
 
                 <CustomSelectionBox
                     title={'Location'}
+                    isRequired={true}
                     value={location ? location?.LocationName : 'Select'}
                     options={locationlist}
                     onSelect={handleorderSelect}
@@ -305,6 +334,7 @@ const AddShop = ({ navigation: { navigate } }) => {
                     title={'Address'}
                     placeholder="Address"
                     errorText={checkshopAddress}
+                    isRequired={true}
                     multiline={true}
                     onChangeText={text => {
                         setShopAddress(text);
@@ -316,7 +346,7 @@ const AddShop = ({ navigation: { navigate } }) => {
                 />
                 <View >
                     <Text style={styles.locationText}>
-                        Add Location
+                        Add Location <Text style={styles.requiredText}>*</Text>
                     </Text>
                     <TouchableOpacity
 
@@ -324,7 +354,7 @@ const AddShop = ({ navigation: { navigate } }) => {
                         onPress={() => requestLocationPermission()}
                         style={styles.locationButton}>
                         <Text style={styles.selectLocationText}>
-                            Select Location
+                            {locationdata?.latitude ? locationdata?.latitude + ',' + locationdata?.longitude : 'Select Location'}  
                         </Text>
                     </TouchableOpacity>
 
@@ -333,6 +363,7 @@ const AddShop = ({ navigation: { navigate } }) => {
                     title={'Contact Number'}
                     placeholder="Contact Number"
                     errorText={checkcontactNumber}
+                    isRequired={true}
                     onChangeText={text => {
                         setContactNumber(text);
                         changecontactNumber('')
@@ -345,6 +376,7 @@ const AddShop = ({ navigation: { navigate } }) => {
                     title={'Email ID'}
                     placeholder="Email ID"
                     errorText={checkEmail}
+                    isRequired={true}
                     onChangeText={text => {
                         setEmail(text);
                         changecheckEmail('');
@@ -486,6 +518,10 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: 'bold',
         color: '#ccc',
+    },
+    requiredText: {
+        color: 'red',
+        marginLeft: 5,
     },
 });
 

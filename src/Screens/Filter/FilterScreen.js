@@ -1,4 +1,4 @@
-import { View, Text, Modal, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, StyleSheet, Alert, StatusBar } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import {height, width} from '../../Theme/Constants';
 import CommonButton from '../../components/CommonButton';
@@ -59,7 +59,7 @@ function FilterScreen() {
     try {
       const response = await getOrderbyShopDate(selectedShop?.shopname, fromDate, toDate);
       console.log(response, 'filter api response')
-      setFilterOrder(response?.shop)
+      dispatch(setFilterOrder(response?.OrdersShops))
       if (response.message = "Getting Orders data Successfully") {
         // dispatch(setOrders(response));
         navigation.navigate('OrderFilterScreen')
@@ -162,9 +162,11 @@ function FilterScreen() {
   };
 
   return (
+
     <View style={styles.modalContainer}>
+      <StatusBar />
       <View style={styles.modalStyle}>
-        <View>
+        <View style={{ marginTop: 25 }}> 
           <Text style={styles.text}>Filter by Shop</Text>
         </View>
 

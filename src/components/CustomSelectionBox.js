@@ -11,7 +11,8 @@ function CustomSelectionBox({
   placeholderTextColor,
   onSelect,
   options,
-  displayProperty
+  displayProperty,
+  isRequired = false
 }) {
   const [showOptions, setShowOptions] = useState(false);
 
@@ -22,7 +23,12 @@ function CustomSelectionBox({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
+      {/* <Text style={styles.title}>{title}</Text> */}
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>{title}</Text>
+        {isRequired && <Text style={styles.requiredText}>*</Text>}
+      </View>
+
       <TouchableOpacity
         style={styles.inputContainer}
         onPress={() => setShowOptions(!showOptions)}>
@@ -96,7 +102,16 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: 'lightgrey',
-    // backgroundColor: 'pink',
+    backgroundColor: 'pink',
+  },
+  requiredText: {
+    color: 'red',
+    marginLeft: 5,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
   },
 });
 

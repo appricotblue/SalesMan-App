@@ -58,6 +58,7 @@ export default (state = INITAL_STATE, action) => {
     case 'SET_SHOPITEMS':
       return { ...state, searchshopitems: action.payload, error: null };
     case 'SET_FILTERORDERS':
+      console.log(action.payload, 'filter data')
       return { ...state, filterorder: action.payload, error: null }; 
     case 'SET_LOCATIONLIST':
       return { ...state, locationlist: action.payload, error: null };

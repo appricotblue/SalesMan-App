@@ -27,6 +27,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setStatus, setShopList, setShopItems } from '../../redux/action';
 import { getOrderStatus, getShopLists, getShopItems, getItemSearch } from '../../api';
 import Local from '../../Storage/Local';
+import moment from 'moment';
+import { env_dev } from "../../env/Dev";
+
 
 
 const AddReturnOrder = () => {
@@ -57,6 +60,9 @@ const AddReturnOrder = () => {
     const [totalAmount, setTotalAmount] = useState(0);
     const [selectedShop, setSelectedShop] = useState({ id: '', shopname: 'Select' });
     const [UserId, setUserId] = useState(null);
+    const [selectedItemId, setSelectedItemId] = useState(null);
+
+
 
     useEffect(() => {
         const checkToken = async () => {
@@ -221,7 +227,7 @@ const AddReturnOrder = () => {
             };
             console.log(requestBody, 'gettt')
 
-            const response = await fetch(`http://64.227.139.72:8000/user/createReturnOrder/${UserId}`, {
+            const response = await fetch(env_dev + `/user/createReturnOrder/${UserId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -230,6 +236,7 @@ const AddReturnOrder = () => {
             });
             const data = await response.json();
             console.log('Order created:', data);
+            navigation.navigate('Return')
             if (data.message == 'Return order created successfully') {
                 navigation.navigate('Return')
             }
@@ -340,6 +347,7 @@ const AddReturnOrder = () => {
                         <View style={styles.fromView}>
                             <CustomSelectionBox
                                 title={'Order Type'}
+                                isRequired={true}
                                 value={location ? location.name : 'Select'}
                                 options={categories}
                                 onSelect={handleorderSelect}
@@ -347,7 +355,7 @@ const AddReturnOrder = () => {
                             />
                         </View>
                         <View style={styles.toView}>
-                            <Text style={styles.toText}>Delivery Date</Text>
+                            <Text style={styles.toText}>Delivery Date <Text style={styles.requiredText}>*</Text></Text>
                             <Calander date={toDate} onPress={() => onShowFromCalander()} />
                         </View>
                     </View>
@@ -355,6 +363,7 @@ const AddReturnOrder = () => {
                         <View style={styles.fromView}>
                             <CustomTextInput
                                 title={'Order No'}
+                                isRequired={true}
                                 placeholder="Enter Order No"
                                 errorText={checkshopName}
                                 inputwidth={width * .35}
@@ -368,6 +377,7 @@ const AddReturnOrder = () => {
                         <View style={styles.toView}>
                             <CustomSelectionBox
                                 title={'Status'}
+                                isRequired={true}
                                 value={selectStatus ? selectStatus.status : 'Select'}
                                 options={status}
                                 onSelect={handleStatusSelect}
@@ -378,12 +388,13 @@ const AddReturnOrder = () => {
 
                     <CustomSelectionBox
                         title={'Select shop'}
+                        isRequired={true}
                         value={selectedShop ? selectedShop.shopname : 'Select'}
                         options={shops}
                         onSelect={handleShopSelect}
                         displayProperty="shopname" // Specify the property to display as shop name
                     />
-                    <Text style={styles.subtitle}>Select Item</Text>
+                    <Text style={styles.subtitle}>Select Item <Text style={styles.requiredText}>*</Text></Text>
                     <View
                         style={{
                             width: width * 0.9,
@@ -438,12 +449,14 @@ const AddReturnOrder = () => {
             <DateTimePickerModal
                 isVisible={isFromDatePickerVisible}
                 mode="date"
+                minimumDate={moment().toDate()}
                 onConfirm={handleFromConfirm}
                 onCancel={onCloseFromCalander}
             />
             <DateTimePickerModal
                 isVisible={isDatePickerVisible}
                 mode="date"
+                minimumDate={moment().toDate()}
                 onConfirm={handleConfirm}
                 onCancel={onCloseCalander}
             />
@@ -458,7 +471,7 @@ const AddReturnOrder = () => {
                 }}
             >
                 <View style={styles.modalContainer}>
-                    <Text style={styles.modalTitle}>Add Item</Text>
+                    <Text style={styles.modalTitle}>Add Item </Text>
                     <FlatList
                         data={searchshopitems}
                         // data={selectedItems} // Display only the selected item
@@ -467,7 +480,7 @@ const AddReturnOrder = () => {
                                 <View style={styles.imageContainer}>
                                     <Image
                                         source={{ uri: item?.image }}
-                                        style={{ height: 70, width: 72, resizeMode: 'stretch' }}
+                                        style={{ height: '100%', width: '100%', resizeMode: 'stretch' }}
                                     />
                                 </View>
                                 <View>
@@ -493,11 +506,17 @@ const AddReturnOrder = () => {
                                             />
 
                                         </View>
-                                        <TouchableOpacity style={styles.addButton} onPress={() => {
+                                        <TouchableOpacity
+                                            style={[
+                                                styles.addButton,
+                                                { backgroundColor: selectedItemId === item.id ? 'green' : '#005A8D' }
+                                            ]}
+                                            onPress={() => {
                                             handleAddItem,
                                                 setSelectedItem(item)
+                                                setSelectedItemId(item.id)
                                         }}>
-                                            <Text style={{ color: 'white', fontSize: 16 }}>Select</Text>
+                                            <Text style={{ color: 'white', fontSize: 16 }}>{selectedItemId === item.id ? 'Selected' : 'Select'}</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -678,7 +697,11 @@ const styles = StyleSheet.create({
         left: 2,
         width: '90%',
         minHeight: 50,
-    }
+    },
+    requiredText: {
+        color: 'red',
+        marginLeft: 5,
+    },
 });
 
 export default AddReturnOrder;

@@ -131,7 +131,7 @@ const OrderDetails = () => {
         </View>
       </ScrollView>
 
-        <View style={{ width: width * .9, alignSelf: 'center', marginTop: 5, paddingBottom: 20, marginBottom: 55, }}>
+        <View style={{ width: width * .9, alignSelf: 'center', marginTop: 5, paddingBottom: 20, marginBottom: 100, }}>
         <View style={{width:width*.9,marginTop:10,justifyContent:'space-between',flexDirection:'row'}}>
         <Text style={styles.subtitle}>Total Invoice Amount</Text>
             <Text style={[styles.title,{color:'black'}]}>₹{orderdetails.totalAmount}</Text>
@@ -143,13 +143,29 @@ const OrderDetails = () => {
           
         </View>
         
-        <CommonButton
+          {/* <CommonButton
         onPress={() => navigation.navigate('EditOrder')}
         color={'white'}
         title={'Edit Order'}
         width={width * 0.9}
         texttitle={'#005A8D'}
-      />
+      /> */}
+          <View style={styles.btnview}>
+            <CommonButton
+              onPress={() => navigation.navigate('EditOrder')}
+              color={'white'}
+              title={'Edit Order'}
+              width={width * 0.4}
+              texttitle={'#005A8D'}
+            />
+            <CommonButton
+              onPress={() => navigation.navigate('InvoiceScreen')}
+              color={'white'}
+              title={'View Invoice'}
+              width={width * 0.4}
+              texttitle={'#005A8D'}
+            />
+          </View>
 
  </View>
       </View>
@@ -219,7 +235,7 @@ const styles = StyleSheet.create({
   height20: {
     height: 20,
   },
-
+  btnview: { width: width * .9, marginTop: 1, flexDirection: 'row', padding: 2, justifyContent: 'space-between' },
   flatlistview:{
     width:width*.9,
     alignSelf:'center',

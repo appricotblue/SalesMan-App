@@ -138,8 +138,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: width * 0.42,
-    height: height * 0.12,
+    width: width * 0.40,
+    height: height * 0.10,
   },
   logoview: {
     width: width * 0.5,

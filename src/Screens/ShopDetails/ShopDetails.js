@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  StatusBar
 } from 'react-native';
 import {height, width} from '../../Theme/Constants';
 import CustomSearch from '../../components/CustomSearch';
@@ -102,6 +103,7 @@ const Data = [
 
 function ShopDetails({ navigation: { navigate } }) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [image, setImage] = useState('');
   const { shoporders, shopdetails, loading, error } = useSelector((state) => state.global);
   const [data, setData] = useState([
     {
@@ -121,13 +123,32 @@ function ShopDetails({ navigation: { navigate } }) {
   };
 
   useEffect(() => {
-    console.log(shoporders, 'kkk')
+    const fetchData = async () => {
+      console.log(shoporders, shopdetails, 'kkk', shopdetails?.shopImage[0].url)
+      const imageUrl = shopdetails?.shopImage[1]?.url; // Accessing URL safely
+      const uriString = imageUrl ? String(imageUrl) : '';
+      await setImage(uriString)
+      console.log(image, 'here image')
+    }
+    fetchData();
+    // convertUrlToImage()
   }, [])
   
   const formatDate = (dateTimeString) => {
     const dateObject = new Date(dateTimeString); // Create a Date object from the dateTimeString
     const formattedDate = dateObject.toLocaleDateString(); // Format date using toLocaleDateString()
     return formattedDate;
+  };
+
+  const convertUrlToImage = (images) => {
+    const responseString = shopdetails?.shopImage;
+    // const urls = responseString?.split(",");
+    const urls = responseString.map(item => {
+      return item.url.replace(/"/g, ''); // Remove all double quotes from the URL
+    });
+    console.log(urls, 'here')
+    // Update state with cleaned URLs
+    setData(urls);
   };
 
   const _renderItems = ({item}) => {
@@ -153,11 +174,14 @@ function ShopDetails({ navigation: { navigate } }) {
 
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#6a51ae" />
       <Header title={'Shop Details'} isBackArrow={true} />
+
       <View style={styles.subContainer}>
         <View style={styles.imageContainer}>
           <Image
-            source={{ uri: shopdetails.shopImage }}
+            // source={{ uri: 'http://salesman.aindriya.co.in/shopImage/original/dress.jpg' }}
+            source={{ uri: shopdetails?.shopImage[0]?.url }}
             style={{
               height: height * 0.16,
               width: width * 0.37,
@@ -165,11 +189,11 @@ function ShopDetails({ navigation: { navigate } }) {
             }}
           />
         </View>
-        <Text style={styles.nameText}>{shopdetails.shopname}</Text>
-        <Text style={styles.locationText}>{shopdetails.location}</Text>
+        <Text style={styles.nameText}>{shopdetails?.shopname}</Text>
+        <Text style={styles.locationText}>{shopdetails?.location}</Text>
       </View>
       <Text style={styles.addressTextH}>Address</Text>
-      <Text style={styles.addressText}>{shopdetails.address}</Text>
+      <Text style={styles.addressText}>{shopdetails?.address}</Text>
 
 
       <View style={styles.height15} />
@@ -214,6 +238,7 @@ function ShopDetails({ navigation: { navigate } }) {
 
 const styles = StyleSheet.create({
   container: {
+    paddingTop: 50,
     flex: 1,
     backgroundColor: '#FFFFFF',
   },

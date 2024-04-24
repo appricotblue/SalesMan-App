@@ -164,13 +164,13 @@ const OrderFilterScreen = ({ navigation: { navigate } }) => {
                 style={styles.itemContainer}>
                 <View style={styles.row1}>
                     <Text style={styles.orderIdText}> {item.orderNo}</Text>
-                    <Text style={styles.timeText}>Pickup Date  {item.deliveryDate}</Text>
+                    <Text style={styles.timeText}>Created Date  {item.createdAt}</Text>
 
                 </View>
-                {/* <View style={styles.row1}>
+                <View style={styles.row1}>
           <Text style={styles.nameText}>{item.shopName}</Text>
-          <Text style={styles.timeText}>Delivery Date  {item.deliveryDate}</Text>
-        </View> */}
+                    <Text style={styles.timeText}>Delivery Date  {item.expecteddate}</Text>
+                </View>
                 <View style={styles.row1}>
                     <View style={styles.row2}>
                         <Text style={styles.rateText}>₹{item.totalAmount}</Text>
@@ -187,7 +187,7 @@ const OrderFilterScreen = ({ navigation: { navigate } }) => {
                                             ? '#17A400'
                                             : 'black',
                             }}>
-                            {item?.status?.status}
+                            {item?.status}
                         </Text>
                     </View>
                 </View>
