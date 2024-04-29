@@ -104,12 +104,15 @@ const UserScreen = () => {
           <TouchableOpacity
             onPress={() => navigation.navigate('MyEarnings')}
             style={styles.subearn}>
-            <Text style={styles.title}>{profile.myearning}</Text>
+            <Text style={styles.title}>{profile?.myearning}</Text>
             <Text style={styles.subtitle}>My earnings</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.subearn}>
-            <Text style={styles.title}>{profile.orders} </Text>
-            <Text style={styles.subtitle}> Orders</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ItemwiseSales')}
+
+            style={styles.subearn}>
+            <Text style={styles.title}>{profile?.totalAmount} </Text>
+            <Text style={styles.subtitle}> Total Sales</Text>
           </TouchableOpacity>
         </View>
         <FlatList
@@ -152,7 +155,7 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   earningsview: {
-    height: height * 0.2,
+    height: height * 0.18,
     width: width,
     justifyContent: 'center',
     alignItems: 'center',

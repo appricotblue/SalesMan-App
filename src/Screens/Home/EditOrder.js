@@ -321,9 +321,12 @@ const EditOrder = () => {
             setSelectedItemQuantity('');
         }
         else if (selectedItemQuantity == '') {
-            // Show validation error or handle invalid quantity input
+
             Alert.alert('Error', 'Please enter a valid quantity.');
-        } else {
+        } else if (selectedItemQuantity == 0) {
+            Alert.alert('Error', 'Please enter a valid quantity.');
+        }
+        else {
             Alert.alert('Error', 'Please select an item to continue');
         }
     };

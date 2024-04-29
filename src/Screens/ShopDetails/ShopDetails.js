@@ -104,7 +104,10 @@ const Data = [
 function ShopDetails({ navigation: { navigate } }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [image, setImage] = useState('');
+  const [images, setImages] = useState([]);
   const { shoporders, shopdetails, loading, error } = useSelector((state) => state.global);
+  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
   const [data, setData] = useState([
     {
       name: 'Supreme Supermarket',
@@ -121,10 +124,32 @@ function ShopDetails({ navigation: { navigate } }) {
   const filterPress = () => {
     navigate('filter');
   };
+  useEffect(() => {
+    // Filter orders when searchQuery changes
+    filterOrders(searchQuery);
+  }, [searchQuery]);
+
+  const filterOrders = (query) => {
+    if (query) {
+      // If searchQuery is not empty, filter orders
+      const filtered = shoporders.filter(order =>
+        order.orderId.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredOrders(filtered);
+      setIsSearching(true);
+    } else {
+      // If searchQuery is empty, show all orders
+      setFilteredOrders(shoporders);
+      setIsSearching(false);
+    }
+  };
+
 
   useEffect(() => {
     const fetchData = async () => {
       console.log(shoporders, shopdetails, 'kkk', shopdetails?.shopImage[0].url)
+      const imageUrls = shopdetails?.shopImage.map(image => image.url);
+      setImages(imageUrls);
       const imageUrl = shopdetails?.shopImage[1]?.url; // Accessing URL safely
       const uriString = imageUrl ? String(imageUrl) : '';
       await setImage(uriString)
@@ -188,6 +213,20 @@ function ShopDetails({ navigation: { navigate } }) {
               borderRadius: 11,
             }}
           />
+          <View style={styles.additionalImagesContainer}>
+            {images.slice(1).map((imageUrl, index) => (
+              <Image
+                key={index}
+                source={{ uri: imageUrl }}
+                style={{
+                  height: height * 0.1,
+                  width: width * 0.2,
+                  borderRadius: 8,
+                  marginLeft: 8,
+                }}
+              />
+            ))}
+          </View>
         </View>
         <Text style={styles.nameText}>{shopdetails?.shopname}</Text>
         <Text style={styles.locationText}>{shopdetails?.location}</Text>
@@ -227,7 +266,7 @@ function ShopDetails({ navigation: { navigate } }) {
         </View>
       </View>
       <FlatList
-        data={shoporders}
+        data={isSearching ? filteredOrders : shoporders} 
         showsVerticalScrollIndicator={false}
         renderItem={({item}) => <_renderItems item={item} />}
         keyExtractor={item => item.id}
@@ -238,21 +277,27 @@ function ShopDetails({ navigation: { navigate } }) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: 50,
+    // paddingTop: 10,
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
   subContainer: {
-    height: height * 0.25,
-    width: width * 1,
+    height: height * 0.26,
+    width: width * .9,
     alignItems: 'center',
     justifyContent: 'center',
+    // backgroundColor: 'red',
+    marginTop: 15,
+    alignSelf: 'center'
   },
   imageContainer: {
-    height: height * 0.16,
-    width: width * 0.37,
-    backgroundColor: 'white',
+    height: height * 0.18,
+    width: width * 0.9,
+    // backgroundColor: 'red',
     borderRadius: 15,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   nameText: {
     color: '#005A8D',
@@ -341,6 +386,12 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  additionalImagesContainer: {
+    flexDirection: 'row',
+    marginTop: 10,
+    paddingHorizontal: 10,
     alignItems: 'center',
   },
 });

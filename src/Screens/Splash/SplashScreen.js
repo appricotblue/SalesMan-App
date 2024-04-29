@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   },
   image: {
     resizeMode: 'cover',
-    height: height * 0.12,
+    height: height * 0.15,
     width: width * 0.32,
   },
 });

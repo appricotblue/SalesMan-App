@@ -19,7 +19,9 @@ const INITAL_STATE = {
   deliveries: [],
   orderdetails: {},
   filterorder: [],
-  locationlist:[]
+  locationlist: [],
+  itemsale: [],
+  earndetails: []
 };
 export default (state = INITAL_STATE, action) => {
   switch (action.type) {
@@ -62,6 +64,10 @@ export default (state = INITAL_STATE, action) => {
       return { ...state, filterorder: action.payload, error: null }; 
     case 'SET_LOCATIONLIST':
       return { ...state, locationlist: action.payload, error: null };
+    case 'SET_ITEMSALE':
+      return { ...state, itemsale: action.payload, error: null };
+    case 'SET_EARNDETAILS':
+      return { ...state, earndetails: action.payload, error: null };
     default:
       return state;
   }

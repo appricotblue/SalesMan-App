@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -15,6 +15,8 @@ import {height, width} from '../../Theme/Constants';
 import images from '../../assets/Images';
 import CommonButton from '../../components/CommonButton';
 import { useDispatch, useSelector } from 'react-redux';
+import Local from '../../Storage/Local';
+
 
 const OrderDetails = () => {
     const navigation = useNavigation();
@@ -60,6 +62,23 @@ const OrderDetails = () => {
   
   ];
 
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const userid = await Local.getUserId();
+        const delay = 2000; // Delay in milliseconds
+        console.log(userid, orderdetails, 'order details ?')
+
+
+
+      } catch (error) {
+        console.error('Error checking token:', error);
+
+      }
+    };
+
+    checkToken();
+  }, []);
   const ListItem = ({item}) => (
     <TouchableOpacity
       style={styles.itemContainer}

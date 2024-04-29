@@ -17,6 +17,8 @@ export const setReturnOrders = (returnorder) => ({ type: 'SET_RETURNORDERS', pay
 export const setOrderDetails = (orderdetails) => ({ type: 'SET_ORDERDETAILS', payload: orderdetails });
 export const setFilterOrder = (filterorder) => ({ type: 'SET_FILTERORDERS', payload: filterorder });
 export const setLocationList = (locationlist) => ({ type: 'SET_LOCATIONLIST', payload: locationlist });
+export const setItemSale = (itemsale) => ({ type: 'SET_ITEMSALE', payload: itemsale });
+export const setEarnDetails = (earndetails) => ({ type: 'SET_EARNDETAILS', payload: earndetails });
 
 
 

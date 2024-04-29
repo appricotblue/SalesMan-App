@@ -13,11 +13,12 @@ import Header from '../../components/Header';
 import {height, width} from '../../Theme/Constants';
 import images from '../../assets/Images';
 import Local from '../../Storage/Local';
-import { getOrders, getEarnings, getDeliveries } from '../../api';
+import { getOrders, getEarnings, getEarningDetails } from '../../api';
 import { useDispatch, useSelector } from 'react-redux';
-import { setEarnings, setItems } from '../../redux/action';
+import { setEarnings, setEarnDetails } from '../../redux/action';
 
 const MyEarnings = () => {
+  const navigation = useNavigation();
   const { earnings, profile, loading, error } = useSelector((state) => state.global);
   const [currentPage, setCurrentPage] = useState(1); // Initial page for pagination
   const [pageSize, setPagesize] = useState(0);
@@ -51,6 +52,19 @@ const MyEarnings = () => {
 
   ];
 
+  const GetEarningDetails = async (orderid) => {
+    console.log('here click ')
+
+    try {
+      const response = await getEarningDetails(orderid);
+      console.log(response, 'here')
+      dispatch(setEarnDetails(response))
+      navigation.navigate('Earningdetails')
+
+    } catch (error) {
+      console.error('Error during fetching orders:', error?.message);
+    }
+  };
   useEffect(() => {
     const checkToken = async () => {
       try {
@@ -100,13 +114,16 @@ const MyEarnings = () => {
   const ListItem = ({item}) => (
     <TouchableOpacity
       style={styles.itemContainer}
-      onPress={() => console.log('Item pressed')}>
+      onPress={() =>
+        GetEarningDetails(item?.orderNo)
+        // navigation.navigate('Earningdetails') 
+      }>
       <View>
         <Text style={styles.itemtitle}>{item.orderNo}</Text>
         <Text style={styles.subtitle}>{item.updatedAt}</Text>
       </View>
 
-      <Text style={styles.title}>₹{item.totalAmount}</Text>
+      <Text style={styles.title}>₹{item.earningAmount}</Text>
     </TouchableOpacity>
   );
 
@@ -129,7 +146,7 @@ const MyEarnings = () => {
           renderItem={({item}) => <ListItem item={item} />}
           keyExtractor={item => item.id}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
-          onEndReached={loadMore} // Call loadMore function when user reaches the end of the list
+          onEndReached={loadMore} 
           onEndReachedThreshold={0.5}
         />
       </View>

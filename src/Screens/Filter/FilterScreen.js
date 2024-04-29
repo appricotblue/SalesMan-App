@@ -29,18 +29,43 @@ function FilterScreen() {
   const [selectedShop, setSelectedShop] = useState({ id: '', shopname: 'Select' });
   const { status, shops, searchshopitems } = useSelector((state) => state.global);
 
+  const [selectedDateFilter, setSelectedDateFilter] = useState('');
+  // const [isFromDatePickerVisible, setFromDatePickerVisibility] = useState(false);
+  const [isToDatePickerVisible, setToDatePickerVisibility] = useState(false);
+  const [customFromDate, setCustomFromDate] = useState('');
+  const [customToDate, setCustomToDate] = useState('');
+
   '--------------------------------'
 
+  const handleDateFilterSelect = (option) => {
+    setSelectedDateFilter(option);
+    if (option !== 'custom') {
+      setCustomFromDate('');
+      setCustomToDate('');
+    }
+  };
   const validateFilters = () => {
     if (!selectedShop) {
       Alert.alert('Error', 'Please select a shop.');
       return false;
     }
 
-    if (!fromDate || !toDate) {
+    if (selectedDateFilter === 'custom' && (!fromDate || !toDate)) {
       Alert.alert('Error', 'Please select both From and To dates.');
       return false;
     }
+
+    if (selectedDateFilter === 'custom' && fromDate > toDate) {
+      Alert.alert('Error', 'To date must be equal to or greater than From date.');
+      return false;
+    }
+    // if (selectedDateFilter === 'custom') {
+    //   if (!fromDate || !toDate) {
+    //     Alert.alert('Error', 'Please select both From and To dates.');
+    //     return false;
+    //   }
+    // }
+
 
     return true;
   };
@@ -200,26 +225,61 @@ function FilterScreen() {
 
 
         <View>
-          <Text style={styles.text}>Filter by Date</Text>
+          <Text style={sty
+            les.text}>Filter by Date</Text>
         </View> */}
 
-        <View
-          style={{
-            flexDirection: 'row',
-            marginTop: 5,
-            justifyContent: 'space-between',
-          }}>
-          <View style={styles.fromView}>
-            <Text style={styles.fromText}>From</Text>
-            {/* <Calander date={fromDate} onPress={() => { handleFromConfirm(), onShowFromCalander() }} /> */}
-            <Calander date={fromDate} onPress={() => onShowCalander()} />
-          </View>
-          <View style={styles.toView}>
-            <Text style={styles.toText}>To</Text>
-            {/* <Calander date={toDate} onPress={() => { handleConfirm(), onShowCalander() }} /> */}
-            <Calander date={toDate} onPress={() => onShowFromCalander()} />
-          </View>
+        <View style={{ marginTop: 25 }}>
+          <Text style={styles.text}>Filter by Date</Text>
         </View>
+        <View style={styles.radioButtonContainer}>
+          <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => handleDateFilterSelect('today')}>
+            <View style={styles.radioButton}>
+              {selectedDateFilter === 'today' && <View style={styles.radioInnerCircle} />}
+            </View>
+            <Text style={styles.filterText}>Today</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => handleDateFilterSelect('yesterday')}>
+            <View style={styles.radioButton}>
+              {selectedDateFilter === 'yesterday' && <View style={styles.radioInnerCircle} />}
+            </View>
+            <Text style={styles.filterText}>Yesterday</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => handleDateFilterSelect('this_month')}>
+            <View style={styles.radioButton}>
+              {selectedDateFilter === 'this_month' && <View style={styles.radioInnerCircle} />}
+            </View>
+            <Text style={styles.filterText}>This Month</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => handleDateFilterSelect('custom')}>
+            <View style={styles.radioButton}>
+              {selectedDateFilter === 'custom' && <View style={styles.radioInnerCircle} />}
+            </View>
+            <Text style={styles.filterText}>Custom</Text>
+          </TouchableOpacity>
+        </View>
+        {selectedDateFilter === 'custom' && (
+          <View
+            style={{
+              flexDirection: 'row',
+              marginTop: 5,
+              justifyContent: 'space-between',
+            }}>
+            <View style={styles.fromView}>
+              <Text style={styles.fromText}>From</Text>
+              {/* <Calander date={fromDate} onPress={() => { handleFromConfirm(), onShowFromCalander() }} /> */}
+              <Calander date={fromDate} onPress={() => onShowCalander()} />
+            </View>
+            <View style={styles.toView}>
+              <Text style={styles.toText}>To</Text>
+              {/* <Calander date={toDate} onPress={() => { handleConfirm(), onShowCalander() }} /> */}
+              <Calander date={toDate} onPress={() => onShowFromCalander()} />
+            </View>
+          </View>
+        )}
+
+
+
         <View style={styles.height10} />
        
       </View>
@@ -321,7 +381,32 @@ const styles = StyleSheet.create({
     position:'absolute',
     bottom:0,
     marginVertical:23
-  }
+  },
+
+  radioButtonContainer: {
+    marginTop: 10,
+    flexDirection: 'column',
+  },
+  radioButton: {
+    height: 20,
+    width: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#005A8D',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
+  radioInnerCircle: {
+    height: 12,
+    width: 12,
+    borderRadius: 6,
+    backgroundColor: '#005A8D',
+  },
+  filterText: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
 });
 
 export default FilterScreen;

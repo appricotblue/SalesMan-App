@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { height } from '../Theme/Constants';
 
 function CustomSelectionBox({
@@ -23,7 +23,6 @@ function CustomSelectionBox({
 
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.title}>{title}</Text> */}
       <View style={styles.titleContainer}>
         <Text style={styles.title}>{title}</Text>
         {isRequired && <Text style={styles.requiredText}>*</Text>}
@@ -44,7 +43,7 @@ function CustomSelectionBox({
         <Text style={styles.dropdownIcon}>{showOptions ? '▲' : '▼'}</Text>
       </TouchableOpacity>
       {showOptions && (
-        <View style={styles.optionsContainer}>
+        <ScrollView style={styles.optionsContainer}>
           {options.map(shop => (
             <TouchableOpacity
               key={shop?.id}
@@ -53,7 +52,7 @@ function CustomSelectionBox({
               <Text style={{ color: 'black' }}>{shop[displayProperty]}</Text>
             </TouchableOpacity>
           ))}
-        </View>
+        </ScrollView>
       )}
     </View>
   );
@@ -87,16 +86,12 @@ const styles = StyleSheet.create({
     color: 'black',
   },
   optionsContainer: {
-    position: 'absolute',
-    top: height * 0.1,
-    left: 0,
-    right: 0,
-    backgroundColor: '#fff',
+    maxHeight: height * 0.3,
+    minHeight: height * 0.2,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: 'grey',
-    maxHeight: height * 0.3,
-    zIndex: 1,
+    backgroundColor: '#fff',
   },
   option: {
     padding: 10,

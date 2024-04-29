@@ -219,7 +219,7 @@ const AddReturnOrder = () => {
                 shopId: selectedShop?.id,
                 yourearing: 10,
                 totalAmount: totalAmount,
-                orderNo: 'RTN-'+shopName,
+                orderNo: 'RTN-' + shopName,
                 itemId: itemIds,
                 status: selectStatus?.id,
                 orderType: location?.name,
@@ -309,9 +309,11 @@ const AddReturnOrder = () => {
             setSelectedItemQuantity('');
         }
         else if (selectedItemQuantity == '') {
-            // Show validation error or handle invalid quantity input
             Alert.alert('Error', 'Please enter a valid quantity.');
-        } else {
+        } else if (selectedItemQuantity == 0) {
+            Alert.alert('Error', 'Please enter a valid quantity.');
+        }
+        else {
             Alert.alert('Error', 'Please select an item to continue');
         }
     };
@@ -512,10 +514,10 @@ const AddReturnOrder = () => {
                                                 { backgroundColor: selectedItemId === item.id ? 'green' : '#005A8D' }
                                             ]}
                                             onPress={() => {
-                                            handleAddItem,
-                                                setSelectedItem(item)
+                                                handleAddItem,
+                                                    setSelectedItem(item)
                                                 setSelectedItemId(item.id)
-                                        }}>
+                                            }}>
                                             <Text style={{ color: 'white', fontSize: 16 }}>{selectedItemId === item.id ? 'Selected' : 'Select'}</Text>
                                         </TouchableOpacity>
                                     </View>

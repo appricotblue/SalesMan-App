@@ -209,6 +209,24 @@ export const getOrderbyShopDate = async (shop, fromDate, toDate) => {
   }
 };
 
+export const getTotalsales = async (userId) => {
+  try {
+    const response = await HTTP_REQUEST.get(`user/getTotalItemSales?${userId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getEarningDetails = async (orderId) => {
+  try {
+    const response = await HTTP_REQUEST.get(`user/getEarningOrderItems/${orderId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const trial = async (PAYLOAD) =>
   HTTP_REQUEST.post("/user-home-screen/", PAYLOAD);
 

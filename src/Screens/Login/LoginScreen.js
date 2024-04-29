@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: width * 0.40,
-    height: height * 0.10,
+    height: height * 0.12,
   },
   logoview: {
     width: width * 0.5,
