@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
+  StatusBar,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import Header from '../../components/Header';
@@ -94,6 +95,7 @@ const OrderDetails = () => {
 
   return (
     <SafeAreaView>
+      <StatusBar />
       <Header title={'Orders Details'} isBackArrow={true} />
       <View style={styles.container}>
       <ScrollView>
