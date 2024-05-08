@@ -21,7 +21,10 @@ const INITAL_STATE = {
   filterorder: [],
   locationlist: [],
   itemsale: [],
-  earndetails: []
+  earndetails: [],
+  route: [],
+  routeitem: [],
+
 };
 export default (state = INITAL_STATE, action) => {
   switch (action.type) {
@@ -67,7 +70,11 @@ export default (state = INITAL_STATE, action) => {
     case 'SET_ITEMSALE':
       return { ...state, itemsale: action.payload, error: null };
     case 'SET_EARNDETAILS':
-      return { ...state, earndetails: action.payload, error: null };
+      return { ...state, earndetails: action.payload, error: null }; 
+    case 'SET_ROUTE':
+      return { ...state, route: action.payload, error: null };
+    case 'SET_ROUTEITEM':
+      return { ...state, routeitem: action.payload, error: null }; 
     default:
       return state;
   }

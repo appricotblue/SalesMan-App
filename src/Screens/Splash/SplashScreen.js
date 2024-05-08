@@ -55,8 +55,10 @@ const styles = StyleSheet.create({
   },
   image: {
     resizeMode: 'cover',
-    height: height * 0.15,
-    width: width * 0.32,
+    width: 200,
+    height: 150,
+    // height: height * 0.15,
+    // width: width * 0.32,
   },
 });
 

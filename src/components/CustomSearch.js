@@ -11,12 +11,12 @@ import images from './../assets/Images';
 var width = Dimensions.get('window').width; //full width
 var height = Dimensions.get('window').height; //full height
 
-const CustomSearch = ({value, onChangeText, onClear, placeholder,onSubmit}) => {
+const CustomSearch = ({ value, onChangeText, onClear, placeholder, onSubmit }) => {
   return (
     <View style={styles.searchBar}>
       <Image
         source={images.GraySearch}
-        style={{height: 20, width: 20, marginLeft: 10}}
+        style={{ height: 20, width: 20, marginLeft: 10 }}
       />
       <TextInput
         style={styles.input}
@@ -26,9 +26,21 @@ const CustomSearch = ({value, onChangeText, onClear, placeholder,onSubmit}) => {
         onChangeText={onChangeText}
         onSubmitEditing={onSubmit}
       />
-      {value.length > 0 && (
-        <TouchableOpacity onPress={onClear}></TouchableOpacity>
-      )}
+      {/* {value.length > 0 ? (
+        <TouchableOpacity onPress={onClear}>
+          <Image
+            source={images.ClearIcon}
+            style={{ height: 20, width: 20, marginRight: 10 }}
+          />
+        </TouchableOpacity>
+      ) : ( */}
+      <TouchableOpacity style={{ backgroundColor: '#005A8D', width: 50, height: '100%', borderTopRightRadius: 10, borderBottomRightRadius: 10, justifyContent: 'center', alignItems: 'center' }} onPress={onSubmit}>
+        <Image
+          source={images.GraySearch}
+          style={{ height: 20, width: 20, marginRight: 10 }}
+        />
+      </TouchableOpacity>
+      {/* )} */}
     </View>
   );
 };
@@ -50,6 +62,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 4,
     color: 'black',
+    marginLeft: 5
   },
 });
 

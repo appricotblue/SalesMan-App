@@ -32,10 +32,10 @@ var windowHeight = Dimensions.get('window').height; //full height
 
 const LoginScreen = props => {
   const navigation = useNavigation();
-  const [email, changeemail] = useState('userTwo');
+  const [email, changeemail] = useState('user');
   const [checkEmail, changecheckEmail] = useState('');
   const [checkPassword, changecheckPassword] = useState('');
-  const [password, changepassword] = useState('userTwo@123');
+  const [password, changepassword] = useState('user@123');
   const [isLogin, changeIsLogin] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -138,11 +138,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: width * 0.40,
-    height: height * 0.12,
+    width: 130,
+    height: 70,
   },
   logoview: {
-    width: width * 0.5,
+    width: width * 0.6,
     marginTop: 100,
     marginBottom: 80,
     justifyContent: 'center',

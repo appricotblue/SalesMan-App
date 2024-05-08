@@ -12,7 +12,8 @@ function CustomTextInput({
   errorText,
   multiline,
   inputwidth = width * 0.9,
-  isRequired = false
+  isRequired = false,
+  editable=true
 }) {
   return (
     <View style={[styles.container,   {
@@ -27,6 +28,7 @@ function CustomTextInput({
       </View>
 
       <TextInput
+       editable={editable}
         style={[styles.inputStyle, { width: inputwidth }, errorText != '' && styles.errorInput,
         {
           minHeight: multiline

@@ -16,12 +16,15 @@ import Local from '../../Storage/Local';
 import { getOrders, getEarnings, getEarningDetails } from '../../api';
 import { useDispatch, useSelector } from 'react-redux';
 import { setEarnings, setEarnDetails } from '../../redux/action';
+import { useRoute } from '@react-navigation/native';
 
 const MyEarnings = () => {
+  const route = useRoute();
   const navigation = useNavigation();
   const { earnings, profile, loading, error } = useSelector((state) => state.global);
   const [currentPage, setCurrentPage] = useState(1); // Initial page for pagination
   const [pageSize, setPagesize] = useState(0);
+  const [earningAmount, setearningAmount] = useState(0);
   const [UserId, setUserId] = useState(null);
   const dispatch = useDispatch();
   const data = [
@@ -52,14 +55,17 @@ const MyEarnings = () => {
 
   ];
 
-  const GetEarningDetails = async (orderid) => {
-    console.log('here click ')
+  const GetEarningDetails = async (orderid, earnamount) => {
+    console.log('here click ', earnamount)
 
     try {
       const response = await getEarningDetails(orderid);
-      console.log(response, 'here')
+      console.log(response, earningAmount, 'here')
       dispatch(setEarnDetails(response))
-      navigation.navigate('Earningdetails')
+      setTimeout(() => {
+        navigation.navigate('Earningdetails', { earningDetails: earnamount })
+      }, 1500);
+
 
     } catch (error) {
       console.error('Error during fetching orders:', error?.message);
@@ -114,13 +120,24 @@ const MyEarnings = () => {
   const ListItem = ({item}) => (
     <TouchableOpacity
       style={styles.itemContainer}
-      onPress={() =>
-        GetEarningDetails(item?.orderNo)
+      onPress={async () => {
+        console.log(item?.earningAmount, 'amount ')
+        //   const newEarningAmount = item?.earningAmount;
+        //  await setearningAmount(item?.earningAmount);
+        //   // setearningAmount(item?.earningAmount)
+        //   setTimeout(async () => {
+        //     console.log(earningAmount, 'here kitiyo ')
+        await GetEarningDetails(item?.orderNo, item?.earningAmount)
+        // }, 2000);
+
+
         // navigation.navigate('Earningdetails') 
+      }
+
       }>
       <View>
         <Text style={styles.itemtitle}>{item.orderNo}</Text>
-        <Text style={styles.subtitle}>{item.updatedAt}</Text>
+        <Text style={styles.subtitle}>{item?.updatedAt} | {item?.time}</Text>
       </View>
 
       <Text style={styles.title}>₹{item.earningAmount}</Text>
@@ -148,6 +165,7 @@ const MyEarnings = () => {
           ItemSeparatorComponent={() => <View style={styles.separator} />}
           onEndReached={loadMore} 
           onEndReachedThreshold={0.5}
+          
         />
       </View>
     </SafeAreaView>

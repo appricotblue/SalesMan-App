@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Keyboard
 } from 'react-native';
 import {height, width} from '../../Theme/Constants';
 import CustomSearch from '../../components/CustomSearch';
@@ -152,12 +153,14 @@ const ItemsScreen = ({navigation: {navigate}}) => {
   
 
     const handleSearchSubmit = async () => {
-
+      dispatch(setItems([]));
       try {
         const response = await getItemSearch(searchQuery);
         console.log(response, 'search jkey api response')
         dispatch(setItems(response));
         console.log(response, 'item response')
+        setSearchQuery('')
+        Keyboard.dismiss();
         if (response.message = "Getting Orders data Successfully") {
 
         } else {
@@ -202,13 +205,18 @@ const ItemsScreen = ({navigation: {navigate}}) => {
       GetItems(currentPage + 1);
     }
   };
-
+  useEffect(() => {
+    return () => {
+      // Dispatch an action to reset the shops state to an empty array when component unmounts
+      dispatch(setItems([]));
+    };
+  }, []);
   const _renderItems = ({item}) => {
     return (
       <View style={styles.itemContainer}>
         <View style={styles.imageContainer}>
           <Image
-            source={{ uri: item.image }}
+            source={{ uri: item?.thumbnail }}
             style={{height: 70, width: 72, resizeMode: 'stretch'}}
           />
         </View>
@@ -218,7 +226,7 @@ const ItemsScreen = ({navigation: {navigate}}) => {
           </View>
           <View style={styles.row1}>
             <View style={styles.row2}>
-              <Text style={styles.qtyText}>{item.quantity}</Text>
+              <Text style={styles.qtyText}>{item.attribute}</Text>
             </View>
           </View>
           <Text style={styles.rateText}>₹{item.price}</Text>
@@ -229,7 +237,7 @@ const ItemsScreen = ({navigation: {navigate}}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title={'Items'} isNotification={true} />
+      <Header title={'Items'} isNotification={false} />
       <View style={{flexDirection: 'row'}}>
         <View
           style={{

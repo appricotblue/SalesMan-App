@@ -6,7 +6,8 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Alert
+  Alert,
+  Keyboard
 } from 'react-native';
 import { height, width } from '../../Theme/Constants';
 import CustomSearch from '../../components/CustomSearch';
@@ -16,77 +17,12 @@ import HomeScreenSelectable from '../../components/HomeScreenSelectable';
 import HomeOrderButton from '../../components/HomeOrderButton';
 import FilterModal from '../../components/FilterModal';
 import Local from '../../Storage/Local';
-import { getOrders, getOrderSearch, getDeliveries, getOrderDetails } from '../../api';
+import { getOrders, getOrderSearch, getDeliveries, getOrderDetails, getRoute } from '../../api';
 import { useDispatch, useSelector } from 'react-redux';
-import { setOrders, setItems, setOrderDetails, setDeliveries } from '../../redux/action';
+import { setOrders, setItems, setOrderDetails, setDeliveries, setRoute } from '../../redux/action';
 import { useIsFocused } from '@react-navigation/native';
 
-const Data = [
-  {
-    id: 0,
-    orderId: '#1678954621',
-    time: '10 mins ago',
-    name: ' Supreme SuperMarket',
-    rate: 1638,
-    qty: 12,
-    status: 'Ordered',
-  },
-  {
-    id: 1,
-    orderId: '#1678954622',
-    time: '20 mins ago',
-    name: ' Green SuperMarket',
-    rate: 3896,
-    qty: 16,
-    status: 'Delivered',
-  },
-  {
-    id: 2,
-    orderId: '#1678954623',
-    time: '30 mins ago',
-    name: ' Golden Stores',
-    rate: 4250,
-    qty: 10,
-    status: 'Draft',
-  },
-  {
-    id: 3,
-    orderId: '#1678954621',
-    time: '10 mins ago',
-    name: ' Supreme SuperMarket',
-    rate: 1638,
-    qty: 12,
-    status: 'Ordered',
-  },
-  {
-    id: 4,
-    orderId: '#1678954622',
-    time: '20 mins ago',
-    name: ' Green SuperMarket',
-    rate: 3896,
-    qty: 16,
-    status: 'Delivered',
-  },
-  {
-    id: 5,
-    orderId: '#1678954623',
-    time: '30 mins ago',
-    name: ' Golden Stores',
-    rate: 4250,
-    qty: 10,
-    status: 'Draft',
-  },
-  {
-    id: 6,
-    orderId: '#1678954621',
-    time: '1 hour ago',
-    name: ' Supreme SuperMarket',
-    rate: 1638,
-    qty: 12,
-    status: 'Ordered',
-  },
 
-];
 
 const Home = ({ navigation: { navigate } }) => {
 
@@ -95,10 +31,13 @@ const Home = ({ navigation: { navigate } }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [UserId, setUserId] = useState(null);
+  const [locationId, setlocationId] = useState('');
   const [selectedItem, setSelectedItem] = useState('Orders');
-  const { orders, deliveries, loading, error } = useSelector((state) => state.global);
+  const { orders, deliveries, route, routeitem, loading, error } = useSelector((state) => state.global);
   const [currentPage, setCurrentPage] = useState(1); // Initial page for pagination
   const [pageSize, setPagesize] = useState(0);
+  const [orderlist, setorderlist] = useState([]);
+  const [delivertlist, setdelivertlist] = useState([]);
 
   const handleSelectItem = (title) => {
     setSelectedItem(title);
@@ -117,7 +56,7 @@ const Home = ({ navigation: { navigate } }) => {
 
   const handleClearSearch = () => {
     setSearchQuery('');
-    GetOrders();
+    GetOrders(UserId, 'Orders', 1);
   };
 
   useEffect(() => {
@@ -125,10 +64,12 @@ const Home = ({ navigation: { navigate } }) => {
       try {
         const userid = await Local.getUserId();
         const delay = 2000; // Delay in milliseconds
-        console.log(userid, 'userid kitiyo ?', orders)
+        console.log(userid, routeitem, 'userid kitiyo ?', orders, route)
         setUserId(userid)
 
         await GetOrders(userid, 'Orders', 1);
+        await GetRoutes(userid);
+
       } catch (error) {
         console.error('Error checking token:', error);
 
@@ -136,15 +77,25 @@ const Home = ({ navigation: { navigate } }) => {
     };
 
     checkToken();
-  }, []);
+  }, [routeitem]);
 
 
-  
+  const GetRoutes = async (userid) => {
+    try {
+      const response = await getRoute(userid);
+      console.log(response, 'routes responsw')
+      dispatch(setRoute(response));
+    } catch (error) {
+      console.log(error)
+
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
+      dispatch(setOrders([]));
       if (isFocused) {
-        console.log('Home screen is focused');
+        console.log('Home screen is focused', routeitem?.id, 'test');
 
         // Fetch user ID from local storage
         try {
@@ -176,6 +127,9 @@ const Home = ({ navigation: { navigate } }) => {
     try {
       const response = await getOrderSearch(searchQuery);
       console.log(response, 'search api response')
+      setSearchQuery('')
+      Keyboard.dismiss();
+
       if (response.message = "Getting Orders data Successfully") {
         dispatch(setOrders(response));
       } else {
@@ -191,12 +145,29 @@ const Home = ({ navigation: { navigate } }) => {
     }
   };
 
+  const handleLocationSelect = async (locationId) => {
+    // Call your API here with the selected location ID
+    console.log('Selected Location ID:', locationId);
+    setlocationId(locationId)
+    // Alert.alert('test' + locationId)
+    await GetOrders(UserId, 'Orders', 1);
+    // Example API call:
+    // fetch(`https://yourapi.com/locations/${locationId}`)
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     // Handle API response
+    //   })
+    //   .catch(error => {
+    //     console.error('Error:', error);
+    //   });
+  };
+
   const GetOrders = async (userId, selectedItem, page = currentPage) => {
-    console.log('here click ', userId, selectedItem, page, orders)
+    console.log('here click ', locationId, userId, selectedItem, page, orders)
     dispatch(setOrders([]));
     try {
       const response = await (selectedItem == 'Orders'
-        ? getOrders(userId, page)
+        ? getOrders(userId, locationId, page)
         : getDeliveries(userId, page));
       console.log(response.orders, 'here')
       if (selectedItem == 'Orders') {
@@ -205,8 +176,10 @@ const Home = ({ navigation: { navigate } }) => {
         const updatedOrders = [...orders, ...newOrders];
         console.log(updatedOrders, 'gvghfggtf')
         dispatch(setOrders(updatedOrders));
+        setorderlist(updatedOrders)
       } else {
         dispatch(setDeliveries(response.orders));
+        setdelivertlist(response.orders)
 
       }
 
@@ -238,24 +211,33 @@ const Home = ({ navigation: { navigate } }) => {
       GetOrders(UserId, selectedItem, currentPage + 1);
     }
   };
+  useEffect(() => {
+    return () => {
+      // Dispatch an action to reset the shops state to an empty array when component unmounts
+      dispatch(setOrders([]));
+      dispatch(setDeliveries([]));
+    };
+  }, []);
+
   const _renderItems = ({ item }) => {
+
     return (
       <TouchableOpacity
         // onPress={() => navigate('OrderDetails')}
         onPress={() => GetOrderDetails(item.id)}
         style={styles.itemContainer}>
         <View style={styles.row1}>
-          <Text style={styles.orderIdText}> {item.orderNo}</Text>
-          <Text style={styles.timeText}>Order Date  {item.createdAt}</Text>
+          <Text style={styles.orderIdText}> {item?.orderNo}</Text>
+          <Text style={styles.timeText}>Order Date  {item?.createdAt}</Text>
         </View>
         <View style={styles.row1}>
           <Text style={styles.nameText}>{item.shopName}</Text>
-          <Text style={styles.timeText}>Delivery Date  {item.expecteddate}</Text>
+          <Text style={styles.timeText}>Delivery Date  {item?.expecteddate}</Text>
         </View>
         <View style={styles.row1}>
           <View style={styles.row2}>
-            <Text style={styles.rateText}>₹{item.totalAmount}</Text>
-            <Text style={styles.qtyText}>({item.qty} Items)</Text>
+            <Text style={styles.rateText}>₹{item?.totalAmount}</Text>
+            <Text style={styles.qtyText}>({item?.itemCount} Items)</Text>
           </View>
           <View>
             <Text
@@ -264,7 +246,7 @@ const Home = ({ navigation: { navigate } }) => {
                 color:
                   item.statusid == 1
                     ? '#D79B00'
-                    : item.status == 4
+                    : item.statusid == 4
                       ? '#17A400'
                       : 'black',
               }}>
@@ -278,7 +260,7 @@ const Home = ({ navigation: { navigate } }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title={'Orders'} isNotification={true} isRouteview={true} />
+      <Header title={'Orders'} isNotification={false} isRouteview={true} onSelectLocation={handleLocationSelect} />
       <View style={{ flexDirection: 'row' }}>
         <View
           style={{
@@ -319,7 +301,7 @@ const Home = ({ navigation: { navigate } }) => {
         data={selectedItem == 'Orders' ? orders : deliveries}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => <_renderItems item={item} />}
-        keyExtractor={item => item?.id}
+        keyExtractor={item => item?.id.toString()}
         onEndReached={loadMore} // Call loadMore function when user reaches the end of the list
         onEndReachedThreshold={0.5} 
       />

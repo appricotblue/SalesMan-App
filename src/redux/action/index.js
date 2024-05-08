@@ -19,6 +19,8 @@ export const setFilterOrder = (filterorder) => ({ type: 'SET_FILTERORDERS', payl
 export const setLocationList = (locationlist) => ({ type: 'SET_LOCATIONLIST', payload: locationlist });
 export const setItemSale = (itemsale) => ({ type: 'SET_ITEMSALE', payload: itemsale });
 export const setEarnDetails = (earndetails) => ({ type: 'SET_EARNDETAILS', payload: earndetails });
+export const setRoute = (route) => ({ type: 'SET_ROUTE', payload: route });
+export const setRouteItem = (routeitem) => ({ type: 'SET_ROUTEITEM', payload: routeitem });
 
 
 

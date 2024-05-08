@@ -209,11 +209,43 @@ function ShopDetails({ navigation: { navigate } }) {
             source={{ uri: shopdetails?.shopImage[0]?.url }}
             style={{
               height: height * 0.16,
-              width: width * 0.37,
+              width: width * 0.3,
               borderRadius: 11,
             }}
           />
           <View style={styles.additionalImagesContainer}>
+
+            <View style={styles.column}>
+              {images.slice(Math.ceil(images.length / 2)).map((imageUrl, index) => (
+                <Image
+                  key={index}
+                  source={{ uri: imageUrl }}
+                  style={{
+                    height: height * 0.1,
+                    width: width * 0.2,
+                    borderRadius: 8,
+                    marginBottom: 8,
+                  }}
+                />
+              ))}
+            </View>
+            <View style={styles.column}>
+              {images.slice(1, Math.ceil(images.length / 2)).map((imageUrl, index) => (
+                <Image
+                  key={index}
+                  source={{ uri: imageUrl }}
+                  style={{
+                    height: height * 0.1,
+                    width: width * 0.2,
+                    borderRadius: 8,
+                    marginBottom: 8,
+                  }}
+                />
+              ))}
+            </View>
+          </View>
+
+          {/* <View style={styles.additionalImagesContainer}>
             {images.slice(1).map((imageUrl, index) => (
               <Image
                 key={index}
@@ -226,7 +258,7 @@ function ShopDetails({ navigation: { navigate } }) {
                 }}
               />
             ))}
-          </View>
+          </View> */}
         </View>
         <Text style={styles.nameText}>{shopdetails?.shopname}</Text>
         <Text style={styles.locationText}>{shopdetails?.location}</Text>
@@ -291,13 +323,15 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   imageContainer: {
-    height: height * 0.18,
-    width: width * 0.9,
+    height: height * 0.2,
+    width: width * 0.8,
     // backgroundColor: 'red',
     borderRadius: 15,
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: 10,
+    alignSelf: 'center'
   },
   nameText: {
     color: '#005A8D',
@@ -381,19 +415,36 @@ const styles = StyleSheet.create({
   },
   rowView: {
     height: height * 0.06,
-    width: width * 0.97,
+    width: width * 0.7,
     marginHorizontal: 5,
     marginBottom: 5,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     alignItems: 'center',
   },
   additionalImagesContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap', // Allow images to wrap to the next line
     marginTop: 10,
     paddingHorizontal: 10,
+    justifyContent: 'center', // Center horizontally
+    alignItems: 'center',
+    // backgroundColor: 'green',
+    width: width / 2.1
+    // justifyContent: 'space-between', // Distribute space between columns
+  },
+  additionalImage: {
+    height: height * 0.1,
+    width: width * 0.42, // Adjust width to fit two images in a row
+    borderRadius: 8,
+    marginBottom: 10, // Add some margin between images
+  },
+  column: {
+    flex: 1,
+    flexDirection: 'column',
     alignItems: 'center',
   },
 });
+
 
 export default ShopDetails;

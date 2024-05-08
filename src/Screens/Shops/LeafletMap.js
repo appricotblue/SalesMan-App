@@ -4,6 +4,7 @@ import { View, TextInput, Button, Alert, Text } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useNavigation } from '@react-navigation/native';
 
+
 const LeafletMap = () => {
   const navigation = useNavigation();
   const [searchQuery, setSearchQuery] = useState('');
@@ -12,7 +13,7 @@ const LeafletMap = () => {
     latitude: '',
     longitude: ''
   })
-
+  const [positionData, setPositionData] = useState(null);
   // .bindPopup('${searchQuery}').openPopup();
 
   const handleSearchLocation = async () => {
@@ -29,6 +30,8 @@ const LeafletMap = () => {
     const { lat, lon } = response.data[0]
 
     setPosition({ ...position, latitude: lat, longitude: lon })
+
+
 
     const htmlContent = `
       <!DOCTYPE html>
@@ -75,30 +78,74 @@ const LeafletMap = () => {
     handleSearchLocation()
   }, [])
 
+  // useEffect(() => {
+  //   const handleMessage = (event) => {
+  //     const position = JSON.parse(event.data);
+  //     console.log(position, 'kitiyoooo')
+  //     // Do something with the position data received from the webview
+  //     setPositionData(position);
+  //   };
+
+  //   // Add event listener for messages from WebView
+  //   const listener = WebView.onMessage(message => {
+  //     handleMessage(message);
+  //   });
+
+  //   // Clean up on unmount
+  //   return () => {
+  //     listener.remove();
+  //   };
+  // }, []);
+
+  // const handleMessage = (event) => {
+  //   console.log(event, 'eventtt')
+  //   const eventData = JSON.parse(event.nativeEvent.data);
+  //   console.log("Message from web page:", eventData.message);
+  //   // Handle the event here
+  // };
+
+  const handleMessage = (event) => {
+    console.log("Received event:", event.nativeEvent.data);
+    const eventData = JSON.parse(event.nativeEvent.data);
+    console.log("Message from web page:", eventData.message);
+    // Handle the event here
+  };
+  const handleOnMessage = (event) => {
+    // Handle the message sent from the WebView
+    // const buttonData = event.nativeEvent.data;
+    console.log('Button data:', event);
+    // Perform any further actions with the button data here
+  };
   return (
     <View style={{ flex: 1 }}>
       <TextInput
-        style={{ height: 40, borderColor: 'gray', borderWidth: 1, margin: 10, paddingHorizontal: 10 }}
+        style={{ height: 40, borderColor: 'gray', color: 'black', borderWidth: 1, margin: 10, paddingHorizontal: 10 }}
         placeholder="Enter location to search..."
         value={searchQuery}
+        placeholderTextColor={'gray'}
         onChangeText={text => setSearchQuery(text)}
       />
-      <View>
-        <Text>latitude:{position.latitude}</Text>
-        <Text>longitude:{position.longitude}</Text>
 
-        <Button title="submit" onPress={() => navigation.navigate('AddShop', { locationdata: position })} />
-      </View>
 
       <Button title="Search Location" onPress={handleSearchLocation} />
 
 
       <WebView
         originWhitelist={['*']}
+        // source={{ uri: 'http://192.168.1.30:5174/' }}
         source={{ html: mapHtmlContent }}
         javaScriptEnabled={true}
+        onMessage={() => handleMessage()}
+        // onMessage={() => handleOnMessage()}
         style={{ flex: 1 }}
       />
+      
+      <View>
+        <Text style={{ color: 'black' }}>latitude:{position.latitude}</Text>
+        <Text style={{ color: 'black' }}>longitude:{position.longitude}</Text>
+
+        <Button title="submit" onPress={() => navigation.navigate('AddShop', { locationdata: position })} />
+      </View> 
     </View>
   );
 };

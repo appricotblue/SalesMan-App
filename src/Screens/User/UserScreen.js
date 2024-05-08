@@ -93,7 +93,7 @@ const UserScreen = () => {
 
   return (
     <SafeAreaView>
-      <Header title={'User'} isNotification={true} />
+      <Header title={'User'} isNotification={false} />
       <View style={styles.container}>
         <View style={styles.imageview}>
           <Image source={{ uri: profile.userProfileImage }} style={styles.image} />
@@ -108,7 +108,7 @@ const UserScreen = () => {
             <Text style={styles.subtitle}>My earnings</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('ItemwiseSales')}
+            onPress={() => navigation.navigate('ItemwiseSales', { totalsales: profile?.totalAmount })}
 
             style={styles.subearn}>
             <Text style={styles.title}>{profile?.totalAmount} </Text>

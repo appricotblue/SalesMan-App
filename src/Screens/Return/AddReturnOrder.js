@@ -24,8 +24,8 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import CustomTextInput from '../../components/CustomTextInput';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
-import { setStatus, setShopList, setShopItems } from '../../redux/action';
-import { getOrderStatus, getShopLists, getShopItems, getItemSearch } from '../../api';
+import { setStatus, setShopList, setShopItems, setReturnOrders } from '../../redux/action';
+import { getOrderStatus, getShopLists, getReturnOrder, getItemSearch } from '../../api';
 import Local from '../../Storage/Local';
 import moment from 'moment';
 import { env_dev } from "../../env/Dev";
@@ -61,6 +61,9 @@ const AddReturnOrder = () => {
     const [selectedShop, setSelectedShop] = useState({ id: '', shopname: 'Select' });
     const [UserId, setUserId] = useState(null);
     const [selectedItemId, setSelectedItemId] = useState(null);
+    const [selectedItemCommission, setSelectedItemCommission] = useState('');
+    const [itemQuantities, setItemQuantities] = useState({});
+    const [totalCommission, setTotalCommission] = useState(0);
 
 
 
@@ -71,7 +74,7 @@ const AddReturnOrder = () => {
                 const delay = 2000; // Delay in milliseconds
                 console.log(userid, 'userid  ?')
                 setUserId(userid)
-
+                GetShops(userid)
 
             } catch (error) {
                 console.error('Error checking token:', error);
@@ -166,7 +169,7 @@ const AddReturnOrder = () => {
 
     useEffect(() => {
         GetStatuses()
-        GetShops(),
+
             console.log(shops, 'heree')
         // GetShopsItems()
     }, [])
@@ -180,9 +183,9 @@ const AddReturnOrder = () => {
 
         }
     };
-    const GetShops = async () => {
+    const GetShops = async (userid) => {
         try {
-            const response = await getShopLists();
+            const response = await getShopLists(userid);
             dispatch(setShopList(response.shops));
         } catch (error) {
             console.log(error)
@@ -215,17 +218,17 @@ const AddReturnOrder = () => {
             const itemIds = selectedItems.map(item => item.id);
             const quantities = selectedItems.map(item => item.count);
             const requestBody = {
-                expecteddate: toDate,
+                deliveryDate: toDate,
                 shopId: selectedShop?.id,
-                yourearing: 10,
+                yourearing: 0,
                 totalAmount: totalAmount,
                 orderNo: 'RTN-' + shopName,
                 itemId: itemIds,
-                status: selectStatus?.id,
+                statusId: selectStatus?.id.toString(),
                 orderType: location?.name,
                 quantity: quantities
             };
-            console.log(requestBody, 'gettt')
+            console.log(requestBody, UserId, 'gettt')
 
             const response = await fetch(env_dev + `/user/createReturnOrder/${UserId}`, {
                 method: 'POST',
@@ -235,16 +238,45 @@ const AddReturnOrder = () => {
                 body: JSON.stringify(requestBody)
             });
             const data = await response.json();
+            Alert.alert(data.message)
             console.log('Order created:', data);
-            navigation.navigate('Return')
-            if (data.message == 'Return order created successfully') {
-                navigation.navigate('Return')
-            }
+            GetReturnOrder(UserId)
+            // navigation.navigate('Return')
+            // if (data.message == 'Return order created successfully') {
+            //     navigation.navigate('Return')
+            // }
 
         } catch (error) {
+            const data = await response.json();
+            Alert.alert(data.message)
             console.error('Error creating order:', error);
         }
     };
+
+    const GetReturnOrder = async (userid) => {
+
+        console.log('here search', searchQuery)
+        try {
+            const response = await getReturnOrder(userid);
+            console.log(response, 'return order  api response')
+            dispatch(setReturnOrders(response));
+            navigation.navigate('Return')
+            if (response.message = "Getting Orders data Successfully") {
+                dispatch(setReturnOrders(response));
+
+            } else {
+                console.log('Error during login:',);
+            }
+        } catch (error) {
+            console.error('Error during login:hwre', error?.message);
+            if (error.response && error.response.data && error.response.data.message) {
+                // Alert.alert('Error', error.response.data.message);
+            } else {
+                // Alert.alert('Error', 'An error occurred during login.');
+            }
+        }
+    }
+
 
 
     const _renderItems = ({ item }) => {
@@ -271,10 +303,12 @@ const AddReturnOrder = () => {
                         <Text style={styles.rateText}>₹{item?.price}</Text>
                         <View style={{ height: 29, width: 65, borderColor: 'gray', borderWidth: .5, justifyContent: 'center', alignItems: 'center' }} >
                             <TextInput
+
                                 editable={false}
                                 style={styles.quantityInput}
                                 keyboardType="numeric" // Set keyboard type to numeric for number input
                                 placeholder="Qnty"
+                                placeholderTextColor={'gray'}
                                 value={item?.count?.toString()}
                                 onChangeText={(text) => handleQuantityChange(item.id, text)}
 
@@ -295,49 +329,107 @@ const AddReturnOrder = () => {
         );
     };
 
-
     const handleAddItem = () => {
         if (selectedItem && selectedItemQuantity !== '') {
             const count = parseInt(selectedItemQuantity, 10) || 0;
-            const newItem = { ...selectedItem, count };
+            const existingItem = selectedItems.find(item => item.id === selectedItem.id);
 
-            setSelectedItems([...selectedItems, newItem]);
-            setTotalAmount(totalAmount + (newItem.price * count));
+            if (existingItem) {
+                // Item already exists, update the quantity
+                const updatedItem = { ...existingItem, count: existingItem.count + count };
+                const updatedItems = selectedItems.map(item =>
+                    item.id === existingItem.id ? updatedItem : item
+                );
+                setSelectedItems(updatedItems);
+            } else {
+                // Item doesn't exist, add a new item to the list
+                const newItem = { ...selectedItem, count };
+                setSelectedItems([...selectedItems, newItem]);
+            }
 
+            // Update total amount and commission
+            setTotalAmount(totalAmount + (selectedItem.price * count));
+            setTotalCommission(totalCommission + (selectedItem.itemcommission * count));
+
+            // Reset state after adding item
             setIsAddItemModalVisible(false);
             setSelectedItem(null);
             setSelectedItemQuantity('');
-        }
-        else if (selectedItemQuantity == '') {
-            Alert.alert('Error', 'Please enter a valid quantity.');
+            setSelectedItemCommission('');
+            setSelectedItemId(null);
         } else if (selectedItemQuantity == 0) {
             Alert.alert('Error', 'Please enter a valid quantity.');
         }
         else {
-            Alert.alert('Error', 'Please select an item to continue');
+            Alert.alert('Error', 'Please select an item and enter a valid quantity.');
         }
     };
 
-
     const handleQuantityChange = (itemId, count) => {
-        const updatedSelectedItems = selectedItems.map(item => {
-            if (item.id === itemId) {
-                return { ...item, count };
-            }
-            return item;
-        });
-        setSelectedItems(updatedSelectedItems);
+        setItemQuantities({ ...itemQuantities, [itemId]: count });
     };
+
 
     const handleDeleteItem = (itemId) => {
         const itemToDelete = selectedItems.find(item => item.id === itemId);
+
         if (itemToDelete) {
             const itemValue = itemToDelete.price * itemToDelete.count;
-            const updatedItems = selectedItems.filter(item => item.id !== itemId);
+            const itemCommission = itemToDelete.itemcommission * itemToDelete.count;
+
+            // Update total amount and commission
             setTotalAmount(totalAmount - itemValue);
+            setTotalCommission(totalCommission - itemCommission);
+
+            // Remove the item from selectedItems
+            const updatedItems = selectedItems.filter(item => item.id !== itemId);
             setSelectedItems(updatedItems);
         }
     };
+
+
+    // const handleAddItem = () => {
+    //     if (selectedItem && selectedItemQuantity !== '') {
+    //         const count = parseInt(selectedItemQuantity, 10) || 0;
+    //         const newItem = { ...selectedItem, count };
+
+    //         setSelectedItems([...selectedItems, newItem]);
+    //         setTotalAmount(totalAmount + (newItem.price * count));
+
+    //         setIsAddItemModalVisible(false);
+    //         setSelectedItem(null);
+    //         setSelectedItemQuantity('');
+    //     }
+    //     else if (selectedItemQuantity == '') {
+    //         Alert.alert('Error', 'Please enter a valid quantity.');
+    //     } else if (selectedItemQuantity == 0) {
+    //         Alert.alert('Error', 'Please enter a valid quantity.');
+    //     }
+    //     else {
+    //         Alert.alert('Error', 'Please select an item to continue');
+    //     }
+    // };
+
+
+    // const handleQuantityChange = (itemId, count) => {
+    //     const updatedSelectedItems = selectedItems.map(item => {
+    //         if (item.id === itemId) {
+    //             return { ...item, count };
+    //         }
+    //         return item;
+    //     });
+    //     setSelectedItems(updatedSelectedItems);
+    // };
+
+    // const handleDeleteItem = (itemId) => {
+    //     const itemToDelete = selectedItems.find(item => item.id === itemId);
+    //     if (itemToDelete) {
+    //         const itemValue = itemToDelete.price * itemToDelete.count;
+    //         const updatedItems = selectedItems.filter(item => item.id !== itemId);
+    //         setTotalAmount(totalAmount - itemValue);
+    //         setSelectedItems(updatedItems);
+    //     }
+    // };
 
     return (
         <SafeAreaView>
@@ -396,7 +488,10 @@ const AddReturnOrder = () => {
                         onSelect={handleShopSelect}
                         displayProperty="shopname" // Specify the property to display as shop name
                     />
-                    <Text style={styles.subtitle}>Select Item <Text style={styles.requiredText}>*</Text></Text>
+                    <Text style={{
+                        color: 'black',
+                        fontWeight: 'bold',
+                    }}>Select Item <Text style={styles.requiredText}>*</Text></Text>
                     <View
                         style={{
                             width: width * 0.9,
@@ -430,18 +525,18 @@ const AddReturnOrder = () => {
 
                     </View> */}
                     <View style={styles.btnview}>
-                        <CommonButton
+                        {/* <CommonButton
                             onPress={() => ''}
                             color={'white'}
                             title={'Save as Draft'}
                             width={width * 0.4}
                             texttitle={'#005A8D'}
-                        />
+                        /> */}
                         <CommonButton
                             onPress={() => createOrder()}
                             color={'#005A8D'}
                             title={'Create Order'}
-                            width={width * 0.4}
+                            width={width * 0.9}
                             texttitle={'white'}
                         />
                     </View>
@@ -503,6 +598,7 @@ const AddReturnOrder = () => {
                                                 style={styles.quantityInput}
                                                 keyboardType="numeric" // Set keyboard type to numeric for number input
                                                 placeholder="Qnty"
+                                                placeholderTextColor={'gray'}
                                                 value={selectedItemQuantity}
                                                 onChangeText={(text) => { handleQuantityChange(item.id, text), setSelectedItemQuantity(text) }} // Update state with entered value
                                             />
@@ -514,9 +610,13 @@ const AddReturnOrder = () => {
                                                 { backgroundColor: selectedItemId === item.id ? 'green' : '#005A8D' }
                                             ]}
                                             onPress={() => {
+                                                if (selectedItemQuantity == 0) {
+                                                    Alert.alert('Error', 'Please enter a valid quantity.');
+                                                } else {
                                                 handleAddItem,
                                                     setSelectedItem(item)
-                                                setSelectedItemId(item.id)
+                                                    setSelectedItemId(item.id)
+                                                }
                                             }}>
                                             <Text style={{ color: 'white', fontSize: 16 }}>{selectedItemId === item.id ? 'Selected' : 'Select'}</Text>
                                         </TouchableOpacity>
@@ -664,6 +764,7 @@ const styles = StyleSheet.create({
     },
     toText: {
         color: 'black',
+        fontWeight: 'bold',
         fontSize: 14,
     },
     totalview: { width: width * .91, marginTop: 5, justifyContent: 'space-between', flexDirection: 'row', backgroundColor: '#D9D9D9', padding: 5 },
@@ -699,6 +800,7 @@ const styles = StyleSheet.create({
         left: 2,
         width: '90%',
         minHeight: 50,
+        color: 'black'
     },
     requiredText: {
         color: 'red',

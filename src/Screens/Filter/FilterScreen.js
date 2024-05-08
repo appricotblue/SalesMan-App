@@ -9,13 +9,15 @@ import FilterModal from '../../components/FilterModal';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { configureLayoutAnimationBatch } from 'react-native-reanimated/lib/typescript/reanimated2/core';
 import Local from '../../Storage/Local';
-import { getShopSearch, getOrderSearch, getShopLists, getOrderDetails, getOrderbyShopDate, } from '../../api';
+import { getShopSearch, getOrderSearch, getShopLists, getOrderDetails, getOrderbyShopDate, getfilterBydate } from '../../api';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomSelectionBox from '../../components/CustomSelectionBox';
 import { setShops, setFilterOrder, setShopDetails, setShoporder, setShopList } from '../../redux/action';
+import { useIsFocused } from '@react-navigation/native';
 
 function FilterScreen() {
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
   const [searchQuery, setSearchQuery] = useState('');
   const [calanderVisible, setCalanderVisible] = useState(false);
 
@@ -28,7 +30,7 @@ function FilterScreen() {
   const [toDate, setToDate] = useState('');
   const [selectedShop, setSelectedShop] = useState({ id: '', shopname: 'Select' });
   const { status, shops, searchshopitems } = useSelector((state) => state.global);
-
+  const [UserId, setUserId] = useState(null);
   const [selectedDateFilter, setSelectedDateFilter] = useState('');
   // const [isFromDatePickerVisible, setFromDatePickerVisibility] = useState(false);
   const [isToDatePickerVisible, setToDatePickerVisibility] = useState(false);
@@ -49,7 +51,10 @@ function FilterScreen() {
       Alert.alert('Error', 'Please select a shop.');
       return false;
     }
-
+    if (selectedDateFilter == "") {
+      Alert.alert('Error', 'Please select a date type');
+      return false;
+    }
     if (selectedDateFilter === 'custom' && (!fromDate || !toDate)) {
       Alert.alert('Error', 'Please select both From and To dates.');
       return false;
@@ -73,18 +78,41 @@ function FilterScreen() {
   const applyFilters = () => {
     if (validateFilters()) {
       // If all validations pass, proceed to fetch orders
+      // GetOrderbyDate()
       GetOrderbyShopDate();
     }
   }
 
+  const GetOrderbyDate = async () => {
+    console.log('here search', selectedShop?.shopname, selectedDateFilter)
+    try {
+      const response = await getfilterBydate(selectedDateFilter);
+      console.log(response, 'filter api response')
+      dispatch(setFilterOrder(response?.OrdersShops))
+      if (response.message = "Getting Orders data Successfully") {
+        // dispatch(setOrders(response));
+        navigation.navigate('OrderFilterScreen')
+      } else {
+        console.log('Error during login:',);
+      }
+    } catch (error) {
+      console.error('Error during login:hwre', error?.message);
+      if (error.response && error.response.data && error.response.data.message) {
+        Alert.alert('Error', error.response.data.message);
+      } else {
+        Alert.alert('Error', 'An error occurred during filter.');
+      }
+    }
+
+  }
 
   const GetOrderbyShopDate = async () => {
 
-    console.log('here search', selectedShop?.shopname,)
+    console.log('here search 123', selectedShop?.shopname, selectedDateFilter, fromDate, toDate)
     try {
-      const response = await getOrderbyShopDate(selectedShop?.shopname, fromDate, toDate);
+      const response = await getOrderbyShopDate(selectedDateFilter, selectedShop?.shopname, fromDate, toDate);
       console.log(response, 'filter api response')
-      dispatch(setFilterOrder(response?.OrdersShops))
+      dispatch(setFilterOrder(response))
       if (response.message = "Getting Orders data Successfully") {
         // dispatch(setOrders(response));
         navigation.navigate('OrderFilterScreen')
@@ -101,11 +129,53 @@ function FilterScreen() {
     }
   };
 
-  useEffect(() => {
 
-    GetShops(),
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isFocused) {
+        console.log('filter screen is focused', routeitem?.id, 'test');
+
+        // Fetch user ID from local storage
+        try {
+          const userid = await Local.getUserId();
+          console.log('User ID:', userid);
+          setUserId(userid);
+          GetShops(userid)
+          // Call API to fetch orders for the user
+          // await GetOrders(userid, 'Orders', 1);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      }
+    };
+
+    fetchData(); // Call the async function immediately inside useEffect
+
+    return () => {
+      // Cleanup function (optional)
+      // This function will be called when the component unmounts or before re-runs of effect
+      // You can perform cleanup tasks here if needed
+    };
+  }, [isFocused]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userid = await Local.getUserId();
+        console.log('User ID:', userid);
+        setUserId(userid);
+        GetShops(userid)
+        // Call API to fetch orders for the user
+        // await GetOrders(userid, 'Orders', 1);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    GetShops(UserId),
       console.log(shops, 'heree')
     // GetShopsItems()
+  };
+
+  fetchData();
   }, [])
 
   const handleSearchChange = (text) => {
@@ -117,9 +187,11 @@ function FilterScreen() {
     GetItems();
   };
 
-  const GetShops = async () => {
+  const GetShops = async (userid) => {
+
     try {
-      const response = await getShopLists();
+      const response = await getShopLists(userid);
+      console.log(response, 'shop response ')
       dispatch(setShopList(response.shops));
     } catch (error) {
       console.log(error)
@@ -133,6 +205,7 @@ function FilterScreen() {
       const response = await getShopSearch(searchQuery);
       console.log(response, 'search jkey api response')
       dispatch(setShops(response));
+      navigation.navigate('OrderFilterScreen')
       if (response.message = "Getting Orders data Successfully") {
         navigation.navigate('OrderFilterScreen')
       } else {
@@ -245,9 +318,9 @@ function FilterScreen() {
             </View>
             <Text style={styles.filterText}>Yesterday</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => handleDateFilterSelect('this_month')}>
+          <TouchableOpacity style={{ flexDirection: 'row' }} onPress={() => handleDateFilterSelect('oneMonth')}>
             <View style={styles.radioButton}>
-              {selectedDateFilter === 'this_month' && <View style={styles.radioInnerCircle} />}
+              {selectedDateFilter === 'oneMonth' && <View style={styles.radioInnerCircle} />}
             </View>
             <Text style={styles.filterText}>This Month</Text>
           </TouchableOpacity>
@@ -406,6 +479,7 @@ const styles = StyleSheet.create({
   filterText: {
     fontSize: 16,
     marginBottom: 10,
+    color: 'black'
   },
 });
 

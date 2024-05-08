@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     SafeAreaView,
     StyleSheet,
@@ -15,9 +15,12 @@ import { height, width } from '../../Theme/Constants';
 import images from '../../assets/Images';
 import CommonButton from '../../components/CommonButton';
 import { useDispatch, useSelector } from 'react-redux';
+import { useRoute } from '@react-navigation/native';
 
 const Earningdetails = () => {
     const navigation = useNavigation();
+    const route = useRoute();
+    const { earningDetails } = route.params;
     const { earndetails, orderdetails, loading, error } = useSelector((state) => state.global);
     const data = [
         {
@@ -59,6 +62,12 @@ const Earningdetails = () => {
 
 
     ];
+    useEffect(() => {
+        const { data } = route?.params;
+        console.log(' movies?', earningDetails)
+
+        // setlocationdata(data)
+    }, []);
 
     const ListItem = ({ item }) => (
         <TouchableOpacity
@@ -75,18 +84,18 @@ const Earningdetails = () => {
 
     return (
         <SafeAreaView>
-            <Header title={'Orders Details'} isBackArrow={true} />
+            <Header title={'Earning Details'} isBackArrow={true} />
             <View style={styles.container}>
                 <ScrollView>
                     <View style={styles.earningsview}>
                         <TouchableOpacity style={styles.subearn}>
-                            <Text style={styles.title}>12 </Text>
+                            <Text style={styles.title}>{earningDetails} </Text>
                             <Text style={styles.subtitle}>Total earnings</Text>
                         </TouchableOpacity>
 
                     </View>
                     <View
-                        style={{ width: width * .9, alignSelf: 'center', marginTop: 10, borderBottomWidth: .5, paddingBottom: 20 }}>
+                        style={{ width: width * .9, alignSelf: 'center', marginTop: 10, paddingBottom: 20 }}>
                         {earndetails.map((item, index) => {
                             return (
                                 <ListItem item={item} />
@@ -150,7 +159,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between'
     },
     itemtitle: {
-        fontSize: 14,
+        fontSize: 16,
         fontFamily: 'Inter-Bold',
         color: 'black',
     },
@@ -179,8 +188,8 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         minHeight: height * .34,
         marginTop: 10,
-        borderBottomColor: 'gray',
-        borderBottomWidth: .5,
+        // borderBottomColor: 'red',
+        // borderBottomWidth: .5,
         paddingBottom: 20
     },
     totalview: {

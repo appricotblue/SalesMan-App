@@ -16,9 +16,9 @@ import HomeScreenSelectable from '../../components/HomeScreenSelectable';
 import HomeOrderButton from '../../components/HomeOrderButton';
 import FilterModal from '../../components/FilterModal';
 import Local from '../../Storage/Local';
-import { getOrders, getOrderSearch, getReturnOrder } from '../../api';
+import { getOrders, getOrderSearch, getReturnOrder, getOrderDetails } from '../../api';
 import { useDispatch, useSelector } from 'react-redux';
-import { setOrders, setReturnOrders, setDeliveries } from '../../redux/action';
+import { setOrderDetails, setReturnOrders, setDeliveries } from '../../redux/action';
 
 const Data = [
     {
@@ -117,6 +117,20 @@ const OrderFilterScreen = ({ navigation: { navigate } }) => {
     const filterPress = () => {
         navigate('filter');
     };
+
+    const GetOrderDetails = async (orderid) => {
+        console.log('here click ')
+
+        try {
+            const response = await getOrderDetails(orderid);
+            console.log(response, 'here')
+            dispatch(setOrderDetails(response))
+            navigate('OrderDetails')
+
+        } catch (error) {
+            console.error('Error during fetching orders:', error?.message);
+        }
+    };
     useEffect(() => {
         const checkToken = async () => {
             try {
@@ -160,7 +174,7 @@ const OrderFilterScreen = ({ navigation: { navigate } }) => {
     const _renderItems = ({ item }) => {
         return (
             <TouchableOpacity
-                onPress={() => ''}
+                onPress={() => GetOrderDetails(item?.id)}
                 style={styles.itemContainer}>
                 <View style={styles.row1}>
                     <Text style={styles.orderIdText}> {item.orderNo}</Text>

@@ -18,6 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 import { getItems, getItemSearch, getTotalsales } from '../../api';
 import { setShops, setItemSale, setItems } from '../../redux/action';
 import Local from '../../Storage/Local';
+import { useRoute } from '@react-navigation/native';
 
 const Data = [
     {
@@ -134,6 +135,8 @@ const ItemwiseSales = ({ navigation: { navigate } }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const navigation = useNavigation();
     const dispatch = useDispatch();
+    const route = useRoute();
+    const { totalsales } = route.params;
     const { shopitems, itemsale, loading, error } = useSelector((state) => state.global);
     const [currentPage, setCurrentPage] = useState(1); // Initial page for pagination
     const [pageSize, setPagesize] = useState(0);
@@ -245,15 +248,15 @@ const ItemwiseSales = ({ navigation: { navigate } }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Header title={'Items'} isNotification={true} isBackArrow={true} />
+            <Header title={'Item-wise Sales'} isNotification={false} isBackArrow={true} />
             <View style={styles.earningsview}>
                 <TouchableOpacity style={styles.subearn}>
-                    <Text style={styles.title}>12 </Text>
+                    <Text style={styles.title}>{totalsales}</Text>
                     <Text style={styles.subtitle}>Total earnings</Text>
                 </TouchableOpacity>
 
             </View>
-            <View style={{ flexDirection: 'row' }}>
+            {/* <View style={{ flexDirection: 'row' }}>
                 <View
                     style={{
                         width: width * 0.96,
@@ -267,7 +270,7 @@ const ItemwiseSales = ({ navigation: { navigate } }) => {
                         onSubmit={handleSearchSubmit}
                     />
                 </View>
-            </View>
+            </View> */}
 
             <FlatList
                 data={itemsale}
@@ -333,7 +336,7 @@ const styles = StyleSheet.create({
     },
     qtyText: {
         color: 'grey',
-        fontSize: 14,
+        fontSize: 15,
     },
     rowView: {
         height: height * 0.06,
@@ -377,6 +380,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
 
     },
+    title: {
+        color: 'black'
+    },
+    subtitle: {
+        color: 'black'
+    }
 });
 
 export default ItemwiseSales;

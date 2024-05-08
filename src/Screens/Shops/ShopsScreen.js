@@ -6,7 +6,8 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Alert
+  Alert,
+  Keyboard
 } from 'react-native';
 import { height, width } from '../../Theme/Constants';
 import CustomSearch from '../../components/CustomSearch';
@@ -20,107 +21,7 @@ import { setShops, setShopDetails, setShoporder } from '../../redux/action';
 import { useIsFocused } from '@react-navigation/native';
 
 
-const Data = [
-  {
-    id: 0,
-    orderId: '#1678954621',
-    time: '10 mins ago',
-    name: ' Supreme SuperMarket',
-    rate: 1638,
-    qty: 12,
-    status: 'Ordered',
-    location: 'Aluva',
-    orders: '1 New Order',
-  },
-  {
-    id: 1,
-    orderId: '#1678954622',
-    time: '20 mins ago',
-    name: ' Green SuperMarket',
-    rate: 3896,
-    qty: 16,
-    status: 'Delivered',
-    location: 'Ponikkara',
-    orders: '1 New Order',
-  },
-  {
-    id: 2,
-    orderId: '#1678954623',
-    time: '30 mins ago',
-    name: ' Golden Stores',
-    rate: 4250,
-    qty: 10,
-    status: 'Draft',
-    location: 'Kakkanad',
-    orders: '',
-  },
-  {
-    id: 3,
-    orderId: '#1678954621',
-    time: '10 mins ago',
-    name: ' Supreme SuperMarket',
-    rate: 1638,
-    qty: 12,
-    status: 'Ordered',
-    location: 'Fort Kochi',
-    orders: '',
-  },
-  {
-    id: 4,
-    orderId: '#1678954622',
-    time: '20 mins ago',
-    name: ' Green SuperMarket',
-    rate: 3896,
-    qty: 16,
-    status: 'Delivered',
-    location: 'Edachira',
-    orders: '',
-  },
-  {
-    id: 5,
-    orderId: '#1678954623',
-    time: '30 mins ago',
-    name: ' Golden Stores',
-    rate: 4250,
-    qty: 10,
-    status: 'Draft',
-    location: 'Ponikkara',
-    orders: '',
-  },
-  {
-    id: 6,
-    orderId: '#1678954621',
-    time: '1 hour ago',
-    name: ' Supreme SuperMarket',
-    rate: 1638,
-    qty: 12,
-    status: 'Ordered',
-    location: 'Fort Kochi',
-    orders: '',
-  },
-  {
-    id: 7,
-    orderId: '#1678954622',
-    time: '20 mins ago',
-    name: ' Green SuperMarket',
-    rate: 3896,
-    qty: 16,
-    status: 'Delivered',
-    location: 'Kakkanad',
-    orders: '',
-  },
-  {
-    id: 8,
-    orderId: '#1678954623',
-    time: '3 hour ago',
-    name: ' Golden Stores',
-    rate: 4250,
-    qty: 10,
-    status: 'Draft',
-    location: 'Fort Kochi',
-    orders: '',
-  },
-];
+
 
 const ShopsScreen = ({ navigation: { navigate } }) => {
   const isFocused = useIsFocused();
@@ -130,6 +31,8 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
   const { shops, shopdetails, loading, error } = useSelector((state) => state.global);
   const [currentPage, setCurrentPage] = useState(1); // Initial page for pagination
   const [pageSize, setPagesize] = useState(0);
+  const [UserId, setUserId] = useState(null);
+  const [shoplist, setshoplist] = useState([]);
   const [position, setPosition] = useState({
     latitude: '',
     longitude: ''
@@ -147,17 +50,19 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
   //   , [])
   useEffect(() => {
     const fetchData = async () => {
+      dispatch(setShops([]));
       if (isFocused) {
-        console.log('Return screen is focused');
+        console.log('shop screen is focused');
 
         // Fetch user ID from local storage
         try {
           const userid = await Local.getUserId();
           console.log('User ID:', userid);
-          // setUserId(userid);
+          await setUserId(userid);
 
           // Call API to fetch orders for the user
-          GetShops();
+          await GetShops(userid);
+
           } catch (error) {
             console.error('Error fetching data:', error);
           }
@@ -184,11 +89,14 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
   };
 
   const handleSearchSubmit = async () => {
-
+    dispatch(setShops([]));
     try {
       const response = await getShopSearch(searchQuery);
       console.log(response, 'search jkey api response')
+      setshoplist(response)
       dispatch(setShops(response));
+      setSearchQuery('')
+      Keyboard.dismiss();
       if (response.message = "Getting Orders data Successfully") {
 
       } else {
@@ -203,26 +111,33 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
       }
     }
   };
+  useEffect(() => {
+    return () => {
+      // Dispatch an action to reset the shops state to an empty array when component unmounts
+      dispatch(setShops([]));
+    };
+  }, []);
 
-
-  const GetShops = async (page = currentPage) => {
-
+  const GetShops = async (userid, page = currentPage) => {
+    console.log(UserId, userid, page, 'shopss  ')
     try {
-      const response = await getShops(page);
-      // const response = await login('userTwo', 'userTwo@123');
+      // Clear the existing shop list in Redux
+      dispatch(setShops([]));
+
+      const response = await getShops(userid, page);
       console.log(response, 'shop api response')
 
       setPagesize(response?.totalPages)
       const newShops = response.shops;
 
-      // Concatenate newOrders with the existing orders array using spread operator
-      const updatedShops = [...shops, ...newShops];
+      // Concatenate new shops with the existing shop list
+      const updatedShops = [...newShops];
       console.log(updatedShops, 'gvghfggtf')
+      setshoplist(updatedShops)
       dispatch(setShops(updatedShops));
       if (response.message = "Getting Orders data Successfully") {
         // dispatch(setShops(response));
         // dispatch(setItems(response?.items));
-
       } else {
         console.log('Error during login:',);
         // setError(response.data.message);
@@ -235,9 +150,43 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
       } else {
         Alert.alert('Error', 'An error occurred during login.');
       }
-
     }
   };
+
+  // const GetShops = async (userid, page = currentPage) => {
+  //   console.log(UserId, userid, page, 'shopss  ')
+  //   try {
+  //     const response = await getShops(userid, page);
+  //     // const response = await login('userTwo', 'userTwo@123');
+  //     console.log(response, 'shop api response')
+
+  //     setPagesize(response?.totalPages)
+  //     const newShops = response.shops;
+
+  //     // Concatenate newOrders with the existing orders array using spread operator
+  //     const updatedShops = [...shops, ...newShops];
+  //     console.log(updatedShops, 'gvghfggtf')
+  //     setshoplist(updatedShops)
+  //     dispatch(setShops(updatedShops));
+  //     if (response.message = "Getting Orders data Successfully") {
+  //       // dispatch(setShops(response));
+  //       // dispatch(setItems(response?.items));
+
+  //     } else {
+  //       console.log('Error during login:',);
+  //       // setError(response.data.message);
+  //     }
+  //   } catch (error) {
+  //     // Alert(error)
+  //     console.error('Error during login:hwre', error?.message);
+  //     if (error.response && error.response.data && error.response.data.message) {
+  //       Alert.alert('Error', error.response.data.message);
+  //     } else {
+  //       Alert.alert('Error', 'An error occurred during login.');
+  //     }
+
+  //   }
+  // };
   const GetShopDetails = async (shopid) => {
     console.log(shopid, '')
     try {
@@ -268,13 +217,14 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
     console.log(currentPage, pageSize, 'pagesss')
     if (currentPage < pageSize) { // Check if the current list length is greater than or equal to the page size
       setCurrentPage(currentPage + 1);
-      GetShops(currentPage + 1);
+      GetShops(UserId, currentPage + 1);
     }
   };
   const _renderItems = ({ item }) => {
+    // console.log('Item:', item);
     return (
       <View style={styles.itemContainer}>
-        <TouchableOpacity onPress={() => onShopPress(item.id)}>
+        <TouchableOpacity onPress={() => onShopPress(item?.id)}>
           <View style={styles.row1}>
             <Text style={styles.nameText} numberOfLines={1}>{item.shopname}</Text>
           </View>
@@ -299,7 +249,7 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title={'Shops'} isNotification={true} />
+      <Header title={'Shops'} isNotification={false} />
       <View style={{ flexDirection: 'row' }}>
         <View
           style={{
@@ -320,7 +270,7 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
         data={shops}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => <_renderItems item={item} />}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item?.id.toString()} 
         onEndReached={loadMore} // Call loadMore function when user reaches the end of the list
         onEndReachedThreshold={0.5} 
       />

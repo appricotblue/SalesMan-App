@@ -19,38 +19,38 @@ const InvoiceScreen = () => {
 
   const invoiceImageUrl = 'https://salesman.aindriya.co.in/invoice/1713939124213_hotel.jpg';
 
-  const downloadInvoice = async () => {
-    console.log('here down')
-    try {
-      // Use Fetch API to download the image
-      const response = await fetch(invoiceImageUrl);
-      const blob = await response.blob();
+  // const downloadInvoice = async () => {
+  //   console.log('here down')
+  //   try {
+  //     // Use Fetch API to download the image
+  //     const response = await fetch(invoiceImageUrl);
+  //     const blob = await response.blob();
 
-      // Save the image to the device's storage
-      const filename = invoiceImageUrl.substring(invoiceImageUrl.lastIndexOf('/') + 1);
-      const pathToSave = `${RNFS.DocumentDirectoryPath}/${filename}`;
-      await RNFS.writeFile(pathToSave, blob, 'base64');
+  //     // Save the image to the device's storage
+  //     const filename = invoiceImageUrl.substring(invoiceImageUrl.lastIndexOf('/') + 1);
+  //     const pathToSave = `${RNFS.DocumentDirectoryPath}/${filename}`;
+  //     await RNFS.writeFile(pathToSave, blob, 'base64');
 
-      // Open the downloaded image
-      if (Platform.OS === 'ios') {
-        // On iOS, open the image in a new window
-        RNFS.readFile(pathToSave, 'base64')
-          .then((fileContent) => {
-            const url = `data:image/jpeg;base64,${fileContent}`;
-            // Open the image in a new window
-            window.open(url, '_blank');
-          })
-          .catch((error) => {
-            console.error('Error opening downloaded image: ', error);
-          });
-      } else if (Platform.OS === 'android') {
-        // On Android, show a toast or notification that the image was downloaded
-        console.log('Invoice downloaded to:', pathToSave);
-      }
-    } catch (error) {
-      console.error('Error downloading image: ', error);
-    }
-  };
+  //     // Open the downloaded image
+  //     if (Platform.OS === 'ios') {
+  //       // On iOS, open the image in a new window
+  //       RNFS.readFile(pathToSave, 'base64')
+  //         .then((fileContent) => {
+  //           const url = `data:image/jpeg;base64,${fileContent}`;
+  //           // Open the image in a new window
+  //           window.open(url, '_blank');
+  //         })
+  //         .catch((error) => {
+  //           console.error('Error opening downloaded image: ', error);
+  //         });
+  //     } else if (Platform.OS === 'android') {
+  //       // On Android, show a toast or notification that the image was downloaded
+  //       console.log('Invoice downloaded to:', pathToSave);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error downloading image: ', error);
+  //   }
+  // };
 
   // const downloadInvoice = async () => {
   //   try {
@@ -89,15 +89,14 @@ const InvoiceScreen = () => {
   // };
 
 
-  // const downloadInvoice = () => {
-  //   console.log('here down', orderdetails?.invoice)
-  //   // You can use any method to download the PDF here, for example:
-  //   // Linking.openURL(samplePdfUrl); // Opens in browser
-  //   // Or use a library like RNFetchBlob to download the PDF
-  //   // Example: RNFetchBlob.config({ fileCache: true }).fetch('GET', samplePdfUrl).then(...)
-  //   // For simplicity, I'll just open the PDF in the browser for demonstration:
-  //   Linking.openURL(orderdetails?.invoice);
-  // };
+  const downloadInvoice = async () => {
+    try {
+      // Open the image URL directly in the device's browser
+      await Linking.openURL(invoiceImageUrl);
+    } catch (error) {
+      console.error('Error downloading image: ', error);
+    }
+  };
 
   return (
     <View style={styles.container}>

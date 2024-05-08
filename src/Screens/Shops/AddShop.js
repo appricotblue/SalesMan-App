@@ -18,13 +18,14 @@ import CommonButton from '../../components/CommonButton';
 import CustomSelectionBox from '../../components/CustomSelectionBox';
 import Geolocation from '@react-native-community/geolocation';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { createShopAPI, getLocationList } from '../../api';
+import { createShopAPI, getLocationList, getShops } from '../../api';
 import Local from '../../Storage/Local';
 import axios from "axios";
 import { useDispatch, useSelector } from 'react-redux';
-import { setOrders, setItems, setLocationList, setDeliveries } from '../../redux/action';
+import { setOrders, setShops, setLocationList, setDeliveries } from '../../redux/action';
 import { env_dev } from "../../env/Dev";
 import { useRoute } from '@react-navigation/native';
+import HomeOrderButton from '../../components/HomeOrderButton';
 
 
 
@@ -150,7 +151,7 @@ const AddShop = ({ navigation: { navigate } }) => {
         images.forEach((imageUri, index) => {
             const imageFile = {
                 uri: imageUri,
-                name: `image_${index}.jpg`, 
+                name: `image_${index}.jpg`,
                 type: 'image/jpeg',
             };
             formData.append(`shopImage`, imageFile);
@@ -166,10 +167,32 @@ const AddShop = ({ navigation: { navigate } }) => {
                     },
                 }
             );
+
+            Alert.alert('Shop created successfully')
+            await GetShops(UserId);
+
             console.log('Shop created successfully:', response, formData);
-            navigate('shops')
+
         } catch (error) {
             console.error('Error creating shop:', error);
+        }
+    };
+
+    const GetShops = async (userid,) => {
+        console.log(UserId, userid, 'shopss  ')
+        try {
+            const response = await getShops(userid, 1);
+            // const response = await login('userTwo', 'userTwo@123');
+            console.log(response, 'shop api response')
+
+            dispatch(setShops(response?.shops));
+            await navigate('shops')
+
+        } catch (error) {
+            // Alert(error)
+            console.error('Error during login:hwre', error?.message);
+
+
         }
     };
 
@@ -197,7 +220,7 @@ const AddShop = ({ navigation: { navigate } }) => {
         const options = {
             selectionLimit: 5,
             mediaType: 'photo',
-            includeBase64: true, 
+            includeBase64: true,
         };
 
         launchImageLibrary(options, (response) => {
@@ -283,7 +306,7 @@ const AddShop = ({ navigation: { navigate } }) => {
     return (
 
         <SafeAreaView style={styles.container}>
-            <Header title={'Add Shops'} isBackArrow={true} isNotification={true} />
+            <Header title={'Add Shops'} isBackArrow={true} isNotification={false} />
 
             <ScrollView style={styles.scrollContainer}>
                 <CustomTextInput
@@ -350,11 +373,11 @@ const AddShop = ({ navigation: { navigate } }) => {
                     </Text>
                     <TouchableOpacity
 
-                        // onPress={() => navigate('LocationScreen')} 
-                        onPress={() => requestLocationPermission()}
+                        onPress={() => navigate('LocationScreen', { data: { latitude: latitude, longitude: longitude } })}
+                        // onPress={() => requestLocationPermission()}
                         style={styles.locationButton}>
                         <Text style={styles.selectLocationText}>
-                            {locationdata?.latitude ? locationdata?.latitude + ',' + locationdata?.longitude : 'Select Location'}  
+                            {locationdata?.latitude ? locationdata?.latitude + ',' + locationdata?.longitude : 'Select Location'}
                         </Text>
                     </TouchableOpacity>
 
@@ -392,7 +415,10 @@ const AddShop = ({ navigation: { navigate } }) => {
                 {renderImageSelection()}
 
             </ScrollView>
-            <View style={styles.saveButtonContainer}>
+            <View style={styles.OrderButton}>
+                <HomeOrderButton onpress={() => isValidate()} title={'Add Shop'} />
+            </View>
+            {/* <View style={styles.saveButtonContainer}>
                 <CommonButton
                     onPress={() => isValidate()}
                     color={'#003451'}
@@ -400,7 +426,7 @@ const AddShop = ({ navigation: { navigate } }) => {
                     width={width * 0.4}
                     texttitle={'white'}
                 />
-            </View>
+            </View> */}
         </SafeAreaView>
     );
 };
@@ -476,7 +502,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flexWrap: 'wrap',
         marginTop: 20,
-        marginBottom: 30,
+        marginBottom: 70,
         // backgroundColor: 'red'
 
     },
@@ -522,6 +548,18 @@ const styles = StyleSheet.create({
     requiredText: {
         color: 'red',
         marginLeft: 5,
+    },
+    OrderButton: {
+        position: 'absolute',
+        bottom: 13,
+        left: 0,
+        right: 0,
+        height: 40, // Adjust height as needed
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'center',
+        borderRadius: 15,
     },
 });
 

@@ -24,7 +24,7 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import CustomTextInput from '../../components/CustomTextInput';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useDispatch, useSelector } from 'react-redux';
-import { setStatus, setShopList, setShopItems } from '../../redux/action';
+import { setStatus, setShopList, setShopItems, setOrders } from '../../redux/action';
 import { getOrderStatus, getShopLists, getOrders, getItemSearch } from '../../api';
 import { env_dev } from "../../env/Dev";
 import moment from 'moment';
@@ -40,7 +40,7 @@ const EditOrder = () => {
     const { status, shops, searchshopitems, orderdetails } = useSelector((state) => state.global);
     const [searchQuery, setSearchQuery] = useState('');
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [location, setlocation] = useState('');
+    const [location, setlocation] = useState({ id: 1, name: 'sales' },);
     const [selectStatus, setSelectStatus] = useState({ id: orderdetails?.statusId, status: orderdetails?.orderStatus });
     const [selectShop, setSelectShop] = useState('');
 
@@ -65,6 +65,10 @@ const EditOrder = () => {
     const [selectedShop, setSelectedShop] = useState({ id: orderdetails?.shopId, shopname: orderdetails?.shopName });
     const [UserId, setUserId] = useState(null);
     const [selectedItemId, setSelectedItemId] = useState(null);
+    const [totalCommission, setTotalCommission] = useState(0);
+    // const [totalCommission, setTotalCommission] = useState(0);
+    const [itemQuantities, setItemQuantities] = useState({});
+
 
 
     useEffect(() => {
@@ -74,6 +78,7 @@ const EditOrder = () => {
                 const delay = 2000; // Delay in milliseconds
                 console.log(userid, 'userid?', orderdetails, orderdetails?.orderStatus)
                 setUserId(userid)
+                GetShops(userid)
                 setSelectedItems(orderdetails.orderItems)
 
             } catch (error) {
@@ -97,6 +102,18 @@ const EditOrder = () => {
         calculateTotalAmount();
     }, [selectedItems]);
 
+
+    useEffect(() => {
+        const calculateTotalCommission = () => {
+            let total = 0;
+            selectedItems.forEach(item => {
+                total += (item.itemcommission * item.quantityCount);
+            });
+            setTotalCommission(total);
+        };
+
+        calculateTotalCommission();
+    }, [selectedItems]);
 
     const isFormValid = () => {
         if (!location) {
@@ -181,8 +198,8 @@ const EditOrder = () => {
 
     useEffect(() => {
         GetStatuses()
-        GetShops(),
-            console.log(shops, 'heree')
+
+        console.log(shops, 'heree')
         // GetShopsItems()
     }, [])
 
@@ -195,9 +212,9 @@ const EditOrder = () => {
 
         }
     };
-    const GetShops = async () => {
+    const GetShops = async (userId) => {
         try {
-            const response = await getShopLists();
+            const response = await getShopLists(userId);
             dispatch(setShopList(response.shops));
         } catch (error) {
             console.log(error)
@@ -232,11 +249,12 @@ const EditOrder = () => {
             const requestBody = {
                 expecteddate: toDate,
                 shopId: selectedShop?.id,
-                yourearing: 10,
+                yourearing: totalCommission,
                 totalAmount: totalAmount,
                 orderNo: shopName,
+                // orderNo: orderdetails?.id,
                 itemId: itemIds,
-                status: selectStatus?.id,
+                status: selectStatus?.id.toString(),
                 orderType: location?.name,
                 quantity: quantities
             };
@@ -251,10 +269,22 @@ const EditOrder = () => {
             });
             const data = await response.json();
             console.log('Order created:', data);
+            GetOrders()
 
-            navigation.navigate('Home')
         } catch (error) {
             console.error('Error creating order:edit', error);
+        }
+    };
+
+    const GetOrders = async () => {
+
+        try {
+            const response = await (getOrders(UserId, '', 1));
+            console.log(response.orders, 'here')
+            dispatch(setOrders(response.orders));
+            navigation.navigate('Home')
+        } catch (error) {
+            console.error('Error during fetching orders:home ', error?.message);
         }
     };
 
@@ -287,6 +317,7 @@ const EditOrder = () => {
                                 style={styles.quantityInput}
                                 keyboardType="numeric" // Set keyboard type to numeric for number input
                                 placeholder="Qnty"
+                                placeholderTextColor={'gray'}
                                 value={selectedItem.quantityCount?.toString()}
                                 onChangeText={(text) => handleQuantityChange(item.id, text)}
 
@@ -311,49 +342,111 @@ const EditOrder = () => {
     const handleAddItem = () => {
         if (selectedItem && selectedItemQuantity !== '') {
             const quantityCount = parseInt(selectedItemQuantity, 10) || 0;
-            const newItem = { ...selectedItem, quantityCount };
+            const existingItem = selectedItems.find(item => item.id === selectedItem.id);
 
-            setSelectedItems([...selectedItems, newItem]);
-            setTotalAmount(totalAmount + (newItem.price * quantityCount));
+            if (existingItem) {
+                // Item already exists, update the quantity
+                const updatedItem = { ...existingItem, quantityCount: existingItem.quantityCount + quantityCount };
+                const updatedItems = selectedItems.map(item =>
+                    item.id === existingItem.id ? updatedItem : item
+                );
+                setSelectedItems(updatedItems);
+            } else {
+                // Item doesn't exist, add a new item to the list
+                const newItem = { ...selectedItem, quantityCount };
+                setSelectedItems([...selectedItems, newItem]);
+            }
 
+            // Update total amount and commission
+            setTotalAmount(totalAmount + (selectedItem.price * quantityCount));
+            setTotalCommission(totalCommission + (selectedItem.itemcommission * quantityCount));
+
+            // Reset state after adding item
             setIsAddItemModalVisible(false);
             setSelectedItem(null);
             setSelectedItemQuantity('');
-        }
-        else if (selectedItemQuantity == '') {
-
-            Alert.alert('Error', 'Please enter a valid quantity.');
+            // setSelectedItemCommission('');
+            setSelectedItemId(null);
         } else if (selectedItemQuantity == 0) {
             Alert.alert('Error', 'Please enter a valid quantity.');
         }
+
         else {
-            Alert.alert('Error', 'Please select an item to continue');
+            Alert.alert('Error', 'Please select an item and enter a valid quantity.');
         }
     };
 
 
+    // const handleAddItem = () => {
+    //     if (selectedItem && selectedItemQuantity !== '') {
+    //         const quantityCount = parseInt(selectedItemQuantity, 10) || 0;
+    //         const newItem = { ...selectedItem, quantityCount };
+
+    //         setSelectedItems([...selectedItems, newItem]);
+    //         setTotalAmount(totalAmount + (newItem.price * quantityCount));
+    //         setTotalCommission(totalCommission + (newItem?.itemcommission * quantityCount));
+
+    //         setIsAddItemModalVisible(false);
+    //         setSelectedItem(null);
+    //         setSelectedItemQuantity('');
+    //         // setSelectedItemCommission('');
+    //     }
+    //     else if (selectedItemQuantity == '') {
+
+    //         Alert.alert('Error', 'Please enter a valid quantity.');
+    //     } else if (selectedItemQuantity == 0) {
+    //         Alert.alert('Error', 'Please enter a valid quantity.');
+    //     }
+    //     else {
+    //         Alert.alert('Error', 'Please select an item to continue');
+    //     }
+    // };
+
+
+    // const handleQuantityChange = (itemId, quantityCount) => {
+    //     const updatedSelectedItems = selectedItems.map(item => {
+    //         if (item.id === itemId) {
+    //             return { ...item, quantityCount };
+    //         }
+    //         return item;
+    //     });
+    //     setSelectedItems(updatedSelectedItems);
+    // };
+
+    // const handleDeleteItem = (itemId) => {
+
+    //     const itemToDelete = selectedItems.find(item => item.id === itemId);
+    //     if (itemToDelete) {
+    //         const itemValue = itemToDelete.price * itemToDelete.quantityCount;
+    //         const itemCommission = itemToDelete?.itemcommission * itemToDelete.quantityCount;
+    //         const updatedItems = selectedItems.filter(item => item.id !== itemId);
+    //         setTotalAmount(totalAmount - itemValue);
+    //         setTotalCommission(totalCommission - itemCommission);
+    //         setSelectedItems(updatedItems);
+    //     }
+    // };
+
     const handleQuantityChange = (itemId, quantityCount) => {
-        const updatedSelectedItems = selectedItems.map(item => {
-            if (item.id === itemId) {
-                return { ...item, quantityCount };
-            }
-            return item;
-        });
-        setSelectedItems(updatedSelectedItems);
+        setItemQuantities({ ...itemQuantities, [itemId]: quantityCount });
     };
 
-    const handleDeleteItem = (itemId) => {
 
+    const handleDeleteItem = (itemId) => {
         const itemToDelete = selectedItems.find(item => item.id === itemId);
+
         if (itemToDelete) {
             const itemValue = itemToDelete.price * itemToDelete.quantityCount;
-            const updatedItems = selectedItems.filter(item => item.id !== itemId);
+            const itemCommission = itemToDelete.itemcommission * itemToDelete.quantityCount;
+
+            // Update total amount and commission
             setTotalAmount(totalAmount - itemValue);
+            setTotalCommission(totalCommission - itemCommission);
+
+            // Remove the item from selectedItems
+            const updatedItems = selectedItems.filter(item => item.id !== itemId);
             setSelectedItems(updatedItems);
         }
     };
-
-
 
     return (
 
@@ -374,15 +467,16 @@ const EditOrder = () => {
                             />
                         </View>
                         <View style={styles.toView}>
-                            <Text style={styles.toText}>Delivery Date <Text style={styles.requiredText}>*</Text></Text>
+                            <Text style={styles.itemtitles}>Delivery Date <Text style={styles.requiredText}>*</Text></Text>
                             <Calander date={toDate} onPress={() => onShowFromCalander()} />
                         </View>
                     </View>
                     <View style={styles.earningsview}>
                         <View style={styles.fromView}>
                             <CustomTextInput
-                                title={'Order No'}
+                                title={'Order Nos'}
                                 isRequired={true}
+                                editable={false}
                                 placeholder="Enter Order No"
                                 errorText={checkshopName}
                                 inputwidth={width * .35}
@@ -413,7 +507,7 @@ const EditOrder = () => {
                         onSelect={handleShopSelect}
                         displayProperty="shopname" // Specify the property to display as shop name
                     />
-                    <Text style={styles.subtitle}>Select Item <Text style={styles.requiredText}>*</Text></Text>
+                    <Text style={styles.itemtitles}>Select Item <Text style={styles.requiredText}>*</Text></Text>
                     <View
                         style={{
                             width: width * 0.9,
@@ -441,24 +535,24 @@ const EditOrder = () => {
                         <Text style={styles.subtitle}>Total Amount</Text>
                         <Text style={[styles.title, { color: 'black' }]}>₹{totalAmount}</Text>
                     </View>
-                    {/* <View style={styles.totalview}>
+                    <View style={styles.totalview}>
                         <Text style={[styles.subtitle, { color: '#117C00' }]}>Your Earnings</Text>
-                        <Text style={[styles.title, { color: '#117C00' }]}>₹6200</Text>
+                        <Text style={[styles.title, { color: '#117C00' }]}>₹{totalCommission}</Text>
 
-                    </View> */}
+                    </View>
                     <View style={styles.btnview}>
-                        <CommonButton
+                        {/* <CommonButton
                             onPress={() => ''}
                             color={'white'}
                             title={'Save as Draft'}
                             width={width * 0.4}
                             texttitle={'#005A8D'}
-                        />
+                        /> */}
                         <CommonButton
                             onPress={() => createOrder()}
                             color={'#005A8D'}
                             title={'Create Order'}
-                            width={width * 0.4}
+                            width={width * 0.9}
                             texttitle={'white'}
                         />
                     </View>
@@ -520,6 +614,7 @@ const EditOrder = () => {
                                                 style={styles.quantityInput}
                                                 keyboardType="numeric" // Set keyboard type to numeric for number input
                                                 placeholder="Qnty"
+                                                placeholderTextColor={'gray'}
                                                 value={selectedItemQuantity}
                                                 onChangeText={(text) => { handleQuantityChange(item.id, text), setSelectedItemQuantity(text) }} // Update state with entered value
                                             />
@@ -531,10 +626,14 @@ const EditOrder = () => {
                                                 { backgroundColor: selectedItemId === item.id ? 'green' : '#005A8D' }
                                             ]}
                                             onPress={() => {
-                                            handleAddItem,
-                                                setSelectedItem(item)
-                                             setSelectedItemId(item.id)
-                                        }}>
+                                                if (selectedItemQuantity == 0) {
+                                                    Alert.alert('Error', 'Please enter a valid quantity.');
+                                                } else {
+                                                    handleAddItem,
+                                                        setSelectedItem(item)
+                                                    setSelectedItemId(item.id)
+                                                }
+                                            }}>
                                             <Text style={{ color: 'white', fontSize: 16 }}>{selectedItemId === item.id ? 'Selected' : 'Select'}</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -578,6 +677,12 @@ const styles = StyleSheet.create({
         color: 'grey',
         fontSize: 14,
         fontFamily: 'Inter-Regular',
+        marginTop: 4,
+    },
+    itemtitles: {
+        color: 'black',
+        fontSize: 14,
+        fontFamily: 'Inter-Bold',
         marginTop: 4,
     },
     earningsview: {
@@ -662,7 +767,7 @@ const styles = StyleSheet.create({
         color: 'grey',
         fontSize: 14,
     },
-    listview: { width: width * .9, alignSelf: 'center', height: height * .34, marginTop: 3, paddingBottom: 10 },
+    listview: { width: width * .9, alignSelf: 'center', height: height * .30, marginTop: 3, paddingBottom: 10 },
     fromView: {
         height: height * 0.1,
         width: width * 0.33,
@@ -716,6 +821,7 @@ const styles = StyleSheet.create({
         left: 2,
         width: '90%',
         minHeight: 50,
+        color: 'black'
     },
     requiredText: {
         color: 'red',

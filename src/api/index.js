@@ -18,9 +18,10 @@ export const login = async (username, password) => {
   }
 };
 
-export const getOrders = async (userId, pageNumber) => {
+export const getOrders = async (userId, routeid, pageNumber) => {
+  console.log(userId, routeid, pageNumber, 'itemsss')
   try {
-    const response = await HTTP_REQUEST.get(`/user/getOrderslist/${userId}?page=${pageNumber}`);
+    const response = await HTTP_REQUEST.get(`/user/getOrderslist/${userId}/${routeid}?page=${pageNumber}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -45,9 +46,9 @@ export const getDeliveries = async (userId, pageNumber) => {
   }
 };
 
-export const getShops = async (pageNumber) => {
+export const getShops = async (userId, pageNumber) => {
   try {
-    const response = await HTTP_REQUEST.get(`/user/getshops?page=${pageNumber}`);
+    const response = await HTTP_REQUEST.get(`/user/getshops/${userId}?page=${pageNumber}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -146,9 +147,9 @@ export const getOrderStatus = async () => {
   }
 };
 
-export const getShopLists = async () => {
+export const getShopLists = async (userId) => {
   try {
-    const response = await HTTP_REQUEST.get(`user/getShops?page=1`);
+    const response = await HTTP_REQUEST.get(`user/getShops/${userId}?page=1`);
     return response.data;
   } catch (error) {
     throw error;
@@ -198,11 +199,12 @@ export const getReturnOrder = async (userId) => {
   }
 };
 
-export const getOrderbyShopDate = async (shop, fromDate, toDate) => {
-  console.log(shop, fromDate, toDate, 'orderbydate')
+export const getOrderbyShopDate = async (datetype, shop, fromDate, toDate) => {
+  console.log(datetype,shop, fromDate, toDate, 'orderbydate')
   try {
-
-    const response = await HTTP_REQUEST.get(`user/searchAndFilterShops?shopName=${shop}&fromDate=${fromDate}&toDate=${toDate}`);
+    // filterbydate?filter=custom&startDate=2024-04-27&endDate=2024-04-29&shopName=testing1
+    // const response = await HTTP_REQUEST.get(`user/searchAndFilterShops?shopName=${shop}&fromDate=${fromDate}&toDate=${toDate}`);
+    const response = await HTTP_REQUEST.get(`user/filterbydate?filter=${datetype}&shopName=${shop}&startDate=${fromDate}&endDate=${toDate}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -226,6 +228,25 @@ export const getEarningDetails = async (orderId) => {
     throw error;
   }
 };
+
+export const getfilterBydate = async (filter) => {
+  try {
+    const response = await HTTP_REQUEST.get(`user/filterbydate`, { filter });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getRoute = async (userId) => {
+  try {
+    const response = await HTTP_REQUEST.get(`user/getUserRoute/${userId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 
 export const trial = async (PAYLOAD) =>
   HTTP_REQUEST.post("/user-home-screen/", PAYLOAD);

@@ -168,7 +168,7 @@ const Return = ({navigation: {navigate}}) => {
 
   const GetReturnOrder = async (userid) => {
 
-    console.log('here search', searchQuery)
+    console.log('here search return page', searchQuery)
     try {
       const response = await getReturnOrder(userid);
       console.log(response, 'return order  api response')
@@ -194,17 +194,17 @@ const Return = ({navigation: {navigate}}) => {
         style={styles.itemContainer}>
         <View style={styles.row1}>
           <Text style={styles.orderIdText}> {item.orderNo}</Text>
-          <Text style={styles.timeText}>Pickup Date  {item.deliveryDate}</Text>
+          <Text style={styles.timeText}>Pickup Date:{item.deliveryDate}</Text>
 
         </View>
-        {/* <View style={styles.row1}>
-          <Text style={styles.nameText}>{item.shopName}</Text>
-          <Text style={styles.timeText}>Delivery Date  {item.deliveryDate}</Text>
-        </View> */}
+        <View style={styles.row1}>
+          <Text style={styles.nameText}>{item?.shopName}</Text>
+          {/* <Text style={styles.timeText}>Delivery Date  {item.deliveryDate}</Text> */}
+        </View>
         <View style={styles.row1}>
           <View style={styles.row2}>
             <Text style={styles.rateText}>₹{item.totalAmount}</Text>
-            <Text style={styles.qtyText}>({item.qty} Items)</Text>
+            <Text style={styles.qtyText}>({item?.totalItemReturned} Items)</Text>
           </View>
           <View>
             <Text
@@ -227,7 +227,7 @@ const Return = ({navigation: {navigate}}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title={'Return'} isNotification={true} />
+      <Header title={'Return'} isNotification={false} />
       <View style={{ flexDirection: 'row', marginBottom: 10, marginTop: 10 }}>
         <View
           style={{

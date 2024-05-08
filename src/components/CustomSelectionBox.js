@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { height } from '../Theme/Constants';
 
 function CustomSelectionBox({
@@ -15,6 +15,16 @@ function CustomSelectionBox({
   isRequired = false
 }) {
   const [showOptions, setShowOptions] = useState(false);
+  const scrollViewRef = useRef();
+
+  // UseEffect to scroll to the selected option if it's not in the view
+  useEffect(() => {
+    if (showOptions && scrollViewRef.current) {
+      setTimeout(() => {
+        scrollViewRef.current.scrollTo({ y: 0, animated: false });
+      }, 200);
+    }
+  }, [showOptions]);
 
   const handleSelectOption = shop => {
     onSelect(shop);
@@ -43,7 +53,10 @@ function CustomSelectionBox({
         <Text style={styles.dropdownIcon}>{showOptions ? '▲' : '▼'}</Text>
       </TouchableOpacity>
       {showOptions && (
-        <ScrollView style={styles.optionsContainer}>
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.optionsContainer}
+          contentContainerStyle={styles.optionsContent}>
           {options.map(shop => (
             <TouchableOpacity
               key={shop?.id}
@@ -87,11 +100,17 @@ const styles = StyleSheet.create({
   },
   optionsContainer: {
     maxHeight: height * 0.3,
-    minHeight: height * 0.2,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: 'grey',
     backgroundColor: '#fff',
+    zIndex: 1, // Ensure the dropdown appears above other elements
+    position: 'absolute', // Position the dropdown absolutely
+    width: '100%', // Make the dropdown take full width
+    marginTop: Platform.OS === 'ios' ? 35 : 0, // Adjust marginTop based on platform
+  },
+  optionsContent: {
+    flexGrow: 1,
   },
   option: {
     padding: 10,
