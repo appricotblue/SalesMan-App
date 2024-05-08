@@ -347,6 +347,7 @@ const AddReturnOrder = () => {
                 setSelectedItems([...selectedItems, newItem]);
             }
 
+            setItemQuantities({ ...itemQuantities, [selectedItem.id]: count });
             // Update total amount and commission
             setTotalAmount(totalAmount + (selectedItem.price * count));
             setTotalCommission(totalCommission + (selectedItem.itemcommission * count));
@@ -388,48 +389,7 @@ const AddReturnOrder = () => {
     };
 
 
-    // const handleAddItem = () => {
-    //     if (selectedItem && selectedItemQuantity !== '') {
-    //         const count = parseInt(selectedItemQuantity, 10) || 0;
-    //         const newItem = { ...selectedItem, count };
 
-    //         setSelectedItems([...selectedItems, newItem]);
-    //         setTotalAmount(totalAmount + (newItem.price * count));
-
-    //         setIsAddItemModalVisible(false);
-    //         setSelectedItem(null);
-    //         setSelectedItemQuantity('');
-    //     }
-    //     else if (selectedItemQuantity == '') {
-    //         Alert.alert('Error', 'Please enter a valid quantity.');
-    //     } else if (selectedItemQuantity == 0) {
-    //         Alert.alert('Error', 'Please enter a valid quantity.');
-    //     }
-    //     else {
-    //         Alert.alert('Error', 'Please select an item to continue');
-    //     }
-    // };
-
-
-    // const handleQuantityChange = (itemId, count) => {
-    //     const updatedSelectedItems = selectedItems.map(item => {
-    //         if (item.id === itemId) {
-    //             return { ...item, count };
-    //         }
-    //         return item;
-    //     });
-    //     setSelectedItems(updatedSelectedItems);
-    // };
-
-    // const handleDeleteItem = (itemId) => {
-    //     const itemToDelete = selectedItems.find(item => item.id === itemId);
-    //     if (itemToDelete) {
-    //         const itemValue = itemToDelete.price * itemToDelete.count;
-    //         const updatedItems = selectedItems.filter(item => item.id !== itemId);
-    //         setTotalAmount(totalAmount - itemValue);
-    //         setSelectedItems(updatedItems);
-    //     }
-    // };
 
     return (
         <SafeAreaView>
@@ -599,7 +559,8 @@ const AddReturnOrder = () => {
                                                 keyboardType="numeric" // Set keyboard type to numeric for number input
                                                 placeholder="Qnty"
                                                 placeholderTextColor={'gray'}
-                                                value={selectedItemQuantity}
+                                                value={itemQuantities[item.id]?.toString() || ''}
+                                                // value={selectedItemQuantity}
                                                 onChangeText={(text) => { handleQuantityChange(item.id, text), setSelectedItemQuantity(text) }} // Update state with entered value
                                             />
 

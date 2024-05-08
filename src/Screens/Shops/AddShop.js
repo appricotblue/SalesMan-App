@@ -65,7 +65,12 @@ const AddShop = ({ navigation: { navigate } }) => {
         console.log(location?.id, item, ' cat iddddd')
     };
     const isValidate = async () => {
-        const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        // const emailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+        const emailFormat = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?$/;
+
+
         if (shopName == '') {
             changecheckshopName('Please enter shopName');
         }

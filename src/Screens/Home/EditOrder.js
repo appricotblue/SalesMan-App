@@ -356,7 +356,7 @@ const EditOrder = () => {
                 const newItem = { ...selectedItem, quantityCount };
                 setSelectedItems([...selectedItems, newItem]);
             }
-
+            setItemQuantities({ ...itemQuantities, [selectedItem.id]: quantityCount });
             // Update total amount and commission
             setTotalAmount(totalAmount + (selectedItem.price * quantityCount));
             setTotalCommission(totalCommission + (selectedItem.itemcommission * quantityCount));
@@ -615,7 +615,8 @@ const EditOrder = () => {
                                                 keyboardType="numeric" // Set keyboard type to numeric for number input
                                                 placeholder="Qnty"
                                                 placeholderTextColor={'gray'}
-                                                value={selectedItemQuantity}
+                                                value={itemQuantities[item.id]?.toString() || ''}
+                                                // value={selectedItemQuantity}
                                                 onChangeText={(text) => { handleQuantityChange(item.id, text), setSelectedItemQuantity(text) }} // Update state with entered value
                                             />
 
