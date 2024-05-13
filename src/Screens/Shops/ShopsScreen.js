@@ -191,7 +191,7 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
     console.log(shopid, '')
     try {
       const response = await getShopDetails(shopid);
-      console.log(response.ordersWithItems, 'shop details api response')
+      console.log(response, 'shop details api response')
       dispatch(setShopDetails(response.shop));
       dispatch(setShoporder(response.ordersWithItems));
 

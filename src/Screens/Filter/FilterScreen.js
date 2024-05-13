@@ -110,7 +110,7 @@ function FilterScreen() {
 
     console.log('here search 123', selectedShop?.shopname, selectedDateFilter, fromDate, toDate)
     try {
-      const response = await getOrderbyShopDate(selectedDateFilter, selectedShop?.shopname, fromDate, toDate);
+      const response = await getOrderbyShopDate(selectedDateFilter, selectedShop.id == '' ? '' : selectedShop?.shopname, fromDate, toDate);
       console.log(response, 'filter api response')
       dispatch(setFilterOrder(response))
       if (response.message = "Getting Orders data Successfully") {
@@ -133,7 +133,7 @@ function FilterScreen() {
   useEffect(() => {
     const fetchData = async () => {
       if (isFocused) {
-        console.log('filter screen is focused', routeitem?.id, 'test');
+        console.log('filter screen is focused', 'test');
 
         // Fetch user ID from local storage
         try {

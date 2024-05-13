@@ -173,7 +173,7 @@ const AddSalesOrder = () => {
     useEffect(() => {
         GetStatuses()
 
-            console.log(shops, 'heree')
+        console.log(shops, 'heree')
         // GetShopsItems()
     }, [])
 
@@ -286,7 +286,7 @@ const AddSalesOrder = () => {
                         <View style={{ height: 29, width: 65, borderColor: 'gray', borderWidth: .5, justifyContent: 'center', alignItems: 'center' }} >
 
                             <TextInput
-                                editable={false}
+                                editable={true}
                                 style={styles.quantityInput}
                                 keyboardType="numeric"
                                 placeholder="Qty"
@@ -298,11 +298,11 @@ const AddSalesOrder = () => {
                         <TouchableOpacity
                             style={styles.addButton}
                             onPress={() => {
-                            const filteredItems = selectedItems.filter((selectedItem) => selectedItem?.id !== item?.id);
-                            setSelectedItems(filteredItems);
-                            handleDeleteItem(item?.id)
+                                const filteredItems = selectedItems.filter((selectedItem) => selectedItem?.id !== item?.id);
+                                setSelectedItems(filteredItems);
+                                handleDeleteItem(item?.id)
 
-                        }}>
+                            }}>
                             <Text style={{ color: 'white', fontSize: 16 }}>delete</Text>
                         </TouchableOpacity>
                     </View>
@@ -350,8 +350,26 @@ const AddSalesOrder = () => {
         }
     };
 
-
     const handleQuantityChange = (itemId, count) => {
+        // Update the count of the selected item
+        const updatedItems = selectedItems.map(item =>
+            item.id === itemId ? { ...item, count: parseInt(count, 10) || 0 } : item
+        );
+        setSelectedItems(updatedItems);
+
+        // Recalculate total amount and earnings based on updated count
+        let newTotalAmount = 0;
+        let newTotalCommission = 0;
+        updatedItems.forEach(item => {
+            newTotalAmount += item.price * item.count;
+            newTotalCommission += item.itemcommission * item.count;
+        });
+
+        setTotalAmount(newTotalAmount);
+        setTotalCommission(newTotalCommission);
+    };
+
+    const handleQuantityChangemodal = (itemId, count) => {
         setItemQuantities({ ...itemQuantities, [itemId]: count });
     };
 
@@ -541,6 +559,20 @@ const AddSalesOrder = () => {
 
                                             <TextInput
                                                 style={styles.quantityInput}
+                                                keyboardType="numeric"
+                                                placeholder="Qnty"
+                                                placeholderTextColor={'gray'}
+                                                value={itemQuantities[item.id]?.toString() || ''}
+                                                // value={selectedItemQuantity.toString()} // Display item count as string in TextInput
+                                                // onChangeText={(text) => setSelectedItemQuantity(text)} // Update selectedItemQuantity state
+                                                onChangeText={(text) => {
+                                                    handleQuantityChangemodal(item.id, text), setSelectedItemQuantity(text)
+                                                }}
+                                            />
+
+
+                                            {/* <TextInput
+                                                style={styles.quantityInput}
                                                 keyboardType="numeric" // Set keyboard type to numeric for number input
                                                 placeholder="Qnty"
                                                 placeholderTextColor={'gray'}
@@ -548,7 +580,7 @@ const AddSalesOrder = () => {
                                                 value={itemQuantities[item.id]?.toString() || ''} // Display item count as string in TextInput
                                                 // onChangeText={(text) => handleQuantityChange(item.id, text)}
                                                 onChangeText={(text) => { handleQuantityChange(item.id, text), setSelectedItemQuantity(text) }} // Update state with entered value
-                                            />
+                                            /> */}
 
                                         </View>
                                         <TouchableOpacity
@@ -566,7 +598,7 @@ const AddSalesOrder = () => {
                                                 }
 
 
-                                        }}>
+                                            }}>
                                             <Text style={{ color: 'white', fontSize: 14 }}>{selectedItemId === item.id ? 'Selected' : 'Select'}</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -576,8 +608,8 @@ const AddSalesOrder = () => {
                         keyExtractor={item => item?.id}
                     />
                     <View style={{ justifyContent: 'space-between', width: width - 150, flexDirection: 'row', marginBottom: 10 }}>
-                    <Button title="Confirm" onPress={handleAddItem} />
-                    <Button title="Cancel" onPress={() => setIsAddItemModalVisible(false)} />
+                        <Button title="Confirm" onPress={handleAddItem} />
+                        <Button title="Cancel" onPress={() => setIsAddItemModalVisible(false)} />
                     </View>
 
                 </View>

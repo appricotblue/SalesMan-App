@@ -6,9 +6,10 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Alert
+  Alert,
+  Keyboard
 } from 'react-native';
-import {height, width} from '../../Theme/Constants';
+import { height, width } from '../../Theme/Constants';
 import CustomSearch from '../../components/CustomSearch';
 import Header from '../../components/Header';
 import FilterButton from '../../components/FilterButton';
@@ -16,97 +17,14 @@ import HomeScreenSelectable from '../../components/HomeScreenSelectable';
 import HomeOrderButton from '../../components/HomeOrderButton';
 import FilterModal from '../../components/FilterModal';
 import Local from '../../Storage/Local';
-import { getOrders, getOrderSearch, getReturnOrder } from '../../api';
+import { getOrders, getOrderSearch, getReturnOrder, getReturnSearch, getReturnOrderDetails } from '../../api';
 import { useDispatch, useSelector } from 'react-redux';
-import { setOrders, setReturnOrders, setDeliveries } from '../../redux/action';
+import { setOrders, setReturnOrders, setDeliveries, setOrderDetails } from '../../redux/action';
 import { useIsFocused } from '@react-navigation/native';
 
 
-const Data = [
-  {
-    id: 0,
-    orderId: '#1678954621',
-    time: '10 mins ago',
-    name: ' Supreme SuperMarket',
-    rate: 1638,
-    qty: 12,
-    status: 'Ordered',
-  },
-  {
-    id: 1,
-    orderId: '#1678954622',
-    time: '20 mins ago',
-    name: ' Green SuperMarket',
-    rate: 3896,
-    qty: 16,
-    status: 'Delivered',
-  },
-  {
-    id: 2,
-    orderId: '#1678954623',
-    time: '30 mins ago',
-    name: ' Golden Stores',
-    rate: 4250,
-    qty: 10,
-    status: 'Draft',
-  },
-  {
-    id: 3,
-    orderId: '#1678954621',
-    time: '10 mins ago',
-    name: ' Supreme SuperMarket',
-    rate: 1638,
-    qty: 12,
-    status: 'Ordered',
-  },
-  {
-    id: 4,
-    orderId: '#1678954622',
-    time: '20 mins ago',
-    name: ' Green SuperMarket',
-    rate: 3896,
-    qty: 16,
-    status: 'Delivered',
-  },
-  {
-    id: 5,
-    orderId: '#1678954623',
-    time: '30 mins ago',
-    name: ' Golden Stores',
-    rate: 4250,
-    qty: 10,
-    status: 'Draft',
-  },
-  {
-    id: 6,
-    orderId: '#1678954621',
-    time: '1 hour ago',
-    name: ' Supreme SuperMarket',
-    rate: 1638,
-    qty: 12,
-    status: 'Ordered',
-  },
-  {
-    id: 7,
-    orderId: '#1678954622',
-    time: '20 mins ago',
-    name: ' Green SuperMarket',
-    rate: 3896,
-    qty: 16,
-    status: 'Delivered',
-  },
-  {
-    id: 8,
-    orderId: '#1678954623',
-    time: '3 hour ago',
-    name: ' Golden Stores',
-    rate: 4250,
-    qty: 10,
-    status: 'Draft',
-  },
-];
 
-const Return = ({navigation: {navigate}}) => {
+const Return = ({ navigation: { navigate } }) => {
   const isFocused = useIsFocused();
   const [searchQuery, setSearchQuery] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -120,23 +38,50 @@ const Return = ({navigation: {navigate}}) => {
   const filterPress = () => {
     navigate('filter');
   };
-  // useEffect(() => {
-  //   const checkToken = async () => {
-  //     try {
-  //       const userid = await Local.getUserId();
-  //       const delay = 2000; // Delay in milliseconds
-  //       console.log(userid, 'userid kitiyo ?', returnorder)
-  //       setUserId(userid)
 
-  //       await GetReturnOrder(userid);
-  //     } catch (error) {
-  //       console.error('Error checking token:', error);
 
-  //     }
-  //   };
+  const handleClearSearch = () => {
+    setSearchQuery('');
+    GetReturnOrder(UserId)
+  };
 
-  //   checkToken();
-  // }, []);
+  const handleSearchSubmit = async () => {
+    dispatch(setReturnOrders([]));
+    try {
+      const response = await getReturnSearch(searchQuery);
+      console.log(response, 'search jkey api response')
+      // setshoplist(response)
+      dispatch(setReturnOrders(response));
+      setSearchQuery('')
+      Keyboard.dismiss();
+      if (response.message = "Getting Orders data Successfully") {
+
+      } else {
+        console.log('Error during login:',);
+      }
+    } catch (error) {
+      console.error('Error during login:hwre', error?.message);
+      if (error.response && error.response.data && error.response.data.message) {
+        Alert.alert('Error', error.response.data.message);
+      } else {
+        Alert.alert('Error', 'An error occurred during login.');
+      }
+    }
+  };
+  const GetOrderDetails = async (orderid) => {
+    console.log('here click ', orderid, 'uu')
+
+    try {
+      const response = await getReturnOrderDetails(orderid);
+      console.log(response, 'here')
+      dispatch(setOrderDetails(response))
+      navigate('ReturnOrderDetails')
+
+    } catch (error) {
+      console.error('Error during fetching orders:', error?.message);
+    }
+  };
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -168,7 +113,7 @@ const Return = ({navigation: {navigate}}) => {
 
   const GetReturnOrder = async (userid) => {
 
-    console.log('here search return page', searchQuery)
+    console.log('here search return page', userid, searchQuery)
     try {
       const response = await getReturnOrder(userid);
       console.log(response, 'return order  api response')
@@ -190,7 +135,7 @@ const Return = ({navigation: {navigate}}) => {
   const _renderItems = ({ item }) => {
     return (
       <TouchableOpacity
-        onPress={() => ''}
+        onPress={() => GetOrderDetails(item.id)}
         style={styles.itemContainer}>
         <View style={styles.row1}>
           <Text style={styles.orderIdText}> {item.orderNo}</Text>
@@ -238,7 +183,9 @@ const Return = ({navigation: {navigate}}) => {
             placeholder={'Search Returns'}
             value={searchQuery}
             onChangeText={setSearchQuery}
-            onClear={() => setSearchQuery('')}
+            // onClear={() => setSearchQuery('')}
+            onClear={handleClearSearch}
+            onSubmit={handleSearchSubmit}
           />
         </View>
         <View
@@ -258,7 +205,7 @@ const Return = ({navigation: {navigate}}) => {
       <FlatList
         data={returnorder}
         showsVerticalScrollIndicator={false}
-        renderItem={({item}) => <_renderItems item={item} />}
+        renderItem={({ item }) => <_renderItems item={item} />}
         keyExtractor={item => item.id}
       />
       <View style={styles.OrderButton}>

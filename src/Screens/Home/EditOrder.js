@@ -313,7 +313,7 @@ const EditOrder = () => {
                         <Text style={styles.rateText}>₹{selectedItem.price}</Text>
                         <View style={{ height: 29, width: 65, borderColor: 'gray', borderWidth: .5, justifyContent: 'center', alignItems: 'center' }} >
                             <TextInput
-                                editable={false}
+                                editable={true}
                                 style={styles.quantityInput}
                                 keyboardType="numeric" // Set keyboard type to numeric for number input
                                 placeholder="Qnty"
@@ -426,8 +426,27 @@ const EditOrder = () => {
     //     }
     // };
 
-    const handleQuantityChange = (itemId, quantityCount) => {
+    const handleQuantityChangemodal = (itemId, quantityCount) => {
         setItemQuantities({ ...itemQuantities, [itemId]: quantityCount });
+    };
+
+    const handleQuantityChange = (itemId, quantityCount) => {
+        // Update the count of the selected item
+        const updatedItems = selectedItems.map(item =>
+            item.id === itemId ? { ...item, quantityCount: parseInt(quantityCount, 10) || 0 } : item
+        );
+        setSelectedItems(updatedItems);
+
+        // Recalculate total amount and earnings based on updated count
+        let newTotalAmount = 0;
+        let newTotalCommission = 0;
+        updatedItems.forEach(item => {
+            newTotalAmount += item.price * item.quantityCount;
+            newTotalCommission += item.itemcommission * item.quantityCount;
+        });
+
+        setTotalAmount(newTotalAmount);
+        setTotalCommission(newTotalCommission);
     };
 
 
@@ -617,7 +636,7 @@ const EditOrder = () => {
                                                 placeholderTextColor={'gray'}
                                                 value={itemQuantities[item.id]?.toString() || ''}
                                                 // value={selectedItemQuantity}
-                                                onChangeText={(text) => { handleQuantityChange(item.id, text), setSelectedItemQuantity(text) }} // Update state with entered value
+                                                onChangeText={(text) => { handleQuantityChangemodal(item.id, text), setSelectedItemQuantity(text) }} // Update state with entered value
                                             />
 
                                         </View>

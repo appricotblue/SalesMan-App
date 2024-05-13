@@ -204,8 +204,8 @@ function ShopDetails({ navigation: { navigate } }) {
 
       <View style={styles.subContainer}>
         <View style={styles.imageContainer}>
+          {/* Main Image */}
           <Image
-            // source={{ uri: 'http://salesman.aindriya.co.in/shopImage/original/dress.jpg' }}
             source={{ uri: shopdetails?.shopImage[0]?.url }}
             style={{
               height: height * 0.16,
@@ -213,10 +213,32 @@ function ShopDetails({ navigation: { navigate } }) {
               borderRadius: 11,
             }}
           />
-          <View style={styles.additionalImagesContainer}>
+          {shopdetails?.shopImage?.length > 1 ? (
+            <>
+              <View style={styles.additionalImagesContainer}>
+                {[...Array(Math.ceil(images.length / 2)).keys()].map(pairIndex => (
+                  <View key={pairIndex} style={styles.column}>
+                    {images.slice(pairIndex * 2, pairIndex * 2 + 2).map((imageUrl, index) => (
+                      <Image
+                        key={index}
+                        source={{ uri: imageUrl }}
+                        style={{
+                          height: height * 0.1,
+                          width: width * 0.2,
+                          borderRadius: 8,
+                          marginBottom: 8,
+                        }}
+                      />
+                    ))}
+                  </View>
+  ))}
+              </View>
+
+              {/* Additional Images */}
+              {/* <View style={styles.additionalImagesContainer}>
 
             <View style={styles.column}>
-              {images.slice(Math.ceil(images.length / 2)).map((imageUrl, index) => (
+                  {images.slice(0, Math.ceil(images.length / 2)).map((imageUrl, index) => (
                 <Image
                   key={index}
                   source={{ uri: imageUrl }}
@@ -229,8 +251,10 @@ function ShopDetails({ navigation: { navigate } }) {
                 />
               ))}
             </View>
+
+
             <View style={styles.column}>
-              {images.slice(1, Math.ceil(images.length / 2)).map((imageUrl, index) => (
+                  {images.slice(Math.ceil(images.length / 2)).map((imageUrl, index) => (
                 <Image
                   key={index}
                   source={{ uri: imageUrl }}
@@ -243,23 +267,12 @@ function ShopDetails({ navigation: { navigate } }) {
                 />
               ))}
             </View>
-          </View>
-
-          {/* <View style={styles.additionalImagesContainer}>
-            {images.slice(1).map((imageUrl, index) => (
-              <Image
-                key={index}
-                source={{ uri: imageUrl }}
-                style={{
-                  height: height * 0.1,
-                  width: width * 0.2,
-                  borderRadius: 8,
-                  marginLeft: 8,
-                }}
-              />
-            ))}
           </View> */}
+            </>
+          ) : null}
         </View>
+
+
         <Text style={styles.nameText}>{shopdetails?.shopname}</Text>
         <Text style={styles.locationText}>{shopdetails?.location}</Text>
       </View>

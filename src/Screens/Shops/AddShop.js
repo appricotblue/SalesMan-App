@@ -340,7 +340,7 @@ const AddShop = ({ navigation: { navigate } }) => {
                         value={shopCode}
                     />
                     <View style={{ width: width * .4, backgroundColor: '#CCE1ED', height: height / 20, justifyContent: 'center', alignItems: 'center', marginTop: 25, borderRadius: 10 }}>
-                        <Text>0</Text>
+                        <Text style={{ color: 'black' }}>0</Text>
                     </View>
                 </View>
 

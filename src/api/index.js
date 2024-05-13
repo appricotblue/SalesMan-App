@@ -37,6 +37,15 @@ export const getOrderDetails = async (orderId) => {
   }
 };
 
+export const getReturnOrderDetails = async (orderId) => {
+  try {
+    const response = await HTTP_REQUEST.get(`/user/getReturnOrderDetails/${orderId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getDeliveries = async (userId, pageNumber) => {
   try {
     const response = await HTTP_REQUEST.get(`/user/getDeliveries/${userId}?page=${pageNumber}`);
@@ -184,6 +193,15 @@ export const getLocationList = async () => {
 export const getShopSearch = async (searchkey) => {
   try {
     const response = await HTTP_REQUEST.get(`user/searchshop?keyword=${searchkey}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getReturnSearch = async (searchkey) => {
+  try {
+    const response = await HTTP_REQUEST.get(`user/returnOrderssearch?keyword=${searchkey}`);
     return response.data;
   } catch (error) {
     throw error;
