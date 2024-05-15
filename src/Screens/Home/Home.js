@@ -40,7 +40,10 @@ const Home = ({ navigation: { navigate } }) => {
   const [delivertlist, setdelivertlist] = useState([]);
 
   const handleSelectItem = (title) => {
+    // Alert.alert(title)
+    console.log(title)
     setSelectedItem(title);
+    GetOrders(UserId, title, 1)
   };
 
   const filterPress = () => {
@@ -91,34 +94,55 @@ const Home = ({ navigation: { navigate } }) => {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      dispatch(setOrders([]));
-      if (isFocused) {
-        console.log('Home screen is focused', routeitem?.id, 'test');
-
-        // Fetch user ID from local storage
-        try {
-          const userid = await Local.getUserId();
-          console.log('User ID:', userid);
-          setUserId(userid);
-
-          // Call API to fetch orders for the user
-          await GetOrders(userid, 'Orders', 1);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
+  const fetchData = async () => {
+    if (isFocused) { // Check if the screen is focused
+      console.log('Home screen is focused', routeitem?.id, selectedItem, 'test');
+      try {
+        const userid = await Local.getUserId();
+        setUserId(userid);
+        await GetOrders(userid, selectedItem, 1);
+        await GetRoutes(userid);
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
-    };
+    }
+  };
 
-    fetchData(); // Call the async function immediately inside useEffect
+  useEffect(() => {
+    dispatch(setOrders([]));
+    dispatch(setDeliveries([]));
+    fetchData(); // Call fetchData in useEffect
+  }, [isFocused, selectedItem, routeitem]);
 
-    return () => {
-      // Cleanup function (optional)
-      // This function will be called when the component unmounts or before re-runs of effect
-      // You can perform cleanup tasks here if needed
-    };
-  }, [isFocused]);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+   
+
+  //     if (isFocused) {
+  //       console.log('Home screen is focused', routeitem?.id, selectedItem, 'test');
+
+  //       // Fetch user ID from local storage
+  //       try {
+  //         const userid = await Local.getUserId();
+  //         console.log('User ID:', userid);
+  //         setUserId(userid);
+
+  //         // Call API to fetch orders for the user
+  //         await GetOrders(userid, 'Orders', 1);
+  //       } catch (error) {
+  //         console.error('Error fetching data:', error);
+  //       }
+  //     }
+  //   };
+
+  //   fetchData(); // Call the async function immediately inside useEffect
+
+  //   return () => {
+  //     // Cleanup function (optional)
+  //     // This function will be called when the component unmounts or before re-runs of effect
+  //     // You can perform cleanup tasks here if needed
+  //   };
+  // }, [isFocused, routeitem, selectedItem,]);
 
 
   const GetSearchOrders = async () => {
@@ -163,18 +187,18 @@ const Home = ({ navigation: { navigate } }) => {
   };
 
   const GetOrders = async (userId, selectedItem, page = currentPage) => {
-    console.log('here click ', locationId, userId, selectedItem, page, orders)
+    console.log('here click  33', locationId, userId, selectedItem, page, orders)
     dispatch(setOrders([]));
     try {
       const response = await (selectedItem == 'Orders'
         ? getOrders(userId, locationId, page)
         : getDeliveries(userId, page));
-      console.log(response.orders, 'here')
+      // console.log(response.orders, 'here')
       if (selectedItem == 'Orders') {
         setPagesize(response?.totalPages)
         const newOrders = response.orders;
         const updatedOrders = [...orders, ...newOrders];
-        console.log(updatedOrders, 'gvghfggtf')
+        // console.log(updatedOrders, 'gvghfggtf')
         dispatch(setOrders(updatedOrders));
         setorderlist(updatedOrders)
       } else {
@@ -216,8 +240,12 @@ const Home = ({ navigation: { navigate } }) => {
       // Dispatch an action to reset the shops state to an empty array when component unmounts
       dispatch(setOrders([]));
       dispatch(setDeliveries([]));
+      setSelectedItem('Orders')
     };
   }, []);
+
+
+
 
   const _renderItems = ({ item }) => {
 
@@ -228,11 +256,11 @@ const Home = ({ navigation: { navigate } }) => {
         style={styles.itemContainer}>
         <View style={styles.row1}>
           <Text style={styles.orderIdText}> {item?.orderNo}</Text>
-          <Text style={styles.timeText}>Order Date  {item?.createdAt}</Text>
+          <Text style={styles.timeText}>Order Date  <Text style={{ color: 'black' }}> {item?.createdAt}</Text></Text>
         </View>
         <View style={styles.row1}>
           <Text style={styles.nameText}>{item.shopName}</Text>
-          <Text style={styles.timeText}>Delivery Date  {item?.expecteddate}</Text>
+          <Text style={styles.timeText}>Delivery Date <Text style={{ color: 'black' }}> {item?.expecteddate}</Text></Text>
         </View>
         <View style={styles.row1}>
           <View style={styles.row2}>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     SafeAreaView,
     StyleSheet,
@@ -10,7 +10,11 @@ import {
     Modal,
     Button,
     TextInput,
-    Alert
+    Alert,
+    Keyboard,
+    KeyboardAvoidingView,
+    TouchableWithoutFeedback,
+    Platform
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../../components/Header';
@@ -36,7 +40,9 @@ import moment from 'moment';
 
 
 const AddSalesOrder = () => {
+    const searchInputRef = useRef(null);
     const navigation = useNavigation();
+    const quantityInputRef = useRef(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [location, setlocation] = useState('');
@@ -67,8 +73,16 @@ const AddSalesOrder = () => {
     const [selectedItemCommission, setSelectedItemCommission] = useState('');
     const [totalCommission, setTotalCommission] = useState(0);
     const [itemQuantities, setItemQuantities] = useState({});
+    const [quantityValue, setQuantityValue] = useState('');
+    const handleKeyboardDismiss = () => {
+        Keyboard.dismiss();
+    };
 
-
+    const unfocusSearchInput = () => {
+        if (searchInputRef.current) {
+            searchInputRef.current.blur();
+        }
+    };
 
     useEffect(() => {
         const checkToken = async () => {
@@ -246,6 +260,9 @@ const AddSalesOrder = () => {
             // navigation.navigate('Home')
         } catch (error) {
             console.error('Error creating order:', error);
+            const data = await response.json();
+            Alert.alert(data.message)
+            console.error('Error creating order:', error);
         }
     };
 
@@ -283,16 +300,37 @@ const AddSalesOrder = () => {
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: width * .6 }}>
                         <Text style={styles.rateText}>₹{item?.price}</Text>
-                        <View style={{ height: 29, width: 65, borderColor: 'gray', borderWidth: .5, justifyContent: 'center', alignItems: 'center' }} >
+                        <View style={{ height: 29, width: 65, borderColor: 'gray', borderWidth: .5, justifyContent: 'center', alignItems: 'center', borderRadius: 10 }} >
 
                             <TextInput
                                 editable={true}
+                                ref={quantityInputRef}
                                 style={styles.quantityInput}
                                 keyboardType="numeric"
                                 placeholder="Qty"
                                 placeholderTextColor={'gray'}
                                 value={item.count.toString()} // Display item count as string in TextInput
-                                onChangeText={(text) => handleQuantityChange(item.id, text)}
+                                onChangeText={(text) => { handleQuantityChange(item.id, text), setQuantityValue(text) }}
+                                // onChangeText={(text) => { setQuantityValue(text) }}
+                                // onBlur={() => {
+                                //     quantityInputRef.current.blur();
+                                // }}
+                                // onFocus={() => {
+                                //     setTimeout(() => {
+                                //         quantityInputRef.current.focus();
+                                //     }, 100); // Adjust the delay if necessary
+                                // }}
+                                // onKeyPress={({ nativeEvent }) => {
+                                //     if (nativeEvent.key === 'Backspace') {
+                                //         // Allow deleting digits
+                                //         return;
+                                //     }
+                                //     // Allow entering multiple digits
+                                //     if (quantityValue.length >= 2) {
+                                //         quantityInputRef.current.blur(); // Automatically blur TextInput after 2 digits
+                                //     }
+                                // }}
+                                // returnKeyType="done"
                             />
                         </View>
                         <TouchableOpacity
@@ -312,7 +350,12 @@ const AddSalesOrder = () => {
     };
 
     const handleAddItem = () => {
-        if (selectedItem && selectedItemQuantity !== '') {
+        setSearchQuery('')
+        Keyboard.dismiss();
+        unfocusSearchInput();
+        setIsAddItemModalVisible(false)
+        if (selectedItem && selectedItemQuantity !== '' && parseInt(selectedItemQuantity) > 0) {
+        // if (selectedItem && selectedItemQuantity !== '') {
             const count = parseInt(selectedItemQuantity, 10) || 0;
             const existingItem = selectedItems.find(item => item.id === selectedItem.id);
 
@@ -330,10 +373,20 @@ const AddSalesOrder = () => {
             }
 
 
+
+
+
             setItemQuantities({ ...itemQuantities, [selectedItem.id]: count });
             // Update total amount and commission
             setTotalAmount(totalAmount + (selectedItem.price * count));
             setTotalCommission(totalCommission + (selectedItem.itemcommission * count));
+
+
+
+            // const updatedItemQuantities = { ...itemQuantities };
+            // delete updatedItemQuantities[selectedItem.id];
+            // setItemQuantities(updatedItemQuantities);
+            setItemQuantities([])
 
             // Reset state after adding item
             setIsAddItemModalVisible(false);
@@ -341,6 +394,9 @@ const AddSalesOrder = () => {
             setSelectedItemQuantity('');
             setSelectedItemCommission('');
             setSelectedItemId(null);
+
+
+
         } else if (selectedItemQuantity == 0) {
             Alert.alert('Error', 'Please enter a valid quantity.');
         }
@@ -348,12 +404,16 @@ const AddSalesOrder = () => {
         else {
             Alert.alert('Error', 'Please select an item and enter a valid quantity.');
         }
+
     };
 
     const handleQuantityChange = (itemId, count) => {
+        // Parse the count as an integer
+        const quantity = parseInt(count, 10);
+
         // Update the count of the selected item
         const updatedItems = selectedItems.map(item =>
-            item.id === itemId ? { ...item, count: parseInt(count, 10) || 0 } : item
+            item.id === itemId ? { ...item, count: isNaN(quantity) ? 0 : quantity } : item
         );
         setSelectedItems(updatedItems);
 
@@ -369,10 +429,29 @@ const AddSalesOrder = () => {
         setTotalCommission(newTotalCommission);
     };
 
+
+    // const handleQuantityChange = (itemId, count) => {
+    //     // Update the count of the selected item
+    //     const updatedItems = selectedItems.map(item =>
+    //         item.id === itemId ? { ...item, count: parseInt(count, 10) || 0 } : item
+    //     );
+    //     setSelectedItems(updatedItems);
+
+    //     // Recalculate total amount and earnings based on updated count
+    //     let newTotalAmount = 0;
+    //     let newTotalCommission = 0;
+    //     updatedItems.forEach(item => {
+    //         newTotalAmount += item.price * item.count;
+    //         newTotalCommission += item.itemcommission * item.count;
+    //     });
+
+    //     setTotalAmount(newTotalAmount);
+    //     setTotalCommission(newTotalCommission);
+    // };
+
     const handleQuantityChangemodal = (itemId, count) => {
         setItemQuantities({ ...itemQuantities, [itemId]: count });
     };
-
 
     const handleDeleteItem = (itemId) => {
         const itemToDelete = selectedItems.find(item => item.id === itemId);
@@ -388,8 +467,30 @@ const AddSalesOrder = () => {
             // Remove the item from selectedItems
             const updatedItems = selectedItems.filter(item => item.id !== itemId);
             setSelectedItems(updatedItems);
+
+            // Remove the corresponding item from itemQuantities
+            const updatedItemQuantities = { ...itemQuantities };
+            delete updatedItemQuantities[itemId];
+            setItemQuantities(updatedItemQuantities);
         }
     };
+
+    // const handleDeleteItem = (itemId) => {
+    //     const itemToDelete = selectedItems.find(item => item.id === itemId);
+
+    //     if (itemToDelete) {
+    //         const itemValue = itemToDelete.price * itemToDelete.count;
+    //         const itemCommission = itemToDelete.itemcommission * itemToDelete.count;
+
+    //         // Update total amount and commission
+    //         setTotalAmount(totalAmount - itemValue);
+    //         setTotalCommission(totalCommission - itemCommission);
+
+    //         // Remove the item from selectedItems
+    //         const updatedItems = selectedItems.filter(item => item.id !== itemId);
+    //         setSelectedItems(updatedItems);
+    //     }
+    // };
 
 
     return (
@@ -459,6 +560,7 @@ const AddSalesOrder = () => {
                             width: width * 0.9,
                         }}>
                         <CustomSearch
+                            ref={searchInputRef}
                             placeholder={'Search Items'}
                             value={searchQuery}
                             onChangeText={handleSearchChange}
@@ -521,7 +623,7 @@ const AddSalesOrder = () => {
                 onCancel={onCloseCalander}
             />
             {/* </ScrollView> */}
-
+            <ScrollView keyboardShouldPersistTaps={'always'}>
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -529,49 +631,59 @@ const AddSalesOrder = () => {
                 onRequestClose={() => {
                     setIsAddItemModalVisible(false);
                 }}
+                    style={{ pointerEvents: 'box-none' }} 
             >
-                <View style={styles.modalContainer}>
-                    <Text style={styles.modalTitle}>Add Item</Text>
-                    <FlatList
-                        data={searchshopitems}
-                        // data={selectedItems} // Display only the selected item
-                        renderItem={({ item }) => (
-                            <View style={styles.itemContainer}>
-                                <View style={styles.imageContainer}>
-                                    <Image
-                                        source={{ uri: item?.image }}
-                                        style={{ height: 70, width: 72, resizeMode: 'stretch' }}
-                                    />
-                                </View>
-                                <View>
-                                    <View style={styles.row1}>
-                                        <Text style={styles.nameText}>{item.name}</Text>
-                                    </View>
-                                    <View style={styles.row1}>
-                                        <View style={styles.row2}>
-                                            <Text style={styles.qtyText}>{item.quantity}</Text>
-                                        </View>
-                                    </View>
-                                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: width * .6 }}>
-                                        <Text style={styles.rateText}>₹{item.price}</Text>
+                    {/* <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    style={styles.modalContainer}
+                > */}
+                    <TouchableWithoutFeedback onPress={handleKeyboardDismiss}>
+                        <View style={styles.modalContainer}>
+                            <KeyboardAvoidingView
+                                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                                style={styles.modalContainer}
+                            >
+                                <Text style={styles.modalTitle}>Add Item</Text>
+                                <FlatList
+                                    data={searchshopitems}
+                                    // data={selectedItems} // Display only the selected item
+                                    renderItem={({ item }) => (
+                                        <View style={styles.itemContainer}>
+                                            <View style={styles.imageContainer}>
+                                                <Image
+                                                    source={{ uri: item?.image }}
+                                                    style={{ height: 70, width: 72, resizeMode: 'stretch' }}
+                                                />
+                                            </View>
+                                            <View>
+                                                <View style={styles.row1}>
+                                                    <Text style={styles.nameText}>{item.name}</Text>
+                                                </View>
+                                                <View style={styles.row1}>
+                                                    <View style={styles.row2}>
+                                                        <Text style={styles.qtyText}>{item.quantity}</Text>
+                                                    </View>
+                                                </View>
+                                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: width * .6 }}>
+                                                    <Text style={styles.rateText}>₹{item.price}</Text>
 
-                                        <View style={{ height: 29, width: 65, borderColor: 'gray', borderWidth: .5, justifyContent: 'center', alignItems: 'center' }} >
+                                                    <View style={{ height: 29, width: 65, borderColor: 'gray', borderWidth: .5, justifyContent: 'center', alignItems: 'center', borderRadius: 10 }} >
 
-                                            <TextInput
-                                                style={styles.quantityInput}
-                                                keyboardType="numeric"
-                                                placeholder="Qnty"
-                                                placeholderTextColor={'gray'}
-                                                value={itemQuantities[item.id]?.toString() || ''}
-                                                // value={selectedItemQuantity.toString()} // Display item count as string in TextInput
-                                                // onChangeText={(text) => setSelectedItemQuantity(text)} // Update selectedItemQuantity state
-                                                onChangeText={(text) => {
-                                                    handleQuantityChangemodal(item.id, text), setSelectedItemQuantity(text)
-                                                }}
-                                            />
+                                                        <TextInput
+                                                            style={styles.quantityInput}
+                                                            keyboardType="numeric"
+                                                            placeholder="Qnty"
+                                                            placeholderTextColor={'gray'}
+                                                            value={itemQuantities[item.id]?.toString() || ''}
+                                                            // value={selectedItemQuantity.toString()} // Display item count as string in TextInput
+                                                            // onChangeText={(text) => setSelectedItemQuantity(text)} // Update selectedItemQuantity state
+                                                            onChangeText={(text) => {
+                                                                handleQuantityChangemodal(item.id, text), setSelectedItemQuantity(text)
+                                                            }}
+                                                        />
 
 
-                                            {/* <TextInput
+                                                        {/* <TextInput
                                                 style={styles.quantityInput}
                                                 keyboardType="numeric" // Set keyboard type to numeric for number input
                                                 placeholder="Qnty"
@@ -582,38 +694,55 @@ const AddSalesOrder = () => {
                                                 onChangeText={(text) => { handleQuantityChange(item.id, text), setSelectedItemQuantity(text) }} // Update state with entered value
                                             /> */}
 
+                                                    </View>
+                                                    <TouchableOpacity
+                                                        style={[
+                                                            styles.addButton,
+                                                            { backgroundColor: selectedItemId === item.id ? 'green' : '#005A8D', zIndex: 10 }
+                                                        ]}
+                                                        onPress={() => {
+                                                            if (selectedItemQuantity == 0) {
+                                                                Alert.alert('Error', 'Please enter a valid quantity');
+                                                            } else {
+                                                                handleAddItem,
+                                                                    setSelectedItem(item)
+                                                                setSelectedItemId(item.id)
+                                                            }
+
+
+                                                        }}>
+                                                        <Text style={{ color: 'white', fontSize: 14 }}>{selectedItemId === item.id ? 'Selected' : 'Select'}</Text>
+                                                    </TouchableOpacity>
+                                                </View>
+                                            </View>
                                         </View>
-                                        <TouchableOpacity
-                                            style={[
-                                                styles.addButton,
-                                                { backgroundColor: selectedItemId === item.id ? 'green' : '#005A8D' }
-                                            ]}
-                                            onPress={() => {
-                                                if (selectedItemQuantity == 0) {
-                                                    Alert.alert('Error', 'Please enter a valid quantity.');
-                                                } else {
-                                                    handleAddItem,
-                                                        setSelectedItem(item)
-                                                    setSelectedItemId(item.id)
-                                                }
+                                    )}
+                                    keyExtractor={item => item?.id}
+                                />
+                                <View style={{ justifyContent: 'space-between', width: width - 50, flexDirection: 'row', marginBottom: 10, alignSelf: 'center', }}>
 
+                                    <CommonButton
+                                        onPress={() => handleAddItem()}
+                                        color={'white'}
+                                        title={'Confirm'}
+                                        width={width * 0.4}
+                                        texttitle={'#005A8D'}
+                                    />
+                                    <CommonButton
+                                        onPress={() => setIsAddItemModalVisible(false)}
+                                        color={'white'}
+                                        title={'Cancel'}
+                                        width={width * 0.4}
+                                        texttitle={'#005A8D'}
+                                    />
 
-                                            }}>
-                                            <Text style={{ color: 'white', fontSize: 14 }}>{selectedItemId === item.id ? 'Selected' : 'Select'}</Text>
-                                        </TouchableOpacity>
-                                    </View>
                                 </View>
-                            </View>
-                        )}
-                        keyExtractor={item => item?.id}
-                    />
-                    <View style={{ justifyContent: 'space-between', width: width - 150, flexDirection: 'row', marginBottom: 10 }}>
-                        <Button title="Confirm" onPress={handleAddItem} />
-                        <Button title="Cancel" onPress={() => setIsAddItemModalVisible(false)} />
-                    </View>
-
-                </View>
+                            </KeyboardAvoidingView>
+                        </View>
+                    </TouchableWithoutFeedback>
+                    {/* </KeyboardAvoidingView>  */}
             </Modal>
+            </ScrollView>
         </SafeAreaView>
     );
 };
@@ -699,7 +828,7 @@ const styles = StyleSheet.create({
     imageContainer: {
         height: height * 0.09,
         width: width * 0.2,
-        backgroundColor: 'pink',
+        // backgroundColor: 'pink',
         marginHorizontal: 3,
         marginRight: 25,
     },
@@ -791,7 +920,8 @@ const styles = StyleSheet.create({
         left: 2,
         width: '90%',
         minHeight: 50,
-        color: 'black'
+        color: 'black',
+        borderRadius: 10
     },
     requiredText: {
         color: 'red',

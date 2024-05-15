@@ -96,7 +96,12 @@ const UserScreen = () => {
       <Header title={'User'} isNotification={false} />
       <View style={styles.container}>
         <View style={styles.imageview}>
-          <Image source={{ uri: profile.userProfileImage }} style={styles.image} />
+
+          {profile.userProfileImage ? (
+            <Image source={{ uri: profile.userProfileImage }} style={styles.image} />
+          ) : (
+            <Image source={images.User} style={styles.image} />
+          )}
           <Text style={styles.title}>{profile.name}</Text>
           <Text style={styles.subtitle}>{profile.role}</Text>
         </View>

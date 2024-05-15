@@ -139,7 +139,7 @@ const Return = ({ navigation: { navigate } }) => {
         style={styles.itemContainer}>
         <View style={styles.row1}>
           <Text style={styles.orderIdText}> {item.orderNo}</Text>
-          <Text style={styles.timeText}>Pickup Date:{item.deliveryDate}</Text>
+          <Text style={styles.timeText}>Pickup Date: <Text style={{ color: 'black' }}>  {item.deliveryDate}</Text></Text>
 
         </View>
         <View style={styles.row1}>
@@ -156,7 +156,7 @@ const Return = ({ navigation: { navigate } }) => {
               style={{
                 fontWeight: 'bold',
                 color:
-                  item.statusId == 3
+                  item.statusId == 1
                     ? '#D79B00'
                     : item.statusId == 4
                       ? '#17A400'

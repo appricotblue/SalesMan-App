@@ -10,7 +10,8 @@ import {
     Modal,
     Button,
     TextInput,
-    Alert
+    Alert,
+    Keyboard
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../../components/Header';
@@ -340,6 +341,10 @@ const EditOrder = () => {
 
 
     const handleAddItem = () => {
+        setSearchQuery('')
+        Keyboard.dismiss();
+        // unfocusSearchInput();
+        setIsAddItemModalVisible(false)
         if (selectedItem && selectedItemQuantity !== '') {
             const quantityCount = parseInt(selectedItemQuantity, 10) || 0;
             const existingItem = selectedItems.find(item => item.id === selectedItem.id);
@@ -361,6 +366,9 @@ const EditOrder = () => {
             setTotalAmount(totalAmount + (selectedItem.price * quantityCount));
             setTotalCommission(totalCommission + (selectedItem.itemcommission * quantityCount));
 
+
+
+            setItemQuantities([])
             // Reset state after adding item
             setIsAddItemModalVisible(false);
             setSelectedItem(null);
@@ -449,7 +457,6 @@ const EditOrder = () => {
         setTotalCommission(newTotalCommission);
     };
 
-
     const handleDeleteItem = (itemId) => {
         const itemToDelete = selectedItems.find(item => item.id === itemId);
 
@@ -464,8 +471,29 @@ const EditOrder = () => {
             // Remove the item from selectedItems
             const updatedItems = selectedItems.filter(item => item.id !== itemId);
             setSelectedItems(updatedItems);
+
+            // Remove the corresponding item from itemQuantities
+            const updatedItemQuantities = { ...itemQuantities };
+            delete updatedItemQuantities[itemId];
+            setItemQuantities(updatedItemQuantities);
         }
     };
+    // const handleDeleteItem = (itemId) => {
+    //     const itemToDelete = selectedItems.find(item => item.id === itemId);
+
+    //     if (itemToDelete) {
+    //         const itemValue = itemToDelete.price * itemToDelete.quantityCount;
+    //         const itemCommission = itemToDelete.itemcommission * itemToDelete.quantityCount;
+
+    //         // Update total amount and commission
+    //         setTotalAmount(totalAmount - itemValue);
+    //         setTotalCommission(totalCommission - itemCommission);
+
+    //         // Remove the item from selectedItems
+    //         const updatedItems = selectedItems.filter(item => item.id !== itemId);
+    //         setSelectedItems(updatedItems);
+    //     }
+    // };
 
     return (
 
@@ -662,9 +690,23 @@ const EditOrder = () => {
                         )}
                         keyExtractor={item => item?.id}
                     />
-                    <View style={{ justifyContent: 'space-between', width: width - 150, flexDirection: 'row', marginBottom: 10 }}>
-                        <Button title="Confirm" onPress={handleAddItem} />
-                        <Button title="Cancel" onPress={() => setIsAddItemModalVisible(false)} />
+                    <View style={{ justifyContent: 'space-between', width: width - 50, flexDirection: 'row', marginBottom: 10, alignSelf: 'center', }}>
+
+                        <CommonButton
+                            onPress={() => handleAddItem()}
+                            color={'white'}
+                            title={'Confirm'}
+                            width={width * 0.4}
+                            texttitle={'#005A8D'}
+                        />
+                        <CommonButton
+                            onPress={() => setIsAddItemModalVisible(false)}
+                            color={'white'}
+                            title={'Cancel'}
+                            width={width * 0.4}
+                            texttitle={'#005A8D'}
+                        />
+
                     </View>
 
                 </View>
@@ -753,7 +795,7 @@ const styles = StyleSheet.create({
         width: width * 0.2,
         backgroundColor: 'pink',
         marginHorizontal: 3,
-        marginRight: 25,
+        // marginRight: 25,
     },
     row1: {
         width: width * 0.96,

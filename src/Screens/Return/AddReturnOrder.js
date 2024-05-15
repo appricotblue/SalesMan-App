@@ -10,7 +10,8 @@ import {
     Modal,
     Button,
     TextInput,
-    Alert
+    Alert,
+    Keyboard
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../../components/Header';
@@ -330,6 +331,10 @@ const AddReturnOrder = () => {
     };
 
     const handleAddItem = () => {
+        setSearchQuery('')
+        Keyboard.dismiss();
+        // unfocusSearchInput();
+        setIsAddItemModalVisible(false)
         if (selectedItem && selectedItemQuantity !== '') {
             const count = parseInt(selectedItemQuantity, 10) || 0;
             const existingItem = selectedItems.find(item => item.id === selectedItem.id);
@@ -352,6 +357,8 @@ const AddReturnOrder = () => {
             setTotalAmount(totalAmount + (selectedItem.price * count));
             setTotalCommission(totalCommission + (selectedItem.itemcommission * count));
 
+
+            setItemQuantities([])
             // Reset state after adding item
             setIsAddItemModalVisible(false);
             setSelectedItem(null);
@@ -403,8 +410,31 @@ const AddReturnOrder = () => {
             // Remove the item from selectedItems
             const updatedItems = selectedItems.filter(item => item.id !== itemId);
             setSelectedItems(updatedItems);
+
+            // Remove the corresponding item from itemQuantities
+            const updatedItemQuantities = { ...itemQuantities };
+            delete updatedItemQuantities[itemId];
+            setItemQuantities(updatedItemQuantities);
         }
     };
+
+
+    // const handleDeleteItem = (itemId) => {
+    //     const itemToDelete = selectedItems.find(item => item.id === itemId);
+
+    //     if (itemToDelete) {
+    //         const itemValue = itemToDelete.price * itemToDelete.count;
+    //         const itemCommission = itemToDelete.itemcommission * itemToDelete.count;
+
+    //         // Update total amount and commission
+    //         setTotalAmount(totalAmount - itemValue);
+    //         setTotalCommission(totalCommission - itemCommission);
+
+    //         // Remove the item from selectedItems
+    //         const updatedItems = selectedItems.filter(item => item.id !== itemId);
+    //         setSelectedItems(updatedItems);
+    //     }
+    // };
 
 
 
@@ -605,9 +635,23 @@ const AddReturnOrder = () => {
                         )}
                         keyExtractor={item => item?.id}
                     />
-                    <View style={{ justifyContent: 'space-between', width: width - 150, flexDirection: 'row', marginBottom: 10 }}>
-                        <Button title="Confirm" onPress={handleAddItem} />
-                        <Button title="Cancel" onPress={() => setIsAddItemModalVisible(false)} />
+                    <View style={{ justifyContent: 'space-between', width: width - 50, flexDirection: 'row', marginBottom: 10, alignSelf: 'center', }}>
+
+                        <CommonButton
+                            onPress={() => handleAddItem()}
+                            color={'white'}
+                            title={'Confirm'}
+                            width={width * 0.4}
+                            texttitle={'#005A8D'}
+                        />
+                        <CommonButton
+                            onPress={() => setIsAddItemModalVisible(false)}
+                            color={'white'}
+                            title={'Cancel'}
+                            width={width * 0.4}
+                            texttitle={'#005A8D'}
+                        />
+
                     </View>
 
                 </View>

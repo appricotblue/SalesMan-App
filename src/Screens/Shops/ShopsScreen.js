@@ -97,11 +97,11 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
       dispatch(setShops(response));
       setSearchQuery('')
       Keyboard.dismiss();
-      if (response.message = "Getting Orders data Successfully") {
+      // if (response.message = "Getting Orders data Successfully") {
 
-      } else {
-        console.log('Error during login:',);
-      }
+      // } else {
+      //   console.log('Error during search:',);
+      // }
     } catch (error) {
       console.error('Error during login:hwre', error?.message);
       if (error.response && error.response.data && error.response.data.message) {
@@ -121,9 +121,6 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
   const GetShops = async (userid, page = currentPage) => {
     console.log(UserId, userid, page, 'shopss  ')
     try {
-      // Clear the existing shop list in Redux
-      dispatch(setShops([]));
-
       const response = await getShops(userid, page);
       console.log(response, 'shop api response')
 
@@ -131,47 +128,47 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
       const newShops = response.shops;
 
       // Concatenate new shops with the existing shop list
-      const updatedShops = [...newShops];
-      console.log(updatedShops, 'gvghfggtf')
-      setshoplist(updatedShops)
-      dispatch(setShops(updatedShops));
-      if (response.message = "Getting Orders data Successfully") {
-        // dispatch(setShops(response));
-        // dispatch(setItems(response?.items));
-      } else {
-        console.log('Error during login:',);
-        // setError(response.data.message);
-      }
+      const updatedShops = [...shops, ...newShops];
+      console.log(updatedShops, 'updated shop list')
+      setshoplist(updatedShops) // Update local state
+      dispatch(setShops(updatedShops)); // Update Redux state
+
+      // if (response.message === "Getting Orders data Successfully") {
+      //   // Dispatch necessary actions if needed
+      // } else {
+      //   console.log('Error during login:',);
+      // }
     } catch (error) {
-      // Alert(error)
-      console.error('Error during login:hwre', error?.message);
+      console.error('Error during fetching shops:', error?.message);
       if (error.response && error.response.data && error.response.data.message) {
         Alert.alert('Error', error.response.data.message);
       } else {
-        Alert.alert('Error', 'An error occurred during login.');
+        Alert.alert('Error', 'An error occurred while fetching shops.');
       }
     }
   };
 
+
   // const GetShops = async (userid, page = currentPage) => {
   //   console.log(UserId, userid, page, 'shopss  ')
   //   try {
+  //     // Clear the existing shop list in Redux
+  //     dispatch(setShops([]));
+
   //     const response = await getShops(userid, page);
-  //     // const response = await login('userTwo', 'userTwo@123');
   //     console.log(response, 'shop api response')
 
   //     setPagesize(response?.totalPages)
   //     const newShops = response.shops;
 
-  //     // Concatenate newOrders with the existing orders array using spread operator
-  //     const updatedShops = [...shops, ...newShops];
+  //     // Concatenate new shops with the existing shop list
+  //     const updatedShops = [...newShops];
   //     console.log(updatedShops, 'gvghfggtf')
   //     setshoplist(updatedShops)
   //     dispatch(setShops(updatedShops));
   //     if (response.message = "Getting Orders data Successfully") {
   //       // dispatch(setShops(response));
   //       // dispatch(setItems(response?.items));
-
   //     } else {
   //       console.log('Error during login:',);
   //       // setError(response.data.message);
@@ -184,9 +181,10 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
   //     } else {
   //       Alert.alert('Error', 'An error occurred during login.');
   //     }
-
   //   }
   // };
+
+
   const GetShopDetails = async (shopid) => {
     console.log(shopid, '')
     try {
@@ -214,12 +212,24 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
   };
 
   const loadMore = () => {
-    console.log(currentPage, pageSize, 'pagesss')
-    if (currentPage < pageSize) { // Check if the current list length is greater than or equal to the page size
-      setCurrentPage(currentPage + 1);
-      GetShops(UserId, currentPage + 1);
+    if (currentPage < pageSize) {
+      setCurrentPage((prevPage) => {
+        const nextPage = prevPage + 1;
+        GetShops(UserId, nextPage);
+        return nextPage;
+      });
     }
   };
+
+
+  // const loadMore = () => {
+  //   Alert.alert('called')
+  //   console.log(currentPage, pageSize, 'pagesss')
+  //   if (currentPage < pageSize) { // Check if the current list length is greater than or equal to the page size
+  //     setCurrentPage(currentPage + 1);
+  //     GetShops(UserId, currentPage + 1);
+  //   }
+  // };
   const _renderItems = ({ item }) => {
     // console.log('Item:', item);
     return (
