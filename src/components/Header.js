@@ -117,7 +117,8 @@ const Header = ({ title, isBackArrow, isNotification, isRouteview, onSelectLocat
         {isRouteview && (
           <TouchableOpacity onPress={() => setShowOptions(true)} style={styles.routeview}>
             {/* <Text style={{ color: 'white', fontSize: 9 }}></Text> */}
-            <Text style={{ color: 'green', fontSize: 11 }}>{location?.LocationName}</Text>
+            <Text style={{ color: 'white', fontSize: 11 }}>{location?.LocationName}</Text>
+            <Image source={images.Arrowdown} style={styles.arrowDown} />
           </TouchableOpacity>
         )}
 
@@ -128,7 +129,7 @@ const Header = ({ title, isBackArrow, isNotification, isRouteview, onSelectLocat
         )}
       </View>
 
-      <Modal visible={showOptions} transparent={false} onRequestClose={() => setShowOptions(false)}>
+      {/* <Modal visible={showOptions} transparent={false} onRequestClose={() => setShowOptions(false)}>
         <View style={styles.modalContainer}>
           <TouchableOpacity onPress={() => setShowOptions(false)} style={styles.closeButton}>
             <Text style={{ color: 'green' }}>Close</Text>
@@ -143,6 +144,27 @@ const Header = ({ title, isBackArrow, isNotification, isRouteview, onSelectLocat
           </View>
 
 
+        </View>
+      </Modal> */}
+      <Modal visible={showOptions} transparent={true} onRequestClose={() => setShowOptions(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <View style={styles.titleContainer}>
+              <Text style={styles.titleText}>All Routes</Text>
+              <TouchableOpacity onPress={() => setShowOptions(false)} style={styles.closeButton}>
+
+                <Image source={images.close} style={styles.arrowStyle} />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.listContainer}>
+              <FlatList
+                data={route}
+                showsVerticalScrollIndicator={false}
+                renderItem={_renderItems}
+                keyExtractor={(item) => item.id.toString()}
+              />
+            </View>
+          </View>
         </View>
       </Modal>
     </View>
@@ -167,6 +189,12 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     marginRight: 15,
+  },
+  arrowDown: {
+    width: 15,
+    height: 15,
+    marginRight: 5,
+    marginLeft: 5
   },
   titleStyle: {
     color: 'white',
@@ -219,6 +247,51 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     // justifyContent: 'space-between',
     // backgroundColor: 'red'
+  },
+
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContainer: {
+    backgroundColor: 'white',
+    width: 300,
+    minHeight: 200,
+    maxHeight: 350,
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#003451',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  titleText: {
+    color: 'white',
+    fontSize: 18,
+  },
+  closeButton: {
+    padding: 5,
+  },
+  listContainer: {
+    flex: 1,
+    padding: 10,
+  },
+  listItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'grey',
+  },
+  listItemText: {
+    color: 'black',
+  },
+  selectedItem: {
+    backgroundColor: '#003451',
   },
 });
 

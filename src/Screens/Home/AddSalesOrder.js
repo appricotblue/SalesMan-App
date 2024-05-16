@@ -295,12 +295,12 @@ const AddSalesOrder = () => {
                     </View>
                     <View style={styles.row1}>
                         <View style={styles.row2}>
-                            <Text style={styles.qtyText}>{selectedItem?.quantity}</Text>
+                            <Text style={styles.qtyText}>{selectedItem?.attribute}</Text>
                         </View>
                     </View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: width * .6 }}>
                         <Text style={styles.rateText}>₹{item?.price}</Text>
-                        <View style={{ height: 29, width: 65, borderColor: 'gray', borderWidth: .5, justifyContent: 'center', alignItems: 'center', borderRadius: 10 }} >
+                        <View style={{ height: 29, width: 65, borderColor: 'gray', borderWidth: .5, justifyContent: 'center', alignItems: 'center', borderRadius: 5 }} >
 
                             <TextInput
                                 editable={true}
@@ -355,7 +355,7 @@ const AddSalesOrder = () => {
         unfocusSearchInput();
         setIsAddItemModalVisible(false)
         if (selectedItem && selectedItemQuantity !== '' && parseInt(selectedItemQuantity) > 0) {
-        // if (selectedItem && selectedItemQuantity !== '') {
+            // if (selectedItem && selectedItemQuantity !== '') {
             const count = parseInt(selectedItemQuantity, 10) || 0;
             const existingItem = selectedItems.find(item => item.id === selectedItem.id);
 
@@ -624,124 +624,124 @@ const AddSalesOrder = () => {
             />
             {/* </ScrollView> */}
             <ScrollView keyboardShouldPersistTaps={'always'}>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={isAddItemModalVisible}
-                onRequestClose={() => {
-                    setIsAddItemModalVisible(false);
-                }}
-                    style={{ pointerEvents: 'box-none' }} 
-            >
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={isAddItemModalVisible}
+                    onRequestClose={() => {
+                        setIsAddItemModalVisible(false);
+                    }}
+                    style={{ pointerEvents: 'box-none' }}
+                >
                     {/* <KeyboardAvoidingView
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                     style={styles.modalContainer}
                 > */}
                     <TouchableWithoutFeedback onPress={handleKeyboardDismiss}>
                         <View style={styles.modalContainer}>
-                            <KeyboardAvoidingView
+                            {/* <KeyboardAvoidingView
                                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                                 style={styles.modalContainer}
-                            >
-                                <Text style={styles.modalTitle}>Add Item</Text>
-                                <FlatList
-                                    data={searchshopitems}
-                                    // data={selectedItems} // Display only the selected item
-                                    renderItem={({ item }) => (
-                                        <View style={styles.itemContainer}>
+                            > */}
+                            <Text style={styles.modalTitle}>Select items </Text>
+
+                            <View style={{ height: 500, width: '96.5%', }}>
+                                {searchshopitems.map((item) => (
+                                    <View style={styles.itemContainer}>
+                                        <View style={{ width: '20%', }}>
                                             <View style={styles.imageContainer}>
                                                 <Image
                                                     source={{ uri: item?.image }}
-                                                    style={{ height: 70, width: 72, resizeMode: 'stretch' }}
+                                                    style={{ height: '100%', width: '100%', resizeMode: 'stretch' }}
                                                 />
                                             </View>
-                                            <View>
-                                                <View style={styles.row1}>
-                                                    <Text style={styles.nameText}>{item.name}</Text>
-                                                </View>
-                                                <View style={styles.row1}>
-                                                    <View style={styles.row2}>
-                                                        <Text style={styles.qtyText}>{item.quantity}</Text>
-                                                    </View>
-                                                </View>
-                                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: width * .6 }}>
-                                                    <Text style={styles.rateText}>₹{item.price}</Text>
+                                        </View>
 
-                                                    <View style={{ height: 29, width: 65, borderColor: 'gray', borderWidth: .5, justifyContent: 'center', alignItems: 'center', borderRadius: 10 }} >
-
-                                                        <TextInput
-                                                            style={styles.quantityInput}
-                                                            keyboardType="numeric"
-                                                            placeholder="Qnty"
-                                                            placeholderTextColor={'gray'}
-                                                            value={itemQuantities[item.id]?.toString() || ''}
-                                                            // value={selectedItemQuantity.toString()} // Display item count as string in TextInput
-                                                            // onChangeText={(text) => setSelectedItemQuantity(text)} // Update selectedItemQuantity state
-                                                            onChangeText={(text) => {
-                                                                handleQuantityChangemodal(item.id, text), setSelectedItemQuantity(text)
-                                                            }}
-                                                        />
-
-
-                                                        {/* <TextInput
-                                                style={styles.quantityInput}
-                                                keyboardType="numeric" // Set keyboard type to numeric for number input
-                                                placeholder="Qnty"
-                                                placeholderTextColor={'gray'}
-                                                // value={selectedItemQuantity}
-                                                value={itemQuantities[item.id]?.toString() || ''} // Display item count as string in TextInput
-                                                // onChangeText={(text) => handleQuantityChange(item.id, text)}
-                                                onChangeText={(text) => { handleQuantityChange(item.id, text), setSelectedItemQuantity(text) }} // Update state with entered value
-                                            /> */}
-
-                                                    </View>
-                                                    <TouchableOpacity
-                                                        style={[
-                                                            styles.addButton,
-                                                            { backgroundColor: selectedItemId === item.id ? 'green' : '#005A8D', zIndex: 10 }
-                                                        ]}
-                                                        onPress={() => {
-                                                            if (selectedItemQuantity == 0) {
-                                                                Alert.alert('Error', 'Please enter a valid quantity');
-                                                            } else {
-                                                                handleAddItem,
-                                                                    setSelectedItem(item)
-                                                                setSelectedItemId(item.id)
-                                                            }
-
-
-                                                        }}>
-                                                        <Text style={{ color: 'white', fontSize: 14 }}>{selectedItemId === item.id ? 'Selected' : 'Select'}</Text>
-                                                    </TouchableOpacity>
+                                        <View style={{ width: '45%', }}>
+                                            <View style={styles.row1}>
+                                                <Text style={styles.nameText}>{item.name}</Text>
+                                            </View>
+                                            <View style={styles.row1}>
+                                                <View style={styles.row2}>
+                                                    <Text style={styles.qtyText}>{item.attribute}</Text>
                                                 </View>
                                             </View>
+                                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: width * .6 }}>
+                                                <Text style={styles.rateText}>₹{item.price}</Text>
+
+                                            </View>
                                         </View>
-                                    )}
-                                    keyExtractor={item => item?.id}
+                                        <View style={{ width: '28%', justifyContent: 'flex-end', alignItems: 'flex-end', }}>
+                                            <View style={{ height: 29, width: 90, borderColor: 'gray', borderWidth: .5, justifyContent: 'center', alignItems: 'center', borderRadius: 5, marginBottom: 10 }} >
+
+                                                <TextInput
+                                                    style={styles.quantityInput}
+                                                    keyboardType="numeric"
+                                                    placeholder="Qnty"
+                                                    placeholderTextColor={'gray'}
+                                                    value={itemQuantities[item.id]?.toString() || ''}
+                                                    // value={selectedItemQuantity.toString()} // Display item count as string in TextInput
+                                                    // onChangeText={(text) => setSelectedItemQuantity(text)} // Update selectedItemQuantity state
+                                                    onChangeText={(text) => {
+                                                        handleQuantityChangemodal(item.id, text), setSelectedItemQuantity(text)
+                                                    }}
+                                                />
+                                            </View>
+                                            <TouchableOpacity
+                                                style={[
+                                                    styles.addButton,
+                                                    { backgroundColor: selectedItemId === item.id ? 'green' : '#005A8D', zIndex: 10 }
+                                                ]}
+                                                onPress={() => {
+                                                    if (selectedItemQuantity == 0) {
+                                                        Alert.alert('Error', 'Please enter a valid quantity');
+                                                    } else {
+                                                        handleAddItem,
+                                                            setSelectedItem(item)
+                                                        setSelectedItemId(item.id)
+                                                    }
+
+
+                                                }}>
+                                                <Text style={{ color: 'white', fontSize: 14 }}>{selectedItemId === item.id ? 'Selected' : 'Select'}</Text>
+
+                                            </TouchableOpacity>
+
+
+                                        </View>
+
+                                    </View>
+                                )
+                                )}
+
+                            </View>
+                            <View style={{
+                                justifyContent: 'space-between', width: width - 50, flexDirection: 'row', marginBottom: 10, alignSelf: 'center', position: 'absolute',
+                                bottom: 10,
+                            }}>
+
+
+                                <CommonButton
+                                    onPress={() => setIsAddItemModalVisible(false)}
+                                    color={'white'}
+                                    title={'Cancel'}
+                                    width={width * 0.4}
+                                    texttitle={'#005A8D'}
                                 />
-                                <View style={{ justifyContent: 'space-between', width: width - 50, flexDirection: 'row', marginBottom: 10, alignSelf: 'center', }}>
+                                <CommonButton
+                                    onPress={() => handleAddItem()}
+                                    color={'#005A8D'}
+                                    title={'Confirm'}
+                                    width={width * 0.4}
+                                    texttitle={'white'}
+                                />
 
-                                    <CommonButton
-                                        onPress={() => handleAddItem()}
-                                        color={'white'}
-                                        title={'Confirm'}
-                                        width={width * 0.4}
-                                        texttitle={'#005A8D'}
-                                    />
-                                    <CommonButton
-                                        onPress={() => setIsAddItemModalVisible(false)}
-                                        color={'white'}
-                                        title={'Cancel'}
-                                        width={width * 0.4}
-                                        texttitle={'#005A8D'}
-                                    />
-
-                                </View>
-                            </KeyboardAvoidingView>
+                            </View>
+                            {/* </KeyboardAvoidingView> */}
                         </View>
                     </TouchableWithoutFeedback>
                     {/* </KeyboardAvoidingView>  */}
-            </Modal>
+                </Modal>
             </ScrollView>
         </SafeAreaView>
     );
@@ -784,12 +784,12 @@ const styles = StyleSheet.create({
     },
     earningsview: {
         height: height * 0.08,
-        width: width - 60,
+        width: width * 0.9,
         justifyContent: 'space-between',
         alignItems: 'center',
         flexDirection: 'row',
         marginTop: 5,
-        marginBottom: 5
+        marginBottom: 5,
         // backgroundColor: 'green'
     },
     subearn: {
@@ -803,12 +803,14 @@ const styles = StyleSheet.create({
     },
     itemContainer: {
         flexDirection: 'row',
-        alignItems: 'center',
+        // alignItems: 'center',
         justifyContent: 'space-between',
         // paddingHorizontal: 16,
         paddingVertical: 10,
 
-        width: width * .9,
+        width: '100%',
+        // backgroundColor: 'red',
+        // height: height - 200
     },
     itemtitle: {
         fontSize: 14,
@@ -828,16 +830,16 @@ const styles = StyleSheet.create({
     imageContainer: {
         height: height * 0.09,
         width: width * 0.2,
-        // backgroundColor: 'pink',
+        backgroundColor: 'pink',
         marginHorizontal: 3,
         marginRight: 25,
     },
     row1: {
-        width: width * 0.96,
+        width: '100%',
         height: height * 0.03,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        // backgroundColor:'red'
+        // backgroundColor: 'green'
     },
     row2: {
         flexDirection: 'row',
@@ -894,6 +896,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 5,
         borderRadius: 5,
+        width: 90
 
     },
     modalContainer: {
@@ -906,6 +909,7 @@ const styles = StyleSheet.create({
     modalTitle: {
         fontSize: 20,
         marginBottom: 20,
+        fontFamily: 'Inter-Bold',
     },
     modalItem: {
         marginBottom: 10,

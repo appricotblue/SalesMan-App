@@ -19,6 +19,9 @@ const images = {
   Envelope: require('./Envelope.png'),
   User: require('./User.png'),
   Arrowryt: require('./arrowryt.png'),
+  Arrowdown: require('./Downarrow.png'),
+  close: require('./X.png'),
+
 };
 
 export default images;

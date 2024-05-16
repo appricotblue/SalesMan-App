@@ -15,7 +15,7 @@ function Calander({date, onPress}) {
 const styles = StyleSheet.create({
   container: {
     height: height * 0.05,
-    width: '105%',
+    width: '100%',
     borderColor: 'grey',
     borderWidth: 0.5,
     borderRadius: 8,
