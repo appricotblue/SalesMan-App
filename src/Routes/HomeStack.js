@@ -18,6 +18,7 @@ import InvoiceScreen from '../Screens/Home/InvoiceScreen';
 import Earningdetails from '../Screens/MyEarnings/Earningdetails';
 import ItemwiseSales from '../Screens/User/ItemwiseSales';
 import ReturnOrderDetails from '../Screens/Return/ReturnOrderDetails';
+import EditShop from '../Screens/Shops/EditShop';
 
 
 const Stack = createStackNavigator();
@@ -46,6 +47,7 @@ const HomeStack = () => {
       <Stack.Screen name="Earningdetails" component={Earningdetails} />
       <Stack.Screen name="ItemwiseSales" component={ItemwiseSales} />
       <Stack.Screen name="ReturnOrderDetails" component={ReturnOrderDetails} />
+      <Stack.Screen name="EditShop" component={EditShop} />
     </Stack.Navigator>
   );
 };

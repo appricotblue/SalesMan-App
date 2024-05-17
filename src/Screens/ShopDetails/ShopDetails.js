@@ -16,90 +16,8 @@ import images from '../../assets/Images';
 import FilterButton from '../../components/FilterButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { setShops, setShopDetails } from '../../redux/action';
+import CommonButton from '../../components/CommonButton';
 
-const Data = [
-  {
-    id: 0,
-    orderId: '#1678954621',
-    time: '10th March 10 25 AM',
-    name: ' Supreme SuperMarket',
-    rate: 1638,
-    qty: 12,
-    status: 'Ordered',
-  },
-  {
-    id: 1,
-    orderId: '#1678954622',
-    time: '10th March 10 25 AM',
-    name: ' Green SuperMarket',
-    rate: 3896,
-    qty: 16,
-    status: 'Delivered',
-  },
-  {
-    id: 2,
-    orderId: '#1678954623',
-    time: '10th March 10 25 AM',
-    name: ' Golden Stores',
-    rate: 4250,
-    qty: 10,
-    status: 'Draft',
-  },
-  {
-    id: 3,
-    orderId: '#1678954621',
-    time: '10th March 10 25 AM',
-    name: ' Supreme SuperMarket',
-    rate: 1638,
-    qty: 12,
-    status: 'Ordered',
-  },
-  {
-    id: 4,
-    orderId: '#1678954622',
-    time: '10th March 10 25 AM',
-    name: ' Green SuperMarket',
-    rate: 3896,
-    qty: 16,
-    status: 'Delivered',
-  },
-  {
-    id: 5,
-    orderId: '#1678954623',
-    time: '10th March 10 25 AM',
-    name: ' Golden Stores',
-    rate: 4250,
-    qty: 10,
-    status: 'Draft',
-  },
-  {
-    id: 6,
-    orderId: '#1678954621',
-    time: '10th March 10 25 AM',
-    name: ' Supreme SuperMarket',
-    rate: 1638,
-    qty: 12,
-    status: 'Ordered',
-  },
-  {
-    id: 7,
-    orderId: '#1678954622',
-    time: '10th March 10 25 AM',
-    name: ' Green SuperMarket',
-    rate: 3896,
-    qty: 16,
-    status: 'Delivered',
-  },
-  {
-    id: 8,
-    orderId: '#1678954623',
-    time: '10th March 10 25 AM',
-    name: ' Golden Stores',
-    rate: 4250,
-    qty: 10,
-    status: 'Draft',
-  },
-];
 
 function ShopDetails({ navigation: { navigate } }) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -108,6 +26,8 @@ function ShopDetails({ navigation: { navigate } }) {
   const { shoporders, shopdetails, loading, error } = useSelector((state) => state.global);
   const [filteredOrders, setFilteredOrders] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
   const [data, setData] = useState([
     {
       name: 'Supreme Supermarket',
@@ -154,6 +74,9 @@ function ShopDetails({ navigation: { navigate } }) {
       const uriString = imageUrl ? String(imageUrl) : '';
       await setImage(uriString)
       console.log(image, 'here image')
+      const parsed = JSON.parse(shopdetails.locationCode);
+      setLatitude(parsed.latitude);
+      setLongitude(parsed.longitude);
     }
     fetchData();
     // convertUrlToImage()
@@ -316,6 +239,19 @@ function ShopDetails({ navigation: { navigate } }) {
         renderItem={({item}) => <_renderItems item={item} />}
         keyExtractor={item => item.id}
       />
+
+      <View style={styles.btnview}>
+        <CommonButton
+          onPress={() => navigate('EditShop', { locationdata: { latitude: latitude, longitude: longitude } })}
+          color={'white'}
+          title={'Edit Shop'}
+          width={width * 0.9}
+          texttitle={'#005A8D'}
+        />
+
+
+
+      </View>
     </View>
   );
 }
@@ -457,6 +393,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
   },
+  btnview: { width: width * .9, marginTop: 1, flexDirection: 'row', padding: 2, alignSelf: 'center' },
 });
 
 

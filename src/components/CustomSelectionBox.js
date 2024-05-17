@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
-import { height } from '../Theme/Constants';
+import { height, width } from '../Theme/Constants';
 
 function CustomSelectionBox({
   title,
@@ -12,7 +12,8 @@ function CustomSelectionBox({
   onSelect,
   options,
   displayProperty,
-  isRequired = false
+  isRequired = false,
+  inputwidth = width * 0.9,
 }) {
   const [showOptions, setShowOptions] = useState(false);
   const scrollViewRef = useRef();
@@ -32,7 +33,7 @@ function CustomSelectionBox({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { width: inputwidth }]}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>{title}</Text>
         {isRequired && <Text style={styles.requiredText}>*</Text>}
@@ -74,6 +75,7 @@ function CustomSelectionBox({
 const styles = StyleSheet.create({
   container: {
     marginBottom: 10,
+
   },
   title: {
     marginBottom: 5,

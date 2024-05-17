@@ -10,9 +10,9 @@ import {
   ScrollView,
   StatusBar,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import Header from '../../components/Header';
-import {height, width} from '../../Theme/Constants';
+import { height, width } from '../../Theme/Constants';
 import images from '../../assets/Images';
 import CommonButton from '../../components/CommonButton';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,7 +20,7 @@ import Local from '../../Storage/Local';
 
 
 const OrderDetails = () => {
-    const navigation = useNavigation();
+  const navigation = useNavigation();
   const { orders, orderdetails, loading, error } = useSelector((state) => state.global);
   const data = [
     {
@@ -59,8 +59,8 @@ const OrderDetails = () => {
       date: '₹120 x 25',
       amount: '₹200',
     },
-  
-  
+
+
   ];
 
   useEffect(() => {
@@ -80,7 +80,7 @@ const OrderDetails = () => {
 
     checkToken();
   }, []);
-  const ListItem = ({item}) => (
+  const ListItem = ({ item }) => (
     <TouchableOpacity
       style={styles.itemContainer}
       onPress={() => console.log('Item pressed')}>
@@ -98,9 +98,9 @@ const OrderDetails = () => {
       <StatusBar />
       <Header title={'Orders Details'} isBackArrow={true} />
       <View style={styles.container}>
-      <ScrollView>
+        <ScrollView>
 
-        <View style={{width:width*.9,alignSelf:'center',marginTop:10,borderBottomColor:'gray',borderBottomWidth:.5,paddingBottom:20}}>
+          <View style={{ width: width * .9, alignSelf: 'center', marginTop: 10, borderBottomColor: 'gray', borderBottomWidth: .5, paddingBottom: 5, }}>
 
             <View style={styles.earningsview}>
               <View style={styles.subearn}>
@@ -126,51 +126,40 @@ const OrderDetails = () => {
                 <Text style={styles.title}>{orderdetails.orderStatus}</Text>
               </View>
             </View>
-            {/* <View style={{width:width*.9,alignSelf:'center',marginTop:10}}>
-        <Text style={styles.subtitle}>Order Status</Text>
-            <Text style={[styles.title,{color:'#D79B00'}]}>Waiting For Pickup </Text>
 
-        </View> */}
 
-   
-        </View>
-        <View style={styles.flatlistview}>
-    
-        <Text style={styles.subtitle}>Items</Text>
-        {/* <FlatList
+
+          </View>
+          <View style={styles.flatlistview}>
+
+            <Text style={styles.subtitle}>Items</Text>
+            {/* <FlatList
           data={data}
           renderItem={({item}) => <ListItem item={item} />}
           keyExtractor={item => item.id}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
         /> */}
             {orderdetails.orderItems.map((item, index) => {
-          return(
-            <ListItem item={item}/>
-          )
-        })}
+              return (
+                <ListItem item={item} />
+              )
+            })}
 
-        </View>
-      </ScrollView>
+          </View>
+        </ScrollView>
 
-        <View style={{ width: width * .9, alignSelf: 'center', marginTop: 5, paddingBottom: 20, marginBottom: 50, }}>
-        <View style={{width:width*.9,marginTop:10,justifyContent:'space-between',flexDirection:'row'}}>
-        <Text style={styles.subtitle}>Total Invoice Amount</Text>
-            <Text style={[styles.title,{color:'black'}]}>₹{orderdetails.totalAmount}</Text>
-          
-        </View>
-        <View style={styles.totalview}>
-        <Text style={[styles.subtitle,{color:'#117C00'}] }>Your Earnings</Text>
-            <Text style={[styles.title,{color:'#117C00'}]}>₹{orderdetails.yourEarnings}</Text>
-          
-        </View>
-        
-          {/* <CommonButton
-        onPress={() => navigation.navigate('EditOrder')}
-        color={'white'}
-        title={'Edit Order'}
-        width={width * 0.9}
-        texttitle={'#005A8D'}
-      /> */}
+        <View style={{ width: width * .92, alignSelf: 'center', marginTop: 5, paddingBottom: 20, marginBottom: 70, }}>
+          <View style={{ width: width * .9, marginTop: 10, justifyContent: 'space-between', flexDirection: 'row' }}>
+            <Text style={styles.subtitle}>Total Invoice Amount</Text>
+            <Text style={[styles.title, { color: 'black' }]}>₹{orderdetails.totalAmount}</Text>
+
+          </View>
+          <View style={styles.totalview}>
+            <Text style={[styles.subtitle, { color: '#117C00' }]}>Your Earnings</Text>
+            <Text style={[styles.title, { color: '#117C00' }]}>₹{orderdetails.yourEarnings}</Text>
+
+          </View>
+
           <View style={styles.btnview}>
             <CommonButton
               onPress={() => navigation.navigate('EditOrder')}
@@ -191,9 +180,9 @@ const OrderDetails = () => {
 
           </View>
 
- </View>
+        </View>
       </View>
-     
+
     </SafeAreaView>
   );
 };
@@ -212,7 +201,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  image: {width: 132, height: 132, borderRadius: 70},
+  image: { width: 132, height: 132, borderRadius: 70 },
   title: { color: 'black', fontSize: 16, fontFamily: 'Inter-Bold' },
   subtitle: {
     color: 'black',
@@ -221,11 +210,11 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   earningsview: {
-    height: height * 0.08,
+    height: height * 0.06,
     width: width,
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent:'space-between'
+    justifyContent: 'space-between'
   },
   subearn: {
     height: height * 0.15,
@@ -260,15 +249,16 @@ const styles = StyleSheet.create({
     height: 20,
   },
   btnview: { width: width * .9, marginTop: 1, flexDirection: 'row', padding: 2, justifyContent: 'space-between' },
-  flatlistview:{
-    width:width*.9,
-    alignSelf:'center',
-    minHeight:height*.34, 
-    marginTop:10,
-    borderBottomColor:'gray',
-    borderBottomWidth:.5,
-    paddingBottom:20},
-  totalview:{width:width*.91,marginTop:10,justifyContent:'space-between',flexDirection:'row',backgroundColor:'#D9D9D9',padding:5}
+  flatlistview: {
+    width: width * .9,
+    alignSelf: 'center',
+    minHeight: height * .33,
+    marginTop: 10,
+    // borderBottomColor: 'gray',
+    // borderBottomWidth: .5,
+    paddingBottom: 20
+  },
+  totalview: { width: width * .91, marginTop: 10, justifyContent: 'space-between', flexDirection: 'row', backgroundColor: '#D9D9D9', padding: 5 }
 });
 
 export default OrderDetails;

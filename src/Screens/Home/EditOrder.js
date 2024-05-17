@@ -348,7 +348,7 @@ const EditOrder = () => {
         setSearchQuery('')
         Keyboard.dismiss();
         // unfocusSearchInput();
-        setIsAddItemModalVisible(false)
+        // setIsAddItemModalVisible(false)
         if (selectedItem && selectedItemQuantity !== '') {
             const quantityCount = parseInt(selectedItemQuantity, 10) || 0;
             const existingItem = selectedItems.find(item => item.id === selectedItem.id);
@@ -509,6 +509,7 @@ const EditOrder = () => {
                     <View style={styles.earningsview}>
                         <View style={styles.fromView}>
                             <CustomSelectionBox
+                                inputwidth={width * .35}
                                 title={'Order Type'}
                                 isRequired={true}
                                 value={location ? location.name : 'Select'}
@@ -540,6 +541,7 @@ const EditOrder = () => {
                         </View>
                         <View style={styles.toView}>
                             <CustomSelectionBox
+                                inputwidth={width * .35}
                                 title={'Status'}
                                 isRequired={true}
                                 value={selectStatus ? selectStatus.status : 'Select'}

@@ -20,89 +20,6 @@ import { getOrders, getOrderSearch, getReturnOrder, getOrderDetails } from '../.
 import { useDispatch, useSelector } from 'react-redux';
 import { setOrderDetails, setReturnOrders, setDeliveries } from '../../redux/action';
 
-const Data = [
-    {
-        id: 0,
-        orderId: '#1678954621',
-        time: '10 mins ago',
-        name: ' Supreme SuperMarket',
-        rate: 1638,
-        qty: 12,
-        status: 'Ordered',
-    },
-    {
-        id: 1,
-        orderId: '#1678954622',
-        time: '20 mins ago',
-        name: ' Green SuperMarket',
-        rate: 3896,
-        qty: 16,
-        status: 'Delivered',
-    },
-    {
-        id: 2,
-        orderId: '#1678954623',
-        time: '30 mins ago',
-        name: ' Golden Stores',
-        rate: 4250,
-        qty: 10,
-        status: 'Draft',
-    },
-    {
-        id: 3,
-        orderId: '#1678954621',
-        time: '10 mins ago',
-        name: ' Supreme SuperMarket',
-        rate: 1638,
-        qty: 12,
-        status: 'Ordered',
-    },
-    {
-        id: 4,
-        orderId: '#1678954622',
-        time: '20 mins ago',
-        name: ' Green SuperMarket',
-        rate: 3896,
-        qty: 16,
-        status: 'Delivered',
-    },
-    {
-        id: 5,
-        orderId: '#1678954623',
-        time: '30 mins ago',
-        name: ' Golden Stores',
-        rate: 4250,
-        qty: 10,
-        status: 'Draft',
-    },
-    {
-        id: 6,
-        orderId: '#1678954621',
-        time: '1 hour ago',
-        name: ' Supreme SuperMarket',
-        rate: 1638,
-        qty: 12,
-        status: 'Ordered',
-    },
-    {
-        id: 7,
-        orderId: '#1678954622',
-        time: '20 mins ago',
-        name: ' Green SuperMarket',
-        rate: 3896,
-        qty: 16,
-        status: 'Delivered',
-    },
-    {
-        id: 8,
-        orderId: '#1678954623',
-        time: '3 hour ago',
-        name: ' Golden Stores',
-        rate: 4250,
-        qty: 10,
-        status: 'Draft',
-    },
-];
 
 const OrderFilterScreen = ({ navigation: { navigate } }) => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -113,6 +30,7 @@ const OrderFilterScreen = ({ navigation: { navigate } }) => {
     const [pageSize, setPagesize] = useState(0);
     const [UserId, setUserId] = useState(null);
     const dispatch = useDispatch();
+    const [isDataEmpty, setIsDataEmpty] = useState(false);
 
     const filterPress = () => {
         navigate('filter');
@@ -138,6 +56,7 @@ const OrderFilterScreen = ({ navigation: { navigate } }) => {
                 const delay = 2000; // Delay in milliseconds
                 console.log(userid, 'userid kitiyo ?', filterorder)
                 setUserId(userid)
+                setIsDataEmpty(filterorder.length === 0);
 
                 // await GetReturnOrder(userid);
             } catch (error) {
@@ -239,12 +158,18 @@ const OrderFilterScreen = ({ navigation: { navigate } }) => {
         <HomeScreenSelectable title={'All Orders'} />
       </View> */}
 
-            <FlatList
-                data={filterorder}
-                showsVerticalScrollIndicator={false}
-                renderItem={({ item }) => <_renderItems item={item} />}
-                keyExtractor={item => item.id}
-            />
+            {isDataEmpty ? (
+                <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyText}>No Order found</Text>
+                </View>
+            ) : (
+                    <FlatList
+                        data={filterorder}
+                        showsVerticalScrollIndicator={false}
+                        renderItem={_renderItems}
+                        keyExtractor={item => item.id}
+                    />
+            )}
             {/* <View style={styles.OrderButton}>
                 <HomeOrderButton onpress={() => navigate('AddReturnOrder')} title={'New Return'} />
             </View> */}
@@ -330,6 +255,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignSelf: 'center',
         borderRadius: 15,
+    },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    emptyText: {
+        fontSize: 18,
+        color: 'grey',
     },
 });
 

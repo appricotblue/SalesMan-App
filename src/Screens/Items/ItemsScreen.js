@@ -135,6 +135,7 @@ const ItemsScreen = ({navigation: {navigate}}) => {
   const { shopitems, loading, error } = useSelector((state) => state.global);
   const [currentPage, setCurrentPage] = useState(1); // Initial page for pagination
   const [pageSize, setPagesize] = useState(0);
+  const [isDataEmpty, setIsDataEmpty] = useState(false);
 
   useEffect(() => {
     console.log(shopitems)
@@ -184,6 +185,7 @@ const ItemsScreen = ({navigation: {navigate}}) => {
       const newOrders = response.items;
       const updatedOrders = [...shopitems, ...newOrders];
       dispatch(setItems(updatedOrders));
+      setIsDataEmpty(updatedOrders.length === 0);
       if (response.message = "Getting Orders data Successfully") {
       } else {
        console.log('Error during login:',);
@@ -217,7 +219,7 @@ const ItemsScreen = ({navigation: {navigate}}) => {
         <View style={styles.imageContainer}>
           <Image
             source={{ uri: item?.thumbnail }}
-            style={{height: 70, width: 72, resizeMode: 'stretch'}}
+            style={{ height: '100%', width: '100%', resizeMode: 'stretch' }}
           />
         </View>
         <View>
@@ -253,7 +255,11 @@ const ItemsScreen = ({navigation: {navigate}}) => {
           />
         </View>
       </View>
-
+      {isDataEmpty ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No Item found</Text>
+        </View>
+      ) : (
       <FlatList
         data={shopitems}
         showsVerticalScrollIndicator={false}
@@ -262,6 +268,7 @@ const ItemsScreen = ({navigation: {navigate}}) => {
         onEndReached={loadMore} // Call loadMore function when user reaches the end of the list
         onEndReachedThreshold={0.5} 
       />
+      )}
     </SafeAreaView>
   );
 };
@@ -346,6 +353,16 @@ const styles = StyleSheet.create({
     width: width * 0.2,
     marginHorizontal: 3,
     marginRight: 25,
+    backgroundColor: 'pink'
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 18,
+    color: 'grey',
   },
 });
 

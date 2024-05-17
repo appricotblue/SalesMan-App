@@ -34,6 +34,7 @@ const Return = ({ navigation: { navigate } }) => {
   const [pageSize, setPagesize] = useState(0);
   const [UserId, setUserId] = useState(null);
   const dispatch = useDispatch();
+  const [isDataEmpty, setIsDataEmpty] = useState(false);
 
   const filterPress = () => {
     navigate('filter');
@@ -117,6 +118,8 @@ const Return = ({ navigation: { navigate } }) => {
     try {
       const response = await getReturnOrder(userid);
       console.log(response, 'return order  api response')
+      dispatch(setReturnOrders(response));
+      setIsDataEmpty(response?.length === 0);
       if (response.message = "Getting Orders data Successfully") {
         dispatch(setReturnOrders(response));
       } else {
@@ -201,13 +204,20 @@ const Return = ({ navigation: { navigate } }) => {
         <HomeScreenSelectable title={'Draft'} />
         <HomeScreenSelectable title={'All Orders'} />
       </View> */}
-
+      {isDataEmpty ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No Order found</Text>
+        </View>
+      ) : (
       <FlatList
         data={returnorder}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => <_renderItems item={item} />}
         keyExtractor={item => item.id}
       />
+      )}
+
+
       <View style={styles.OrderButton}>
         <HomeOrderButton onpress={() => navigate('AddReturnOrder')} title={'New Return'} />
       </View>
@@ -216,6 +226,7 @@ const Return = ({ navigation: { navigate } }) => {
         onPress={() => setModalVisible(false)}
         onApply={() => setModalVisible(false)}
       />
+
     </SafeAreaView>
   );
 };
@@ -293,6 +304,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     borderRadius: 15,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 18,
+    color: 'grey',
   },
 });
 

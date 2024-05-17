@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import Header from '../../components/Header';
-import {height, width} from '../../Theme/Constants';
+import { height, width } from '../../Theme/Constants';
 import images from '../../assets/Images';
 import Local from '../../Storage/Local';
 import { getOrders, getEarnings, getEarningDetails } from '../../api';
@@ -27,33 +27,8 @@ const MyEarnings = () => {
   const [earningAmount, setearningAmount] = useState(0);
   const [UserId, setUserId] = useState(null);
   const dispatch = useDispatch();
-  const data = [
-    {
-      id: '1',
-      title: 'Order#1345333667',
-      date: '12:05 PM | Oct 5, 2023',
-      amount: '₹200',
-    },
-    {
-      id: '2',
-      title: 'Order#1345333667',
-      date: '12:05 PM | Oct 5, 2023',
-      amount: '₹200',
-    },
-    {
-      id: '3',
-      title: 'Order#1345333667',
-      date: '12:05 PM | Oct 5, 2023',
-      amount: '₹200',
-    },
-    {
-      id: '4',
-      title: 'Order#1345333667',
-      date: '12:05 PM | Oct 5, 2023',
-      amount: '₹200',
-    },
+  const [isDataEmpty, setIsDataEmpty] = useState(false);
 
-  ];
 
   const GetEarningDetails = async (orderid, earnamount) => {
     console.log('here click ', earnamount)
@@ -95,6 +70,7 @@ const MyEarnings = () => {
       const newEarnings = response.orders;
       const updatedEarnings = [...earnings, ...newEarnings];
       dispatch(setEarnings(updatedEarnings));
+      setIsDataEmpty(updatedEarnings?.length === 0);
       if (response.message = "Getting Orders data Successfully") {
       } else {
         console.log('Error during login:',);
@@ -117,7 +93,7 @@ const MyEarnings = () => {
       GetEarnings(UserId, currentPage + 1);
     }
   };
-  const ListItem = ({item}) => (
+  const ListItem = ({ item }) => (
     <TouchableOpacity
       style={styles.itemContainer}
       onPress={async () => {
@@ -158,15 +134,22 @@ const MyEarnings = () => {
             <Text style={styles.subtitle}> Orders</Text>
           </TouchableOpacity>
         </View>
-        <FlatList
-          data={earnings}
-          renderItem={({item}) => <ListItem item={item} />}
-          keyExtractor={item => item.id}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
-          onEndReached={loadMore} 
-          onEndReachedThreshold={0.5}
-          
-        />
+        {isDataEmpty ? (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No data found</Text>
+          </View>
+        ) : (
+            <FlatList
+              data={earnings}
+              renderItem={({ item }) => <ListItem item={item} />}
+              keyExtractor={item => item.id}
+              ItemSeparatorComponent={() => <View style={styles.separator} />}
+              onEndReached={loadMore}
+              onEndReachedThreshold={0.5}
+              contentContainerStyle={{ marginBottom: 50 }}
+
+            />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -188,7 +171,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  image: {width: 132, height: 132, borderRadius: 70},
+  image: { width: 132, height: 132, borderRadius: 70 },
   title: { color: '#005A8D', fontSize: 17, fontFamily: 'Inter-Bold' },
   subtitle: {
     color: 'grey',
@@ -236,6 +219,15 @@ const styles = StyleSheet.create({
   separator: {
     height: 1,
     backgroundColor: '#ccc',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 18,
+    color: 'grey',
   },
 });
 

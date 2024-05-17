@@ -20,6 +20,7 @@ import { setShops, setItemSale, setItems } from '../../redux/action';
 import Local from '../../Storage/Local';
 import { useRoute } from '@react-navigation/native';
 
+
 const Data = [
     {
         id: 0,
@@ -140,7 +141,7 @@ const ItemwiseSales = ({ navigation: { navigate } }) => {
     const { shopitems, itemsale, loading, error } = useSelector((state) => state.global);
     const [currentPage, setCurrentPage] = useState(1); // Initial page for pagination
     const [pageSize, setPagesize] = useState(0);
-
+    const [isDataEmpty, setIsDataEmpty] = useState(false);
     useEffect(() => {
         const checkToken = async () => {
             try {
@@ -200,6 +201,7 @@ const ItemwiseSales = ({ navigation: { navigate } }) => {
             // const newOrders = response.items;
             // const updatedOrders = [...shopitems, ...newOrders];
             dispatch(setItemSale(response));
+            setIsDataEmpty(response?.length === 0);
             if (response.message = "Getting Orders data Successfully") {
             } else {
                 console.log('Error during login:',);
@@ -271,7 +273,11 @@ const ItemwiseSales = ({ navigation: { navigate } }) => {
                     />
                 </View>
             </View> */}
-
+            {isDataEmpty ? (
+                <View style={styles.emptyContainer}>
+                    <Text style={styles.emptyText}>No data found</Text>
+                </View>
+            ) : (
             <FlatList
                 data={itemsale}
                 showsVerticalScrollIndicator={false}
@@ -279,7 +285,9 @@ const ItemwiseSales = ({ navigation: { navigate } }) => {
                 keyExtractor={item => item.id}
                 onEndReached={loadMore} // Call loadMore function when user reaches the end of the list
                 onEndReachedThreshold={0.5}
+                        contentContainerStyle={{ paddingBottom: 50 }}
             />
+            )}
         </SafeAreaView>
     );
 };
@@ -385,7 +393,16 @@ const styles = StyleSheet.create({
     },
     subtitle: {
         color: 'black'
-    }
+    },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    emptyText: {
+        fontSize: 18,
+        color: 'grey',
+    },
 });
 
 export default ItemwiseSales;

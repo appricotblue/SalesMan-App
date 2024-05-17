@@ -353,7 +353,7 @@ const AddSalesOrder = () => {
         setSearchQuery('')
         Keyboard.dismiss();
         unfocusSearchInput();
-        setIsAddItemModalVisible(false)
+        // setIsAddItemModalVisible(false)
         if (selectedItem && selectedItemQuantity !== '' && parseInt(selectedItemQuantity) > 0) {
             // if (selectedItem && selectedItemQuantity !== '') {
             const count = parseInt(selectedItemQuantity, 10) || 0;
@@ -503,6 +503,7 @@ const AddSalesOrder = () => {
                     <View style={styles.earningsview}>
                         <View style={styles.fromView}>
                             <CustomSelectionBox
+                                inputwidth={width * .35}
                                 title={'Order Type'}
                                 isRequired={true}
                                 value={location ? location.name : 'Select'}
@@ -533,6 +534,7 @@ const AddSalesOrder = () => {
                         </View>
                         <View style={styles.toView}>
                             <CustomSelectionBox
+                                inputwidth={width * .35}
                                 title={'Status'}
                                 isRequired={true}
                                 value={selectStatus ? selectStatus.status : 'Select'}

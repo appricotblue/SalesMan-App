@@ -37,7 +37,7 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
     latitude: '',
     longitude: ''
   })
-
+  const [isDataEmpty, setIsDataEmpty] = useState(false);
   const onShopPress = (shopid) => {
     GetShopDetails(shopid)
 
@@ -132,7 +132,7 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
       console.log(updatedShops, 'updated shop list')
       setshoplist(updatedShops) // Update local state
       dispatch(setShops(updatedShops)); // Update Redux state
-
+      setIsDataEmpty(updatedShops?.length === 0);
       // if (response.message === "Getting Orders data Successfully") {
       //   // Dispatch necessary actions if needed
       // } else {
@@ -275,7 +275,11 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
           />
         </View>
       </View>
-
+      {isDataEmpty ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No Shops found</Text>
+        </View>
+      ) : (
       <FlatList
         data={shops}
         showsVerticalScrollIndicator={false}
@@ -284,7 +288,7 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
         onEndReached={loadMore} // Call loadMore function when user reaches the end of the list
         onEndReachedThreshold={0.5} 
       />
-
+      )}
       <View style={styles.OrderButton}>
         <HomeOrderButton onpress={() => navigation.navigate('AddShop', { locationdata: position })} title={'Add Shop'} />
       </View>
@@ -365,6 +369,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     borderRadius: 15,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 18,
+    color: 'grey',
   },
 });
 

@@ -313,7 +313,7 @@ const AddShop = ({ navigation: { navigate } }) => {
         <SafeAreaView style={styles.container}>
             <Header title={'Add Shops'} isBackArrow={true} isNotification={false} />
 
-            <ScrollView style={styles.scrollContainer}>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
                 <CustomTextInput
                     title={'Name Of Shop'}
                     placeholder="Enter shop name"
@@ -418,11 +418,11 @@ const AddShop = ({ navigation: { navigate } }) => {
                 </TouchableOpacity> */}
                 <Text style={styles.buttonText}>Upload Images</Text>
                 {renderImageSelection()}
-
-            </ScrollView>
-            <View style={styles.OrderButton}>
+                <View style={styles.OrderButton}>
                 <HomeOrderButton onpress={() => isValidate()} title={'Add Shop'} />
             </View>
+            </ScrollView>
+
             {/* <View style={styles.saveButtonContainer}>
                 <CommonButton
                     onPress={() => isValidate()}
@@ -439,12 +439,23 @@ const AddShop = ({ navigation: { navigate } }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFFFFF',
+        // backgroundColor: '#FFFFFF',
+        // backgroundColor: 'red',
+        width: width * 1,
+        alignSelf: 'center',
+        // alignItems: 'center',
+        justifyContent: 'center'
     },
     scrollContainer: {
-        flex: 1,
-        paddingHorizontal: 15,
-        paddingTop: 16
+        // flex: 1,
+        // paddingHorizontal: 15,
+        flexGrow: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%', // Full width of the screen
+        paddingVertical: 16,
+
+
     },
     saveButtonContainer: {
         paddingBottom: 10,
@@ -475,10 +486,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginBottom: 5
     },
-    scrollContainer: {
-        paddingHorizontal: 20,
-        paddingTop: 20,
-    },
+
     imageButton: {
         backgroundColor: '#003451',
         padding: 10,

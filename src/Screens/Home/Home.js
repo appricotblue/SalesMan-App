@@ -38,6 +38,7 @@ const Home = ({ navigation: { navigate } }) => {
   const [pageSize, setPagesize] = useState(0);
   const [orderlist, setorderlist] = useState([]);
   const [delivertlist, setdelivertlist] = useState([]);
+  const [isDataEmpty, setIsDataEmpty] = useState(false);
 
   const handleSelectItem = (title) => {
     // Alert.alert(title)
@@ -324,7 +325,11 @@ const Home = ({ navigation: { navigate } }) => {
         />
 
       </View>
-
+      {isDataEmpty ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No Shops found</Text>
+        </View>
+      ) : (
       <FlatList
         data={selectedItem == 'Orders' ? orders : deliveries}
         showsVerticalScrollIndicator={false}
@@ -333,6 +338,7 @@ const Home = ({ navigation: { navigate } }) => {
         onEndReached={loadMore} // Call loadMore function when user reaches the end of the list
         onEndReachedThreshold={0.5} 
       />
+      )}
       <View style={styles.OrderButton}>
         <HomeOrderButton onpress={() => navigate('AddSalesOrder')} title={'New Sales Order'} />
       </View>
@@ -420,6 +426,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     borderRadius: 15,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 18,
+    color: 'grey',
   },
 });
 
