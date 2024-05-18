@@ -832,6 +832,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'pink',
         marginHorizontal: 3,
         marginRight: 23,
+        borderRadius: 5
     },
     row1: {
         width: width * 0.96,

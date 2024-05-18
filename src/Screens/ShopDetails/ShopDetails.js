@@ -136,6 +136,8 @@ function ShopDetails({ navigation: { navigate } }) {
               borderRadius: 11,
             }}
           />
+
+
           {shopdetails?.shopImage?.length > 1 ? (
             <>
               <View style={styles.additionalImagesContainer}>

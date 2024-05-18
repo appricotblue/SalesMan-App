@@ -185,7 +185,7 @@ const ItemsScreen = ({navigation: {navigate}}) => {
       const newOrders = response.items;
       const updatedOrders = [...shopitems, ...newOrders];
       dispatch(setItems(updatedOrders));
-      setIsDataEmpty(updatedOrders.length === 0);
+      setIsDataEmpty(updatedOrders?.length === 0);
       if (response.message = "Getting Orders data Successfully") {
       } else {
        console.log('Error during login:',);
@@ -239,7 +239,7 @@ const ItemsScreen = ({navigation: {navigate}}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title={'Items'} isNotification={false} />
+      <Header title={'Items'} isNotification={false} isBackArrow={true} />
       <View style={{flexDirection: 'row'}}>
         <View
           style={{
@@ -349,11 +349,12 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   imageContainer: {
-    height: height * 0.09,
+    height: height * 0.1,
     width: width * 0.2,
     marginHorizontal: 3,
     marginRight: 25,
-    backgroundColor: 'pink'
+    backgroundColor: 'pink',
+    borderRadius: 5
   },
   emptyContainer: {
     flex: 1,

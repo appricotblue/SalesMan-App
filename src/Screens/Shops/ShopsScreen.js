@@ -259,7 +259,7 @@ const ShopsScreen = ({ navigation: { navigate } }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title={'Shops'} isNotification={false} />
+      <Header title={'Shops'} isNotification={false} isBackArrow={true} />
       <View style={{ flexDirection: 'row' }}>
         <View
           style={{
