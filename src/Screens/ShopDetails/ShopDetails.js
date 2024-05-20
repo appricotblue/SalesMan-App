@@ -121,8 +121,8 @@ function ShopDetails({ navigation: { navigate } }) {
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#6a51ae" />
+    <SafeAreaView style={styles.container}>
+      {/* <StatusBar barStyle="light-content" backgroundColor="#6a51ae" /> */}
       <Header title={'Shop Details'} isBackArrow={true} />
 
       <View style={styles.subContainer}>
@@ -254,7 +254,7 @@ function ShopDetails({ navigation: { navigate } }) {
 
 
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

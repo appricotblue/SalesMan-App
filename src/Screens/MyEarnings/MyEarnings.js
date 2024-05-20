@@ -39,7 +39,7 @@ const MyEarnings = () => {
       dispatch(setEarnDetails(response))
       setTimeout(() => {
         navigation.navigate('Earningdetails', { earningDetails: earnamount })
-      }, 1500);
+      }, 600);
 
 
     } catch (error) {

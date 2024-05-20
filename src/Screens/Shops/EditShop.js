@@ -135,7 +135,7 @@ const EditShop = ({ navigation: { navigate } }) => {
     const GetLocationList = async () => {
         try {
             const response = await getLocationList();
-            console.log(response.locations, 'locationsss')
+            // console.log(response.locations, 'locationsss')
             dispatch(setLocationList(response?.locations));
         } catch (error) {
             console.log(error)
