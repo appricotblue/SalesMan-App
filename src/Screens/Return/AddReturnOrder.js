@@ -458,6 +458,7 @@ const AddReturnOrder = () => {
                             <CustomSelectionBox
                                 inputwidth={width * .35}
                                 title={'Order Type'}
+
                                 isRequired={true}
                                 value={location ? location.name : 'Select'}
                                 options={categories}
@@ -477,6 +478,7 @@ const AddReturnOrder = () => {
                             <CustomTextInput
                                 title={'Order No'}
                                 isRequired={true}
+                                keyboardType="numeric"
                                 placeholder="Enter Order No"
                                 errorText={checkshopName}
                                 inputwidth={width * .35}

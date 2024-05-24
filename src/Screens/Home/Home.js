@@ -50,9 +50,7 @@ const Home = ({ navigation: { navigate } }) => {
   const filterPress = () => {
     navigate('filter');
   };
-  useEffect(() => {
-    console.log(orders, 'hooy')
-  }, []);
+
 
   const handleSearchChange = (text) => {
     setSearchQuery(text);
@@ -66,6 +64,7 @@ const Home = ({ navigation: { navigate } }) => {
   useEffect(() => {
     const checkToken = async () => {
       try {
+        dispatch(setOrders([]));
         const userid = await Local.getUserId();
         const delay = 2000; // Delay in milliseconds
         console.log(userid, routeitem, 'userid kitiyo ?', orders, route)
@@ -99,6 +98,7 @@ const Home = ({ navigation: { navigate } }) => {
     if (isFocused) { // Check if the screen is focused
       console.log('Home screen is focused', routeitem?.id, selectedItem, 'test');
       try {
+        dispatch(setOrders([]));
         const userid = await Local.getUserId();
         setUserId(userid);
         await GetOrders(userid, selectedItem, 1);
@@ -201,6 +201,7 @@ const Home = ({ navigation: { navigate } }) => {
         const updatedOrders = [...orders, ...newOrders];
         // console.log(updatedOrders, 'gvghfggtf')
         dispatch(setOrders(updatedOrders));
+        console.log('here click  33', locationId, userId, selectedItem, page, newOrders)
         setorderlist(updatedOrders)
       } else {
         dispatch(setDeliveries(response.orders));
@@ -273,7 +274,7 @@ const Home = ({ navigation: { navigate } }) => {
               style={{
                 fontWeight: 'bold',
                 color:
-                  item.statusid == 1
+                  item.statusid == 2
                     ? '#D79B00'
                     : item.statusid == 4
                       ? '#17A400'

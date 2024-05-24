@@ -263,6 +263,7 @@ const AddSalesOrder = () => {
             });
             const data = await response.json();
             console.log('Order created:', data);
+            Alert.alert(data.message)
             GetOrders()
             // navigation.navigate('Home')
         } catch (error) {
@@ -275,11 +276,12 @@ const AddSalesOrder = () => {
 
 
     const GetOrders = async () => {
-
+        dispatch(setOrders([]));
         try {
+            dispatch(setOrders([]));
             const response = await (getOrders(UserId, '', 1));
             console.log(response.orders, 'here')
-            dispatch(setOrders(response.orders));
+            // dispatch(setOrders(response.orders));
             navigation.navigate('Home')
         } catch (error) {
             console.error('Error during fetching orders:home ', error?.message);
@@ -531,6 +533,7 @@ const AddSalesOrder = () => {
                             <CustomTextInput
                                 title={'Order No'}
                                 isRequired={true}
+                                keyboardType="numeric"
                                 placeholder="Enter Order No"
                                 errorText={checkshopName}
                                 inputwidth={width * .35}

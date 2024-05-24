@@ -288,11 +288,11 @@ const EditOrder = () => {
     };
 
     const GetOrders = async () => {
-
+        dispatch(setOrders([]));
         try {
             const response = await (getOrders(UserId, '', 1));
             console.log(response.orders, 'here')
-            dispatch(setOrders(response.orders));
+            // dispatch(setOrders(response.orders));
             navigation.navigate('Home')
         } catch (error) {
             console.error('Error during fetching orders:home ', error?.message);
