@@ -74,6 +74,13 @@ const AddSalesOrder = () => {
     const [totalCommission, setTotalCommission] = useState(0);
     const [itemQuantities, setItemQuantities] = useState({});
     const [quantityValue, setQuantityValue] = useState('');
+    const [openBoxId, setOpenBoxId] = useState(null);
+
+    const handleSelectBox = (id) => {
+        setOpenBoxId(openBoxId === id ? null : id);
+    };
+
+
     const handleKeyboardDismiss = () => {
         Keyboard.dismiss();
     };
@@ -286,7 +293,7 @@ const AddSalesOrder = () => {
                 <View style={styles.imageContainer}>
                     <Image
                         source={{ uri: selectedItem?.image }}
-                        style={{ height: 70, width: 72, resizeMode: 'stretch' }}
+                        style={{ height: '100%', width: '100%', resizeMode: 'stretch' }}
                     />
                 </View>
                 <View>
@@ -302,7 +309,7 @@ const AddSalesOrder = () => {
                         <Text style={styles.rateText}>₹{item?.price}</Text>
                         <View style={{ height: 29, width: 65, borderColor: 'gray', borderWidth: .5, justifyContent: 'center', alignItems: 'center', borderRadius: 5 }} >
 
-                            <TextInput
+                            <TextInput 
                                 editable={true}
                                 ref={quantityInputRef}
                                 style={styles.quantityInput}
@@ -510,6 +517,8 @@ const AddSalesOrder = () => {
                                 options={categories}
                                 onSelect={handleorderSelect}
                                 displayProperty="name"
+                                isOpen={openBoxId === 1}
+                                onOpen={() => handleSelectBox(1)}
                             />
                         </View>
                         <View style={styles.toView}>
@@ -541,6 +550,8 @@ const AddSalesOrder = () => {
                                 options={status}
                                 onSelect={handleStatusSelect}
                                 displayProperty="status"
+                                isOpen={openBoxId === 2}
+                                onOpen={() => handleSelectBox(2)}
                             />
                         </View>
                     </View>
@@ -552,6 +563,8 @@ const AddSalesOrder = () => {
                         options={shops}
                         onSelect={handleShopSelect}
                         displayProperty="shopname" // Specify the property to display as shop name
+                        isOpen={openBoxId === 3}
+                        onOpen={() => handleSelectBox(3)}
                     />
                     <Text style={{
                         fontWeight: 'bold',
@@ -572,13 +585,20 @@ const AddSalesOrder = () => {
                     </View>
                 </View>
                 <View style={styles.listview}>
-                    <FlatList
+                    <ScrollView showsVerticalScrollIndicator={false}>
+                        {selectedItems.map(item => (
+                            <View key={item?.id}>
+                                <_renderItems item={item} />
+                            </View>
+                        ))}
+                    </ScrollView>
+                    {/* <FlatList
                         // data={searchshopitems}
                         data={selectedItems}
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item }) => <_renderItems item={item} />}
                         keyExtractor={item => item?.id}
-                    />
+                    /> */}
                 </View>
                 <View style={styles.totalcommiview}>
                     <View style={{ width: width * .9, justifyContent: 'space-between', flexDirection: 'row', alignSelf: 'center' }}>
@@ -640,6 +660,7 @@ const AddSalesOrder = () => {
                     style={styles.modalContainer}
                 > */}
                     <TouchableWithoutFeedback onPress={handleKeyboardDismiss}>
+                        <ScrollView contentContainerStyle={{ height: height }}>
                         <View style={styles.modalContainer}>
                             {/* <KeyboardAvoidingView
                                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -654,7 +675,7 @@ const AddSalesOrder = () => {
                                             <View style={styles.imageContainer}>
                                                 <Image
                                                     source={{ uri: item?.image }}
-                                                    style={{ height: '100%', width: '100%', resizeMode: 'stretch' }}
+                                                    style={{ height: '100%', width: '100%', borderRadius: 5, resizeMode: 'stretch' }}
                                                 />
                                             </View>
                                         </View>
@@ -741,6 +762,7 @@ const AddSalesOrder = () => {
                             </View>
                             {/* </KeyboardAvoidingView> */}
                         </View>
+                        </ScrollView>
                     </TouchableWithoutFeedback>
                     {/* </KeyboardAvoidingView>  */}
                 </Modal>

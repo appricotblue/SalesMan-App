@@ -3,7 +3,6 @@ import { View, TextInput, Button, Alert, Text, PermissionsAndroid, Platform, Act
 import { WebView } from 'react-native-webview';
 import { useNavigation } from '@react-navigation/native';
 import Geolocation from 'react-native-geolocation-service';
-
 import axios from 'axios';
 
 const LeafletMap = () => {
@@ -14,6 +13,7 @@ const LeafletMap = () => {
     latitude: '',
     longitude: ''
   });
+  const [loading, setLoading] = useState(false);
 
   const requestLocationPermission = async () => {
     try {
@@ -45,8 +45,10 @@ const LeafletMap = () => {
   };
 
   const handleSearchLocationPermission = async () => {
+    setLoading(true); // Start loader
     const hasPermission = await requestLocationPermission();
     if (!hasPermission) {
+      setLoading(false); // Stop loader if permission is denied
       Alert.alert('Permission denied', 'Location permission is required to use this feature.');
       return;
     }
@@ -59,6 +61,7 @@ const LeafletMap = () => {
         handleSearchLocation(latitude, longitude);
       },
       (error) => {
+        setLoading(false); // Stop loader on error
         console.error('Error getting current position:', error);
         Alert.alert('Error', error.message);
       },
@@ -67,49 +70,24 @@ const LeafletMap = () => {
   };
 
   useEffect(() => {
-    // handleSearchLocationPermission();
-  }, []);
-
-
-  useEffect(() => {
-    const requestLocationPermission = async () => {
-      if (Platform.OS === 'android') {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          {
-            title: 'Location Permission',
-            message: 'We need your location to provide better service.',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
+    requestLocationPermission().then(granted => {
+      if (granted) {
+        setLoading(true); // Start loader
+        Geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            setPosition({ latitude, longitude });
+            handleSearchLocation(latitude, longitude);
           },
+          (error) => {
+            console.error(error);
+            setLoading(false); // Stop loader on error
+          },
+          { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
         );
-        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('Location permission denied');
-          return;
-        }
       }
-      Geolocation.getCurrentPosition(
-        (position) => {
-          console.log(position);
-          const { latitude, longitude } = position.coords;
-          setPosition({ latitude, longitude });
-          handleSearchLocation(latitude, longitude);
-        },
-        (error) => {
-          console.error(error);
-        },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
-      );
-    };
-
-    requestLocationPermission();
+    });
   }, []);
-
-
-
-
-
 
   const handleSearchLocation = async (latitude, longitude, retryCount = 0) => {
     console.log('Searching location for', latitude, longitude);
@@ -127,6 +105,7 @@ const LeafletMap = () => {
       }
     } catch (error) {
       console.error('Error fetching location data:', error);
+      setLoading(false); // Stop loader on error
       if (error.response && error.response.status === 429 && retryCount < 3) {
         const waitTime = Math.pow(2, retryCount) * 1000;
         setTimeout(() => {
@@ -166,8 +145,10 @@ const LeafletMap = () => {
         </html>
       `;
       setMapHtmlContent(htmlContent);
+      setLoading(false); // Stop loader after successful fetch
     } catch (error) {
       console.error('Error fetching location data:', error);
+      setLoading(false); // Stop loader on error
     }
   };
 
@@ -187,17 +168,20 @@ const LeafletMap = () => {
         onChangeText={text => setSearchQuery(text)}
       />
       <Button title="Search Location" onPress={() => handleSearchLocation(position.latitude, position.longitude)} />
-      <WebView
-        originWhitelist={['*']}
-        source={{ html: mapHtmlContent }}
-        javaScriptEnabled={true}
-        onMessage={handleMessage}
-        style={{ flex: 1 }}
-      />
-      <View style={{ marginLeft: 10, }}>
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+          <WebView
+            originWhitelist={['*']}
+            source={{ html: mapHtmlContent }}
+            javaScriptEnabled={true}
+            onMessage={handleMessage}
+            style={{ flex: 1 }}
+          />
+      )}
+      <View style={{ marginLeft: 10 }}>
         <Text style={{ color: 'black' }}>latitude: {position.latitude}</Text>
         <Text style={{ color: 'black' }}>longitude: {position.longitude}</Text>
-
       </View>
       <Button title="Submit" onPress={() => navigation.navigate('AddShop', { locationdata: position })} />
     </View>

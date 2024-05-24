@@ -71,6 +71,12 @@ const EditOrder = () => {
     // const [totalCommission, setTotalCommission] = useState(0);
     const [itemQuantities, setItemQuantities] = useState({});
 
+    const [openBoxId, setOpenBoxId] = useState(null);
+
+    const handleSelectBox = (id) => {
+        setOpenBoxId(openBoxId === id ? null : id);
+    };
+
     const handleKeyboardDismiss = () => {
         Keyboard.dismiss();
     };
@@ -516,6 +522,9 @@ const EditOrder = () => {
                                 options={categories}
                                 onSelect={handleorderSelect}
                                 displayProperty="name"
+                                isOpen={openBoxId === 1}
+                                onOpen={() => handleSelectBox(1)}
+
                             />
                         </View>
                         <View style={styles.toView}>
@@ -548,6 +557,8 @@ const EditOrder = () => {
                                 options={status}
                                 onSelect={handleStatusSelect}
                                 displayProperty="status"
+                                isOpen={openBoxId === 2}
+                                onOpen={() => handleSelectBox(2)}
                             />
                         </View>
                     </View>
@@ -559,6 +570,8 @@ const EditOrder = () => {
                         options={shops}
                         onSelect={handleShopSelect}
                         displayProperty="shopname" // Specify the property to display as shop name
+                        isOpen={openBoxId === 3}
+                        onOpen={() => handleSelectBox(3)}
                     />
                     <Text style={styles.itemtitles}>Select Item <Text style={styles.requiredText}>*</Text></Text>
                     <View
@@ -642,6 +655,7 @@ const EditOrder = () => {
                     style={styles.modalContainer}
                 > */}
                     <TouchableWithoutFeedback onPress={handleKeyboardDismiss}>
+                        <ScrollView contentContainerStyle={{ height: height }}>
                         <View style={styles.modalContainer}>
                             {/* <KeyboardAvoidingView
                                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -743,6 +757,7 @@ const EditOrder = () => {
                             </View>
                             {/* </KeyboardAvoidingView> */}
                         </View>
+                        </ScrollView>
                     </TouchableWithoutFeedback>
                     {/* </KeyboardAvoidingView>  */}
                 </Modal>

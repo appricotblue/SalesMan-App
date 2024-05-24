@@ -66,6 +66,11 @@ const AddReturnOrder = () => {
     const [selectedItemCommission, setSelectedItemCommission] = useState('');
     const [itemQuantities, setItemQuantities] = useState({});
     const [totalCommission, setTotalCommission] = useState(0);
+    const [openBoxId, setOpenBoxId] = useState(null);
+
+    const handleSelectBox = (id) => {
+        setOpenBoxId(openBoxId === id ? null : id);
+    };
 
     const handleKeyboardDismiss = () => {
         Keyboard.dismiss();
@@ -458,6 +463,8 @@ const AddReturnOrder = () => {
                                 options={categories}
                                 onSelect={handleorderSelect}
                                 displayProperty="name"
+                                isOpen={openBoxId === 1}
+                                onOpen={() => handleSelectBox(1)}
                             />
                         </View>
                         <View style={styles.toView}>
@@ -489,6 +496,8 @@ const AddReturnOrder = () => {
                                 options={status}
                                 onSelect={handleStatusSelect}
                                 displayProperty="status"
+                                isOpen={openBoxId === 2}
+                                onOpen={() => handleSelectBox(2)}
                             />
                         </View>
                     </View>
@@ -500,6 +509,8 @@ const AddReturnOrder = () => {
                         options={shops}
                         onSelect={handleShopSelect}
                         displayProperty="shopname" // Specify the property to display as shop name
+                        isOpen={openBoxId === 3}
+                        onOpen={() => handleSelectBox(3)}
                     />
                     <Text style={{
                         color: 'black',
@@ -587,6 +598,7 @@ const AddReturnOrder = () => {
                     style={styles.modalContainer}
                 > */}
                     <TouchableWithoutFeedback onPress={handleKeyboardDismiss}>
+                        <ScrollView contentContainerStyle={{ height: height }}>
                         <View style={styles.modalContainer}>
                             {/* <KeyboardAvoidingView
                                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -688,6 +700,7 @@ const AddReturnOrder = () => {
                             </View>
                             {/* </KeyboardAvoidingView> */}
                         </View>
+                        </ScrollView>
                     </TouchableWithoutFeedback>
                     {/* </KeyboardAvoidingView>  */}
                 </Modal>

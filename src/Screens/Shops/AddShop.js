@@ -28,9 +28,6 @@ import { useRoute } from '@react-navigation/native';
 import HomeOrderButton from '../../components/HomeOrderButton';
 
 
-
-
-
 const AddShop = ({ navigation: { navigate } }) => {
     const route = useRoute();
     const [shopName, setShopName] = useState('');
@@ -54,6 +51,11 @@ const AddShop = ({ navigation: { navigate } }) => {
     const [categories, setCategories] = useState([{ id: 1, name: 'Kakkanad' }, { id: 2, name: 'Kakkanad express' }]);
     const [selectedLocation, setSelectedLocation] = useState(null);
     const { locationdata } = route.params;
+    const [openBoxId, setOpenBoxId] = useState(null);
+
+    const handleSelectBox = (id) => {
+      setOpenBoxId(openBoxId === id ? null : id);
+    };
 
     // Now you can use locationdata.latitude and locationdata.longitude
     // const loclatitude = locationdata?.latitude;
@@ -351,6 +353,8 @@ const AddShop = ({ navigation: { navigate } }) => {
                     options={locationlist}
                     onSelect={handleorderSelect}
                     displayProperty="LocationName"
+                    isOpen={openBoxId === 1}
+                    onOpen={() => handleSelectBox(1)}
                 />
                 {/* <CustomSelectionBox
                     title={'Location'}

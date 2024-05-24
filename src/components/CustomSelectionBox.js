@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, Platform } from 'react-native';
 import { height, width } from '../Theme/Constants';
 
@@ -14,22 +14,23 @@ function CustomSelectionBox({
   displayProperty,
   isRequired = false,
   inputwidth = width * 0.9,
+  isOpen,
+  onOpen,
 }) {
-  const [showOptions, setShowOptions] = useState(false);
   const scrollViewRef = useRef();
 
   // UseEffect to scroll to the selected option if it's not in the view
   useEffect(() => {
-    if (showOptions && scrollViewRef.current) {
+    if (isOpen && scrollViewRef.current) {
       setTimeout(() => {
         scrollViewRef.current.scrollTo({ y: 0, animated: false });
       }, 200);
     }
-  }, [showOptions]);
+  }, [isOpen]);
 
-  const handleSelectOption = shop => {
+  const handleSelectOption = (shop) => {
     onSelect(shop);
-    setShowOptions(false);
+    onOpen();
   };
 
   return (
@@ -41,7 +42,7 @@ function CustomSelectionBox({
 
       <TouchableOpacity
         style={styles.inputContainer}
-        onPress={() => setShowOptions(!showOptions)}>
+        onPress={onOpen}>
         <TextInput
           style={styles.inputStyle}
           onChangeText={text => onChangeText(text)}
@@ -51,9 +52,9 @@ function CustomSelectionBox({
           placeholderTextColor={placeholderTextColor}
           editable={false}
         />
-        <Text style={styles.dropdownIcon}>{showOptions ? '▲' : '▼'}</Text>
+        <Text style={styles.dropdownIcon}>{isOpen ? '▲' : '▼'}</Text>
       </TouchableOpacity>
-      {showOptions && (
+      {isOpen && (
         <ScrollView
           ref={scrollViewRef}
           style={styles.optionsContainer}
@@ -75,7 +76,6 @@ function CustomSelectionBox({
 const styles = StyleSheet.create({
   container: {
     marginBottom: 10,
-
   },
   title: {
     marginBottom: 5,
@@ -106,10 +106,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'grey',
     backgroundColor: '#fff',
-    zIndex: 1, // Ensure the dropdown appears above other elements
-    position: 'absolute', // Position the dropdown absolutely
-    width: '100%', // Make the dropdown take full width
-    marginTop: Platform.OS === 'ios' ? 35 : 0, // Adjust marginTop based on platform
+    zIndex: 1,
+    position: 'absolute',
+    width: '100%',
+    marginTop: Platform.OS === 'ios' ? 35 : 0,
   },
   optionsContent: {
     flexGrow: 1,
